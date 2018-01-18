@@ -17,26 +17,32 @@ const friendList = [
     records: {value: "1 record"}
   }
 ];
-export const SharedRecordsScreen = () => (
-  <View style={{ flex: 1, backgroundColor: colors.bg }}>
-    <CoralHeader title='Shared Medical Records' subtitle='Users below have delagated access to you.'/>
-    <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
-      {
-        friendList.map((l, i) => (
-          <ListItem
-            roundAvatar
-            avatar={{uri:l.avatar_url}}
-            key={i}
-            title={l.name}
-            badge={l.records}
-            chevronColor={colors.red}
-          />
-        ))
-      }
-    </List>
-    <Button
-      backgroundColor={colors.red}
-      icon={{name: 'qrcode', type: 'font-awesome'}}
-      title='Show QR code' />
-  </View>
-);
+export class SharedRecordsScreen extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+        <CoralHeader title='Shared Medical Records' subtitle='Users below have delagated access to you.'/>
+        <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
+          {
+            friendList.map((l, i) => (
+              <ListItem
+                roundAvatar
+                avatar={{uri:l.avatar_url}}
+                key={i}
+                title={l.name}
+                badge={l.records}
+                chevronColor={colors.red}
+              />
+            ))
+          }
+        </List>
+        <Button
+          backgroundColor={colors.red}
+          icon={{name: 'qrcode', type: 'font-awesome'}}
+          title='Show QR code'
+          onPress={() => this.props.navigation.navigate('QRCode')}
+        />
+      </View>
+    );
+  }
+}

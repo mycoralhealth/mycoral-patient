@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import { TabNavigator } from 'react-navigation';
+import { TabNavigator, StackNavigator } from 'react-navigation';
 import { Button, Icon, Text } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,8 +10,14 @@ import { CoralHeader, colors } from './src/ui.js';
 import { MyRecordsScreen } from './src/screens/MyRecordsScreen.js';
 import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen.js';
 import { SettingsScreen } from './src/screens/SettingsScreen.js';
+import { QRCodeScreen } from './src/screens/QRCodeScreen.js';
 
-
+const SharedRecordsNavigator = StackNavigator({
+  SharedRecords: { screen: SharedRecordsScreen },
+  QRCode: { screen: QRCodeScreen },
+},{
+  headerMode: 'none'
+});
 
 const App = TabNavigator({
   MyRecords: {
@@ -28,7 +34,7 @@ const App = TabNavigator({
     },
   },
   Friends: {
-    screen: SharedRecordsScreen,
+    screen: SharedRecordsNavigator,
     navigationOptions: {
       tabBarLabel: 'Shared Records',
       tabBarIcon: ({ tintColor, focused }) => (
