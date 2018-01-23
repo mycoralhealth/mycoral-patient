@@ -4,7 +4,7 @@ import { Button } from 'react-native-elements';
 import QRCode from 'react-native-qrcode';
 import { CoralHeader, colors } from '../ui.js';
 import { NavigationActions } from 'react-navigation';
-
+// harded coded address as a sample
 const address = '0x1234567896d4a755815f9cb19e1acc8565a0c2ac';
 
 const backAction = NavigationActions.back();
