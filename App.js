@@ -8,9 +8,22 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { CoralHeader, colors } from './src/ui.js';
 
 import { MyRecordsScreen } from './src/screens/MyRecordsScreen.js';
+import { ViewRecordScreen } from './src/screens/ViewRecordScreen.js';
+import { RequestHealthTipScreen } from './src/screens/RequestHealthTipScreen.js';
+import { RequestHealthTipConfirmScreen } from './src/screens/RequestHealthTipConfirmScreen.js';
+
 import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen.js';
 import { SettingsScreen } from './src/screens/SettingsScreen.js';
 import { QRCodeScreen } from './src/screens/QRCodeScreen.js';
+
+const MyRecordsNavigator = StackNavigator({
+  MyRecords: { screen: MyRecordsScreen },
+  ViewRecord: { screen: ViewRecordScreen },
+  RequestHealthTip: { screen: RequestHealthTipScreen },
+  RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen }
+},{
+  headerMode: 'none'
+});
 
 const SharedRecordsNavigator = StackNavigator({
   SharedRecords: { screen: SharedRecordsScreen },
@@ -21,7 +34,7 @@ const SharedRecordsNavigator = StackNavigator({
 
 const App = TabNavigator({
   MyRecords: {
-    screen: MyRecordsScreen,
+    screen: MyRecordsNavigator,
     navigationOptions: {
       tabBarLabel: 'My Records',
       tabBarIcon: ({ tintColor, focused }) => (

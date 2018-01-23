@@ -1,0 +1,17 @@
+{
+  "username":"123456",
+  "email":"andy@mycoralhealth.com",
+  "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",
+  "IPFSaddr":"QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6",
+  "testType":"basic blood",
+  "date":"01-21-2018",
+  "results": [
+    {"marker":"Cholesterol","value":"180"},
+    {"marker":"HbA1c","value":"6.0"},
+    {"marker":"hsCRP","value":"2.5"}
+  ]
+}
+
+
+
+
