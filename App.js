@@ -19,6 +19,7 @@ const SharedRecordsNavigator = StackNavigator({
   headerMode: 'none'
 });
 
+// possibly modify 'records' to 'results'
 const App = TabNavigator({
   MyRecords: {
     screen: MyRecordsScreen,

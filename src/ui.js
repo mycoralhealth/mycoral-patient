@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 import { Text } from 'react-native-elements';
-
+// logo color scheme
 export const colors = {
   'bg': '#eee',
   'green': '#1db495',
