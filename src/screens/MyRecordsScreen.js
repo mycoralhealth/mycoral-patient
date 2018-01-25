@@ -19,26 +19,31 @@ const recordList = [
     date: '2016-10-29'
   }
 ];
-export const MyRecordsScreen = () => (
-  <View style={{ flex: 1, backgroundColor: colors.bg }}>
-    <CoralHeader title='My Medical Records' subtitle='View your records on the blockchain.'/>
+export class MyRecordsScreen extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+        <CoralHeader title='My Medical Records' subtitle='View your records on the blockchain.'/>
 
-    <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
-      {
-        recordList.map((l, i) => (
-          <ListItem
-            key={i}
-            title={l.name}
-            rightTitle={l.date}
-            chevronColor={colors.red}
-            leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
-          />
-        ))
-      }
-    </List>
-    <Button
-      backgroundColor={colors.red}
-      icon={{name: 'ios-add-circle', type: 'ionicon'}}
-      title='Add record' />
-  </View>
-);
+        <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
+          {
+            recordList.map((l, i) => (
+              <ListItem
+                key={i}
+                title={l.name}
+                rightTitle={l.date}
+                chevronColor={colors.red}
+                leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
+                onPress={() => this.props.navigation.navigate('ViewRecord')}
+              />
+            ))
+          }
+        </List>
+        <Button
+          backgroundColor={colors.red}
+          icon={{name: 'ios-add-circle', type: 'ionicon'}}
+          title='Add record' />
+      </View>
+    );
+  }
+}

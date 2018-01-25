@@ -3,6 +3,7 @@ import { View, Image } from 'react-native';
 import { Text } from 'react-native-elements';
 export const colors = {
   'bg': '#eee',
+  'gray': '#999',
   'green': '#1db495',
   'red': '#f10d34'
 }
