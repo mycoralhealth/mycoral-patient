@@ -1,0 +1,39 @@
+[
+
+{
+  "record_id": "BH1",
+  "username":"123456",
+  "email":"andy@mycoralhealth.com",
+  "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",
+  "IPFSaddr":"QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6",
+  "testType":"basic heart",
+  "name": "Basic Heart Metrics",
+  "date":"2016-10-29",
+  "results": [
+    {"key":"Cholesterol","value":"180", "type":"marker", "valueType":"magnitude"},
+    {"key":"HbA1c","value":"6.0", "type":"marker", "valueType":"magnitude"},
+    {"key":"hsCRP","value":"2.5", "type":"marker", "valueType":"magnitude"}
+  ]
+},
+
+
+{
+  "record_id": "G2",
+  "username":"123456",
+  "email":"andy@mycoralhealth.com",
+  "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",
+  "IPFSaddr":"QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6",
+  "testType":"genetic",
+  "name": "Genetic",
+  "date":"2016-11-20",
+  "results": [
+    {"key":"BRCA1", "value":"positive", "type":"gene", "valueType":"mutation"},
+    {"key":"BRCA2", "value":"negative", "type":"gene", "valueType":"mutation"}
+  ]
+}
+
+
+
+
+
+]
