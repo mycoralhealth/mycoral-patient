@@ -20,6 +20,12 @@ export class MyRecordsScreen extends Component {
     this.setState({recordsList});
   }
 
+  newRecord(record) {
+    let recordsList = this.state.recordsList;
+    recordsList.push(record);
+    this.setState({recordsList});
+  }
+
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -43,7 +49,7 @@ export class MyRecordsScreen extends Component {
           backgroundColor={colors.red}
           icon={{name: 'ios-add-circle', type: 'ionicon'}}
           title='Add record' 
-          onPress={() => this.props.navigation.navigate('AddRecord', {recordsList})}
+          onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
         />
       </View>
     );

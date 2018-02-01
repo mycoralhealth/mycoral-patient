@@ -14,7 +14,7 @@ export class QRCodeReaderScreen extends Component {
   async componentWillMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({hasCameraPermission: status === 'granted'});
-    }
+  }
 
   render() {
     const { hasCameraPermission } = this.state;
@@ -27,7 +27,7 @@ export class QRCodeReaderScreen extends Component {
       return (
         <View style={{ flex: 1 }}>
           <BarCodeScanner
-            onBarCodeRead={this._handleBarCodeRead}
+            onBarCodeRead={this.handleBarCodeRead}
             style={StyleSheet.absoluteFill}
           />
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end'}}>
@@ -36,15 +36,14 @@ export class QRCodeReaderScreen extends Component {
               title='Cancel Scan'
               onPress={() => this.props.navigation.dispatch(backAction)}
             />
-
           </View>
         </View>
       );
     }
   }
 
-  _handleBarCodeRead = ({ type, data }) => {
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+  handleBarCodeRead = ({ type, data }) => {
+    this.props.navigation.state.params.onQRCodeScanned(type, data);
     this.props.navigation.dispatch(backAction);
   }
 }
