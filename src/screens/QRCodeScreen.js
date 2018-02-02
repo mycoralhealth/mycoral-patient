@@ -2,10 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 import QRCode from 'react-native-qrcode';
-import { CoralHeader, colors } from '../ui.js';
 import { NavigationActions } from 'react-navigation';
 
-const address = '0x1234567896d4a755815f9cb19e1acc8565a0c2ac';
+import { CoralHeader, colors } from '../ui.js';
+import { blockchainAddress } from './common';
+
 
 const backAction = NavigationActions.back();
 
@@ -17,11 +18,11 @@ export class QRCodeScreen extends React.Component {
 
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <QRCode
-            value={address}
+            value={blockchainAddress}
             size={300}
             bgColor='#333'
             fgColor={colors.bg}/>
-          <Text style={{ margin: 20, fontSize: 12, color: 'rgba(0, 0, 0, 0.6)' }}>{address}</Text>
+          <Text style={{ margin: 20, fontSize: 12, color: 'rgba(0, 0, 0, 0.6)' }}>{blockchainAddress}</Text>
         </View>
         <Button
           style={{ marginBottom: 20 }}
