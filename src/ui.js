@@ -4,6 +4,7 @@ import { Text } from 'react-native-elements';
 export const colors = {
   'bg': '#eee',
   'gray': '#999',
+  'darkerGray': '#666',
   'green': '#1db495',
   'red': '#f10d34'
 }

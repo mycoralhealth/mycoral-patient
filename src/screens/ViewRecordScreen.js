@@ -31,7 +31,7 @@ export class ViewRecordScreen extends Component {
                 key={item.key}
                 title={item.key}
                 hideChevron={true}
-                rightTitle={item.value}
+                rightTitle={(item.value == '') ? ' ' : item.value}
                 rightTitleStyle={{ color: 'black', fontSize: 20, fontFamily: 'Courier', fontWeight: 'bold'}}
               />
             ))
