@@ -15,15 +15,15 @@ export class RequestHealthTipScreen extends Component {
         <ScrollView>
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
-              doctorList.map((l, i) => (
+              doctorList.map((doctor, i) => (
                 <ListItem
                   roundAvatar
-                  avatar={{uri:l.avatar_url}}
+                  avatar={{uri:doctor.avatar_url}}
                   key={i}
-                  title={l.name}
-                  subtitle={l.institution}
+                  title={doctor.name}
+                  subtitle={doctor.institution}
                   chevronColor={colors.red}
-                  onPress={() => this.props.navigation.navigate('RequestHealthTipConfirm')}
+                  onPress={() => this.props.navigation.navigate('RequestHealthTipConfirm', {doctor})}
                 />
               ))
             }
