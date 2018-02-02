@@ -1,25 +1,31 @@
-import React from 'react';
+import moment from 'moment';
+import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Button } from 'react-native-elements';
-import { List, ListItem } from 'react-native-elements';
+import { Button, List, ListItem } from 'react-native-elements';
 
 import { CoralHeader, colors } from '../ui.js';
+import recordsList from '../data/results.json';
 
-const recordList = [
-  {
-    name: 'Basic Heart Metrics',
-    date: '2017-07-01'
-  },
-  {
-    name: 'Genetic',
-    date: '2016-11-20'
-  },
-  {
-    name: 'Blood',
-    date: '2016-10-29'
+export class MyRecordsScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { recordsList: [] };
   }
-];
-export class MyRecordsScreen extends React.Component {
+
+  /* We could load the data straight in the constructor
+   * but this will set us on a way to eventually load from elsewhere.
+   */
+  componentDidMount() {
+    this.setState({recordsList});
+  }
+
+  newRecord(record) {
+    let recordsList = this.state.recordsList;
+    recordsList.push(record);
+    this.setState({recordsList});
+  }
+
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -27,14 +33,14 @@ export class MyRecordsScreen extends React.Component {
 
         <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
           {
-            recordList.map((l, i) => (
+            this.state.recordsList.map((record) => (
               <ListItem
-                key={i}
-                title={l.name}
-                rightTitle={l.date}
+                key={record.record_id}
+                title={record.name}
+                rightTitle={moment(record.date).format('MMM Do, YYYY')}
                 chevronColor={colors.red}
                 leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
-                onPress={() => this.props.navigation.navigate('ViewRecord')}
+                onPress={() => this.props.navigation.navigate('ViewRecord', {record})}
               />
             ))
           }
@@ -42,7 +48,9 @@ export class MyRecordsScreen extends React.Component {
         <Button
           backgroundColor={colors.red}
           icon={{name: 'ios-add-circle', type: 'ionicon'}}
-          title='Add record' />
+          title='Add record' 
+          onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
+        />
       </View>
     );
   }

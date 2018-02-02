@@ -11,6 +11,8 @@ import { MyRecordsScreen } from './src/screens/MyRecordsScreen.js';
 import { ViewRecordScreen } from './src/screens/ViewRecordScreen.js';
 import { RequestHealthTipScreen } from './src/screens/RequestHealthTipScreen.js';
 import { RequestHealthTipConfirmScreen } from './src/screens/RequestHealthTipConfirmScreen.js';
+import { AddRecordScreen } from './src/screens/AddRecordScreen.js';
+import { QRCodeReaderScreen } from './src/screens/QRCodeReaderScreen.js';
 
 import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen.js';
 import { SettingsScreen } from './src/screens/SettingsScreen.js';
@@ -20,7 +22,15 @@ const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
   ViewRecord: { screen: ViewRecordScreen },
   RequestHealthTip: { screen: RequestHealthTipScreen },
-  RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen }
+  RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen },
+  AddRecord: { screen: AddRecordScreen },
+  QRCodeReader: { 
+    screen: QRCodeReaderScreen,
+    navigationOptions: ({ navigation }) => ({
+      title: 'QR Code',
+      tabBarVisible: false
+    })
+  }
 },{
   headerMode: 'none'
 });
@@ -43,7 +53,7 @@ const App = TabNavigator({
           size={26}
           style={{ color: tintColor }}
         />
-      ),
+      )
     },
   },
   Friends: {

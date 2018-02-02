@@ -1,45 +1,34 @@
-import React from 'react';
-import { View } from 'react-native';
-import { Button } from 'react-native-elements';
-import { List, ListItem, Text } from 'react-native-elements'
+import moment from 'moment';
+import React, { Component } from 'react';
+import { View, ScrollView } from 'react-native';
+import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
-const backAction = NavigationActions.back();
 
 import { CoralHeader, colors } from '../ui.js';
 
-const record = {
-  "username":"123456",
-  "email":"andy@mycoralhealth.com",
-  "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",
-  "IPFSaddr":"QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6",
-  "testType":"Basic Blood Test",
-  "date":"2017-10-02",
-  "results": [
-    {"key":"Cholesterol","value":"180"},
-    {"key":"HbA1c","value":"6.0"},
-    {"key":"hsCRP","value":"2.5"}
-  ]
-}
+const backAction = NavigationActions.back();
 
-
-export class ViewRecordScreen extends React.Component {
+export class ViewRecordScreen extends Component {
   render() {
+    const state = this.props.navigation.state;
+    const record = state.params.record;
+
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
         <CoralHeader title='View Medical Record' subtitle='Your record has been decrypted below.'/>
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-          Basic Blood Test
+          {record.name}
         </Text>
         <Text style={{textAlign: 'center'}}>
-          Date: Oct 2, 2017
+          Date: {moment(record.date).format('MMMM Do, YYYY')}
         </Text>
 
         <List containerStyle={{marginBottom: 20}}>
           {
-            record.results.map((item, i) => (
+            record.results.map((item) => (
               <ListItem
-                key={i}
+                key={item.key}
                 title={item.key}
                 hideChevron={true}
                 rightTitle={item.value}
@@ -72,7 +61,6 @@ export class ViewRecordScreen extends React.Component {
             onPress={() => this.props.navigation.dispatch(backAction)}
           />
         </View>
-
       </View>
     );
   }

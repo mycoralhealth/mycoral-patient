@@ -1,0 +1,47 @@
+[
+  {
+    name: 'Dr. Isabela Moner',
+    avatar_url: 'https://randomuser.me/api/portraits/women/65.jpg',
+    institution: 'Alden General Hospital'
+  },
+  {
+    name: 'Dr. Timothy Gunter',
+    avatar_url: 'https://d3iw72m71ie81c.cloudfront.net/gaurav.JPG',
+    institution: 'Chicago Hope'
+  },
+  {
+    name: 'Dr. Lyle Kauffman',
+    avatar_url: 'https://d3iw72m71ie81c.cloudfront.net/male-73.png',
+    institution: 'Hilltop Hospital'
+  },
+  {
+    name: 'Dr. Anna Faris',
+    avatar_url: 'https://d3iw72m71ie81c.cloudfront.net/female-4.jpg',
+    institution: 'Oxbridge General'
+  },
+  {
+    name: 'Dr. Anthony Rapp',
+    avatar_url: 'https://randomuser.me/api/portraits/men/97.jpg',
+    institution: 'Kingdom Hospital'
+  },
+  {
+    name: 'Dr. Daniel Webber',
+    avatar_url: 'https://images.pexels.com/photos/428341/pexels-photo-428341.jpeg?h=350&auto=compress&cs=tinysrgb',
+    institution: 'Saint Eligius Hospital'
+  },
+  {
+    name: 'Dr. Scott Howard',
+    avatar_url: 'https://randomuser.me/api/portraits/men/91.jpg',
+    institution: 'Holby City Hospital'
+  },
+  {
+    name: 'Dr. Sara Koivisto',
+    avatar_url: 'https://d3iw72m71ie81c.cloudfront.net/female-83.jpg',
+    institution: 'Princeton-Plainsboro Teaching Hospital'
+  },
+  {
+    name: 'Dr. Damion Weir',
+    avatar_url: 'https://randomuser.me/api/portraits/men/83.jpg',
+    institution: 'Oxbridge General'
+  }
+]
