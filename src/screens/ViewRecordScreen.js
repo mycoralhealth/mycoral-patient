@@ -10,8 +10,7 @@ const backAction = NavigationActions.back();
 
 export class ViewRecordScreen extends Component {
   render() {
-    const state = this.props.navigation.state;
-    const record = state.params.record;
+    const record = this.props.navigation.state.params.record;
 
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
@@ -51,7 +50,7 @@ export class ViewRecordScreen extends Component {
             backgroundColor={colors.gray}
             icon={{name: 'verified-user', type: 'material'}}
             title='Delegate Access'
-            //onPress={() => this.props.navigation.navigate('TODO')}
+            onPress={() => this.props.navigation.navigate('DelegateAccess', {record})}
           />
           <Button
             style={{ marginBottom: 20 }}

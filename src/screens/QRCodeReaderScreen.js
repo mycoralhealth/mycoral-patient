@@ -4,11 +4,11 @@ import { BarCodeScanner, Permissions } from 'expo';
 import { NavigationActions } from 'react-navigation';
 
 import { CoralHeader, colors } from '../ui.js';
-const backAction = NavigationActions.back();
 
 export class QRCodeReaderScreen extends Component {
   state = {
     hasCameraPermission: null,
+    readBarcode: false
   }
 
   async componentWillMount() {
@@ -34,7 +34,7 @@ export class QRCodeReaderScreen extends Component {
             <Button
               style={{flex: 1}}
               title='Cancel Scan'
-              onPress={() => this.props.navigation.dispatch(backAction)}
+              onPress={this.handleCancel}
             />
           </View>
         </View>
@@ -42,8 +42,19 @@ export class QRCodeReaderScreen extends Component {
     }
   }
 
+  handleCancel = () => {
+    this.props.navigation.state.params.onCancel();
+    this.props.navigation.dispatch(NavigationActions.back());
+  }
+
   handleBarCodeRead = ({ type, data }) => {
+    if (this.state.readBarcode)
+      return;
+
+    this.setState({'readBarcode': true});
+
     this.props.navigation.state.params.onQRCodeScanned(type, data);
-    this.props.navigation.dispatch(backAction);
+    this.props.navigation.dispatch(NavigationActions.back());
+
   }
 }

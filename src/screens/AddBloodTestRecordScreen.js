@@ -1,6 +1,6 @@
 import moment from 'moment'
 import React from 'react';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
@@ -41,54 +41,56 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
+      <View style={{ flex: 1, backgroundColor: colors.bg  }}>
         <CoralHeader title='Add Basic Heart Metrics Test' subtitle='Fill in your record information as below.'/>
 
-        <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-          Basic Heart Metrics
-        </Text>
-        <Text style={{textAlign: 'center'}}>
-          Date: {moment().format('MMMM Do, YYYY')}
-        </Text>
+        <ScrollView>
+          <Text h3 style={{textAlign: 'center', marginTop: 20}}>
+            Basic Heart Metrics
+          </Text>
+          <Text style={{textAlign: 'center'}}>
+            Date: {moment().format('MMMM Do, YYYY')}
+          </Text>
 
-        <List containerStyle={{marginBottom: 20}}>
-          {
-            [
-              {"key":"Cholesterol","placeholder":"180"},
-              {"key":"HbA1c","placeholder":"6.0"},
-              {"key":"hsCRP","placeholder":"2.5"}
-            ].map((item, index) => (
+          <List containerStyle={{marginBottom: 20}}>
+            {
+              [
+                {"key":"Cholesterol","placeholder":"180"},
+                {"key":"HbA1c","placeholder":"6.0"},
+                {"key":"hsCRP","placeholder":"2.5"}
+              ].map((item, index) => (
 
-              <ListItem 
-                key={item.key}
-                title={item.key} 
-                hideChevron={true}
-                textInput={true} 
-                textInputPlaceholder={item.placeholder} 
-                textInputValue={this.state[item.key]}
-                textInputOnChangeText={(title) => this.onChangeValue(item.key, title)}
-                textInputReturnKeyType={'done'}
-              />
-            ))
-          }
-        </List>
+                <ListItem 
+                  key={item.key}
+                  title={item.key} 
+                  hideChevron={true}
+                  textInput={true} 
+                  textInputPlaceholder={item.placeholder} 
+                  textInputValue={this.state[item.key]}
+                  textInputOnChangeText={(title) => this.onChangeValue(item.key, title)}
+                  textInputReturnKeyType={'done'}
+                />
+              ))
+            }
+          </List>
 
-        <View>
-          <Button
-            style={{marginBottom: 10}}
-            backgroundColor={colors.green}
-            icon={{name: 'ios-add-circle', type: 'ionicon'}}
-            title='Add record' 
-            onPress={() => this.addRecord()}
-          />
-          <Button
-            style={{ marginBottom: 20 }}
-            backgroundColor={colors.red}
-            icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-            title='Back'
-            onPress={() => this.props.navigation.dispatch(backAction)}
-          />
-        </View>
+          <View>
+            <Button
+              style={{marginBottom: 10}}
+              backgroundColor={colors.green}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Add record' 
+              onPress={() => this.addRecord()}
+            />
+            <Button
+              style={{ marginBottom: 20 }}
+              backgroundColor={colors.red}
+              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
+              title='Back'
+              onPress={() => this.props.navigation.dispatch(backAction)}
+            />
+          </View>
+        </ScrollView>
       </View>
     );
   }
