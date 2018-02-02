@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import { TabNavigator, StackNavigator } from 'react-navigation';
+import { TabNavigator, StackNavigator, NavigationActions } from 'react-navigation';
 import { Button, Icon, Text } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -58,10 +58,20 @@ const SharedRecordsNavigator = StackNavigator({
   headerMode: 'none'
 });
 
+const resetStack = (scene, jumpToIndex, navigation) => {
+  const { route, focused, index } = scene;
+  if (!focused && (route.index > 0)) {
+    const { routeName, key } = route.routes[1]
+    navigation.dispatch(NavigationActions.back({ key }))
+  } else {
+    jumpToIndex(index);
+  }
+};
+
 const App = TabNavigator({
   MyRecords: {
     screen: MyRecordsNavigator,
-    navigationOptions: {
+    navigationOptions: ({ navigation }) => ( {
       tabBarLabel: 'My Records',
       tabBarIcon: ({ tintColor, focused }) => (
         <Ionicons
@@ -69,12 +79,13 @@ const App = TabNavigator({
           size={26}
           style={{ color: tintColor }}
         />
-      )
-    },
+      ),
+      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
+    }),
   },
   Friends: {
     screen: SharedRecordsNavigator,
-    navigationOptions: {
+    navigationOptions: ({ navigation }) => ( {
       tabBarLabel: 'Shared Records',
       tabBarIcon: ({ tintColor, focused }) => (
         <Ionicons
@@ -83,7 +94,8 @@ const App = TabNavigator({
           style={{ color: tintColor }}
         />
       ),
-    },
+      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
+    }),
   },
   Settings: {
     screen: SettingsScreen,
@@ -97,8 +109,7 @@ const App = TabNavigator({
         />
       ),
     },
-  },
-
+  }, 
 });
 
 export default App;
