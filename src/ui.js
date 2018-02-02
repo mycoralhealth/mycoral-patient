@@ -6,7 +6,8 @@ export const colors = {
   'gray': '#999',
   'darkerGray': '#666',
   'green': '#1db495',
-  'red': '#f10d34'
+  'red': '#f10d34',
+  'white': '#fff'
 }
 
 export class CoralHeader extends React.Component {
