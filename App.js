@@ -58,6 +58,16 @@ const SharedRecordsNavigator = StackNavigator({
   headerMode: 'none'
 });
 
+const resetStack = (scene, jumpToIndex, navigation) => {
+  const { route, focused, index } = scene;
+  if (!focused && (route.index > 0)) {
+    const { routeName, key } = route.routes[1]
+    navigation.dispatch(NavigationActions.back({ key }))
+  } else {
+    jumpToIndex(index);
+  }
+};
+
 const App = TabNavigator({
   MyRecords: {
     screen: MyRecordsNavigator,
@@ -70,15 +80,7 @@ const App = TabNavigator({
           style={{ color: tintColor }}
         />
       ),
-      tabBarOnPress: ({ scene, jumpToIndex }) => {
-        const { route, focused, index } = scene;
-        if (!focused && (route.index > 0)) {
-          const { routeName, key } = route.routes[1]
-          navigation.dispatch(NavigationActions.back({ key }))
-        } else {
-          jumpToIndex(index);
-        }
-      }
+      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
     }),
   },
   Friends: {
@@ -92,15 +94,7 @@ const App = TabNavigator({
           style={{ color: tintColor }}
         />
       ),
-      tabBarOnPress: ({ scene, jumpToIndex }) => {
-        const { route, focused, index } = scene;
-        if (!focused && (route.index > 0)) {
-          const { routeName, key } = route.routes[1]
-          navigation.dispatch(NavigationActions.back({ key }))
-        } else {
-          jumpToIndex(index);
-        }
-      }
+      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
     }),
   },
   Settings: {
@@ -115,7 +109,7 @@ const App = TabNavigator({
         />
       ),
     },
-  },
+  }, 
 });
 
 export default App;
