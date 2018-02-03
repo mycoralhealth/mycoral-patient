@@ -32,7 +32,7 @@ export class DelegateAccessScreen extends Component {
 
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='Delegate Access' subtitle='To delegate access of this record scan the QR code of the delegate or enter their blockchain address'/>
+        <CoralHeader title='Share Access' subtitle='Scan the QR code or enter the blockchain address of the person you'd to share this record with'/>
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
           {record.name}
@@ -43,7 +43,7 @@ export class DelegateAccessScreen extends Component {
 
         <View style={{ backgroundColor: (this.state.accessDelegated) ? colors.darkerGray : null }}>
           <Text h4 style={{textAlign: 'center', color: colors.white, margin: 10}}>
-            {(this.state.accessDelegated) ? 'ACCESS DELEGATED' : ''}
+            {(this.state.accessDelegated) ? 'Record Shared' : ''}
           </Text>
         </View>
 
