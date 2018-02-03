@@ -32,7 +32,7 @@ export class DelegateAccessScreen extends Component {
 
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='Share Access' subtitle='Scan the QR code or enter the blockchain address of the person you'd to share this record with'/>
+        <CoralHeader title='Share Access' subtitle='Scan the QR code or enter the blockchain address of the person you'd like to share this record with'/>
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
           {record.name}
