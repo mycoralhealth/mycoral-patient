@@ -21,7 +21,7 @@ export class SharedRecordsScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
-        <CoralHeader title='Shared Medical Records' subtitle='Users below have delagated access to you.'/>
+        <CoralHeader title='Shared Medical Records' subtitle='You have shared your records with the below people.'/>
         <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
           {
             friendList.map((l, i) => (
