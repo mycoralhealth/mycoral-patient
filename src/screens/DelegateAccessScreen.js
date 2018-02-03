@@ -52,14 +52,14 @@ export class DelegateAccessScreen extends Component {
             style={{marginBottom: 10}}
             backgroundColor={colors.green}
             icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Scan QR Code'
+            title='Scan Recipient's QR Code'
             onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this), onCancel: this.onCancel.bind(this)})}
           />
           <Button
             style={{marginBottom: 10}}
             backgroundColor={colors.gray}
             icon={{name: 'terminal', type: 'font-awesome'}}
-            title='Enter blockchain address'
+            title='Enter Recipients Address'
             onPress={() => this.props.navigation.navigate('DelegateAccessEntry', {onManualEntry: this.onManualEntry.bind(this), onCancel: this.onCancel.bind(this)})}
           />
           <Button
