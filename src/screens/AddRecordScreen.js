@@ -3,6 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
+import DropdownAlert from 'react-native-dropdownalert';
 
 import { CoralHeader, colors } from '../ui.js';
 import { blockchainAddress } from './common.js';
@@ -10,6 +11,15 @@ import { blockchainAddress } from './common.js';
 const backAction = NavigationActions.back();
 
 export class AddRecordScreen extends Component {
+  onRecordAdded(record) {
+    this.props.navigation.state.params.onRecordAdded(record);
+    this.dropdown.alertWithType('info', 'New Record Added', 'You can add more medical records or go back to the records list.');
+  }
+
+  onRecordUploaded(record) {
+    this.dropdown.alertWithType('info', 'New Photo Record Uploaded', 'You can add more medical records or go back to the records list.');
+  }
+
   render() {
     const state = this.props.navigation.state;
     return (
@@ -32,7 +42,7 @@ export class AddRecordScreen extends Component {
               backgroundColor={colors.darkerGray}
               icon={{name: 'camera', type: 'font-awesome'}}
               title='Add Records By Camera' 
-              onPress={() => this.props.navigation.navigate('Camera')}
+              onPress={() => this.props.navigation.navigate('Camera', {onRecordUploaded: this.onRecordUploaded.bind(this)})}
             />
           </View>
           <View style={{ flex: 1, marginBottom: 10}}>
@@ -42,7 +52,7 @@ export class AddRecordScreen extends Component {
               title='Add Blood Test' 
               onPress={() => this.props.navigation.navigate('AddBloodTestRecord', {
                 recordsList: this.props.navigation.state.params.recordsList, 
-                onRecordAdded: this.props.navigation.state.params.onRecordAdded})}
+                onRecordAdded: this.onRecordAdded.bind(this)})}
             />
           </View>
           <View style={{ flex: 1, marginBottom: 20}}>          
@@ -52,7 +62,7 @@ export class AddRecordScreen extends Component {
               title='Add Genetic Test' 
               onPress={() => this.props.navigation.navigate('AddGeneticTestRecord', {
                 recordsList: this.props.navigation.state.params.recordsList, 
-                onRecordAdded: this.props.navigation.state.params.onRecordAdded})}
+                onRecordAdded: this.onRecordAdded.bind(this)})}
             />
           </View>
           <View style={{ flex: 1, marginBottom: 20}}>
@@ -65,7 +75,10 @@ export class AddRecordScreen extends Component {
           </View>
 
         </ScrollView>
-
+        <DropdownAlert 
+          ref={ref => this.dropdown = ref} 
+          infoColor={colors.darkerGray}
+        />
       </View>
     );
   }
