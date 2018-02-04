@@ -38,7 +38,7 @@ export class AddRecordScreen extends Component {
             style={{marginBottom: 10}}
             backgroundColor={colors.green}
             icon={{name: 'heartbeat', type: 'font-awesome'}}
-            title='Basic Heart Metrics' 
+            title='Blood Test' 
             onPress={() => this.props.navigation.navigate('AddBloodTestRecord', {
               recordsList: this.props.navigation.state.params.recordsList, 
               onRecordAdded: this.props.navigation.state.params.onRecordAdded})}
