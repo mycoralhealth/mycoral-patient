@@ -1,8 +1,9 @@
 import moment from 'moment'
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { CoralHeader, colors } from '../ui.js';
 import { TestRecordScreen } from './TestRecordScreen';
@@ -44,7 +45,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
         <CoralHeader title='Add Blood Test' subtitle='Enter your results below.'/>
 
-        <ScrollView>
+        <KeyboardAwareScrollView style={{ flex: 1 }}>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
             Blood Test
           </Text>
@@ -90,7 +91,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
               onPress={() => this.props.navigation.dispatch(backAction)}
             />
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </View>
     );
   }
