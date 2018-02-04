@@ -35,13 +35,14 @@ export class RequestHealthTipConfirmScreen extends React.Component {
             </Text>
           </View>
 
-          <Button
-            style={{ marginBottom: 20 }}
-            backgroundColor={colors.red}
-            icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-            title='Home'
-            onPress={() => this.props.navigation.dispatch(resetAction)}
-          />
+          <View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
+              title='Home'
+              onPress={() => this.props.navigation.dispatch(resetAction)}
+            />
+          </View>
         </ScrollView>
       </View>
     );

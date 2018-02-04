@@ -25,13 +25,14 @@ export class QRCodeScreen extends React.Component {
               fgColor={colors.bg}/>
             <Text style={{ margin: 20, fontSize: 12, color: 'rgba(0, 0, 0, 0.6)' }}>{blockchainAddress}</Text>
           </View>
-          <Button
-            style={{ marginBottom: 20 }}
-            backgroundColor={colors.red}
-            icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-            title='Back'
-            onPress={() => this.props.navigation.dispatch(backAction)}
-          />
+          <View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
+              title='Back'
+              onPress={() => this.props.navigation.dispatch(backAction)}
+            />
+          </View>
         </ScrollView>
       </View>
     );

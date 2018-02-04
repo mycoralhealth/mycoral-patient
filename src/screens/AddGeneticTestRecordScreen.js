@@ -70,21 +70,23 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
           }
         </List>
 
-        <View>
-          <Button
-            style={{marginBottom: 10}}
-            backgroundColor={colors.green}
-            icon={{name: 'ios-add-circle', type: 'ionicon'}}
-            title='Add Record' 
-            onPress={() => this.addRecord()}
-          />
-          <Button
-            style={{ marginBottom: 20 }}
-            backgroundColor={colors.red}
-            icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-            title='Back'
-            onPress={() => this.props.navigation.dispatch(backAction)}
-          />
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, marginBottom: 10}}>
+            <Button
+              backgroundColor={colors.green}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Add Record' 
+              onPress={() => this.addRecord()}
+            />
+          </View>
+          <View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
+              title='Back'
+              onPress={() => this.props.navigation.dispatch(backAction)}
+            />
+          </View>
         </View>
       </View>
     );

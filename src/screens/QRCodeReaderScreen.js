@@ -32,8 +32,7 @@ export class QRCodeReaderScreen extends Component {
           />
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end'}}>
             <Button
-              style={{flex: 1}}
-              title='Cancel Scan'
+              title='Cancel'
               onPress={this.handleCancel}
             />
           </View>
