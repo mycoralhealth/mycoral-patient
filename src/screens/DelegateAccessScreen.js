@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
+import DropdownAlert from 'react-native-dropdownalert';
 
 import { CoralHeader, colors } from '../ui.js';
 
@@ -16,15 +17,19 @@ export class DelegateAccessScreen extends Component {
   onQRCodeScanned(type, data) {
     // Dummy for now
     console.log(`Code scanned ${type} with data ${data}`);
-    this.setState({accessDelegated:true})
+    this.showSharedAlert();
   }
 
   onManualEntry(data) {
-    this.setState({accessDelegated:true})    
+    this.showSharedAlert();    
   }
 
   onCancel() {
     this.setState({accessDelegated:false})    
+  }
+
+  showSharedAlert() {
+    this.dropdown.alertWithType('info', 'Record Shared', 'You can share the record with more people or go back.');
   }
 
   render() {
@@ -42,13 +47,7 @@ export class DelegateAccessScreen extends Component {
             Date: {moment(record.date).format('MMMM Do, YYYY')}
           </Text>
 
-          <View style={{ backgroundColor: (this.state.accessDelegated) ? colors.darkerGray : null }}>
-            <Text h4 style={{textAlign: 'center', color: colors.white, margin: 10}}>
-              {(this.state.accessDelegated) ? 'Record Shared' : ''}
-            </Text>
-          </View>
-
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, marginTop: 20 }}>
             <View style={{ flex: 1, marginBottom: 10}}>
               <Button
                 backgroundColor={colors.green}
@@ -75,6 +74,10 @@ export class DelegateAccessScreen extends Component {
             </View>
           </View>
         </ScrollView>
+        <DropdownAlert 
+          ref={ref => this.dropdown = ref} 
+          infoColor={colors.darkerGray}
+        />
       </View>
     );
   }
