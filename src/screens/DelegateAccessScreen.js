@@ -59,7 +59,7 @@ export class DelegateAccessScreen extends Component {
             style={{marginBottom: 10}}
             backgroundColor={colors.gray}
             icon={{name: 'terminal', type: 'font-awesome'}}
-            title='Enter Recipients Address'
+            title='Enter Recipient's Address'
             onPress={() => this.props.navigation.navigate('DelegateAccessEntry', {onManualEntry: this.onManualEntry.bind(this), onCancel: this.onCancel.bind(this)})}
           />
           <Button
