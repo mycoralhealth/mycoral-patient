@@ -14,7 +14,7 @@ export class QRCodeScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Your Account QR Code' subtitle='Show this to any labs or doctors that you'd like to share your full medical records with.'/>
+        <CoralHeader title='Your Account QR Code' subtitle="Show this to any labs or doctors that you'd like to share your full medical records with."/>
 
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <QRCode
