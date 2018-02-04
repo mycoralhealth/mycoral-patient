@@ -75,7 +75,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
             style={{marginBottom: 10}}
             backgroundColor={colors.green}
             icon={{name: 'ios-add-circle', type: 'ionicon'}}
-            title='Add record' 
+            title='Add Record' 
             onPress={() => this.addRecord()}
           />
           <Button
