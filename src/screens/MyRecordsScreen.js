@@ -46,12 +46,14 @@ export class MyRecordsScreen extends Component {
               ))
             }
           </List>
-          <Button
-            backgroundColor={colors.red}
-            icon={{name: 'ios-add-circle', type: 'ionicon'}}
-            title='Add Record' 
-            onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
-          />
+          <View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Add Record' 
+              onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
+            />
+          </View>
         </ScrollView>
       </View>
     );

@@ -43,21 +43,23 @@ export class DelegateAccessEntryScreen extends Component {
             />
           </View>
 
-          <View>
-            <Button
-              style={{marginBottom: 10}}
-              backgroundColor={colors.green}
-              icon={{name: 'check', type: 'font-awesome'}}
-              title='Share Record'
-              onPress={this.handleDone}
-            />
-            <Button
-              style={{ marginBottom: 20 }}
-              backgroundColor={colors.red}
-              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-              title='Back'
-              onPress={this.handleCancel}
-            />
+          <View style={{flex: 1}}>
+            <View style={{ flex: 1, marginBottom: 10}}>
+              <Button
+                backgroundColor={colors.green}
+                icon={{name: 'check', type: 'font-awesome'}}
+                title='Share Record'
+                onPress={this.handleDone}
+              />
+            </View>
+            <View style={{ flex: 1, marginBottom: 20}}>
+              <Button
+                backgroundColor={colors.red}
+                icon={{name: 'ios-arrow-back', type: 'ionicon'}}
+                title='Back'
+                onPress={this.handleCancel}
+              />
+            </View>
           </View>
         </KeyboardAwareScrollView>
       </View>

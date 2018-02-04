@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, Platform } from 'react-native';
 import { Text } from 'react-native-elements';
 export const colors = {
   'bg': '#eee',
@@ -13,7 +13,7 @@ export const colors = {
 export class CoralHeader extends React.Component {
   render() {
     return (
-      <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.green, borderTopWidth: 1, borderTopColor: colors.green, marginTop: 20}}>
+      <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.green, borderTopWidth: 1, borderTopColor: colors.green, marginTop: (Platform.OS === 'ios') ? 20 : 0}}>
         <View style={{ backgroundColor: 'white', width: 80, height: 80, justifyContent: 'center'}}>
           <Image style={{ width: 80, height: 80 }} source={require('../assets/corner-logo.png')} />
         </View>

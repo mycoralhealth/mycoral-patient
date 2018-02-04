@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, Platform } from 'react-native';
 import { TabNavigator, StackNavigator, NavigationActions } from 'react-navigation';
 import { Button, Icon, Text } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Constants } from 'expo';
 
 import { CoralHeader, colors } from './src/ui.js';
 
@@ -110,7 +111,13 @@ const App = TabNavigator({
       ),
     },
   }, 
-});
+},
+{
+  tabBarOptions:{
+    style:{marginTop: (Platform.OS === 'ios') ? 0 : Constants.statusBarHeight}
+  }
+}
+);
 
 export default App;
 

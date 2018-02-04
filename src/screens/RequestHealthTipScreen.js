@@ -29,13 +29,14 @@ export class RequestHealthTipScreen extends Component {
             }
           </List>
 
-          <Button
-            style={{ marginBottom: 20 }}
-            backgroundColor={colors.red}
-            icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-            title='Cancel'
-            onPress={() => this.props.navigation.dispatch(backAction)}
-          />
+          <View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
+              title='Cancel'
+              onPress={() => this.props.navigation.dispatch(backAction)}
+            />
+          </View>
         </ScrollView>
       </View>
     );

@@ -37,12 +37,14 @@ export class SharedRecordsScreen extends React.Component {
               ))
             }
           </List>
-          <Button
-            backgroundColor={colors.red}
-            icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Show QR code'
-            onPress={() => this.props.navigation.navigate('QRCode')}
-          />
+          <View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'qrcode', type: 'font-awesome'}}
+              title='Show QR code'
+              onPress={() => this.props.navigation.navigate('QRCode')}
+            />
+          </View>
         </ScrollView>
       </View>
     );
