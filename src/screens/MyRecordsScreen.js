@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { Button, List, ListItem } from 'react-native-elements';
 
 import { CoralHeader, colors } from '../ui.js';
@@ -29,28 +29,30 @@ export class MyRecordsScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
-        <CoralHeader title='My Medical Records' subtitle='View your records on the blockchain.'/>
+        <CoralHeader style={{ flex: 1}} title='My Medical Records' subtitle='View your records on the blockchain.'/>
 
-        <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
-          {
-            this.state.recordsList.map((record) => (
-              <ListItem
-                key={record.record_id}
-                title={record.name}
-                rightTitle={moment(record.date).format('MMM Do, YYYY')}
-                chevronColor={colors.red}
-                leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
-                onPress={() => this.props.navigation.navigate('ViewRecord', {record})}
-              />
-            ))
-          }
-        </List>
-        <Button
-          backgroundColor={colors.red}
-          icon={{name: 'ios-add-circle', type: 'ionicon'}}
-          title='Add Record' 
-          onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
-        />
+        <ScrollView style={{ flex: 1}}>
+          <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
+            {
+              this.state.recordsList.map((record) => (
+                <ListItem
+                  key={record.record_id}
+                  title={record.name}
+                  rightTitle={moment(record.date).format('MMM Do, YYYY')}
+                  chevronColor={colors.red}
+                  leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
+                  onPress={() => this.props.navigation.navigate('ViewRecord', {record})}
+                />
+              ))
+            }
+          </List>
+          <Button
+            backgroundColor={colors.red}
+            icon={{name: 'ios-add-circle', type: 'ionicon'}}
+            title='Add Record' 
+            onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
+          />
+        </ScrollView>
       </View>
     );
   }
