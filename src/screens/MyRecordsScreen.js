@@ -48,7 +48,7 @@ export class MyRecordsScreen extends Component {
         <Button
           backgroundColor={colors.red}
           icon={{name: 'ios-add-circle', type: 'ionicon'}}
-          title='Add record' 
+          title='Add Record' 
           onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
         />
       </View>
