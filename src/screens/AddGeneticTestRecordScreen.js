@@ -40,10 +40,10 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Basic Heart Metrics Test' subtitle='Fill in your record information as below.'/>
+        <CoralHeader title='Add Genetic Test' subtitle='Enter your results below.'/>
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-          Basic Heart Metrics
+          Genetic Test
         </Text>
         <Text style={{textAlign: 'center'}}>
           Date: {moment().format('MMMM Do, YYYY')}
