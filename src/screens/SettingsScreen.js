@@ -11,7 +11,7 @@ doNothing = (menuItem) => {
 
 export const SettingsScreen = () => (
   <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-    <CoralHeader title='Account Settings' subtitle='Configure blockchain account settings.'/>
+    <CoralHeader title='Account Settings' subtitle=''/>
 
     <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
       {
