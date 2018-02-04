@@ -26,11 +26,11 @@ export class DelegateAccessEntryScreen extends Component {
   render() {    
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='Delegate Access' subtitle='Enter your delegate blockchain address'/>
+        <CoralHeader title='Share Record' subtitle='Enter the blockchain address of the person you'd like to share this record with'/>
 
         <View>
           <Text h4 style={{textAlign: 'center', marginTop: 20}}>
-            Delegate blockchain address
+            Enter Recipient's Blockchain Address
           </Text>
           <TextInput
             style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 10, paddingHorizontal: 10}}
@@ -46,7 +46,7 @@ export class DelegateAccessEntryScreen extends Component {
             style={{marginBottom: 10}}
             backgroundColor={colors.green}
             icon={{name: 'check', type: 'font-awesome'}}
-            title='Done'
+            title='Share Record'
             onPress={this.handleDone}
           />
           <Button

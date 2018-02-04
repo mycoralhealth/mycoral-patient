@@ -33,7 +33,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
       {"key": "hsCRP", "value": this.state['hsCRP'], "type":"marker", "valueType":"magnitude"}
     ];
 
-    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, 'basic heart');
+    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, 'blood test');
 
     this.props.navigation.state.params.onRecordAdded(record);
     this.props.navigation.dispatch(backAction);
@@ -42,11 +42,11 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Basic Heart Metrics Test' subtitle='Fill in your record information as below.'/>
+        <CoralHeader title='Add Blood Test' subtitle='Enter your results below.'/>
 
         <ScrollView>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-            Basic Heart Metrics
+            Blood Test
           </Text>
           <Text style={{textAlign: 'center'}}>
             Date: {moment().format('MMMM Do, YYYY')}
@@ -79,7 +79,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
               style={{marginBottom: 10}}
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
-              title='Add record' 
+              title='Add Record' 
               onPress={() => this.addRecord()}
             />
             <Button

@@ -32,7 +32,7 @@ export class DelegateAccessScreen extends Component {
 
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='Delegate Access' subtitle='To delegate access of this record scan the QR code of the delegate or enter their blockchain address'/>
+        <CoralHeader title='Share Record' subtitle='Scan the QR code or enter the blockchain address of the person you'd like to share this record with'/>
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
           {record.name}
@@ -43,7 +43,7 @@ export class DelegateAccessScreen extends Component {
 
         <View style={{ backgroundColor: (this.state.accessDelegated) ? colors.darkerGray : null }}>
           <Text h4 style={{textAlign: 'center', color: colors.white, margin: 10}}>
-            {(this.state.accessDelegated) ? 'ACCESS DELEGATED' : ''}
+            {(this.state.accessDelegated) ? 'Record Shared' : ''}
           </Text>
         </View>
 
@@ -52,14 +52,14 @@ export class DelegateAccessScreen extends Component {
             style={{marginBottom: 10}}
             backgroundColor={colors.green}
             icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Scan QR Code'
+            title='Scan Recipient's QR Code'
             onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this), onCancel: this.onCancel.bind(this)})}
           />
           <Button
             style={{marginBottom: 10}}
             backgroundColor={colors.gray}
             icon={{name: 'terminal', type: 'font-awesome'}}
-            title='Enter blockchain address'
+            title='Enter Recipient's Address'
             onPress={() => this.props.navigation.navigate('DelegateAccessEntry', {onManualEntry: this.onManualEntry.bind(this), onCancel: this.onCancel.bind(this)})}
           />
           <Button
