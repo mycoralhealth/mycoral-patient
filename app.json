@@ -1,5 +1,8 @@
 {
   "expo": {
-    "sdkVersion": "23.0.0"
+    "name": "Coral Health Patient App",
+    "slug": "mycoral-patient",
+    "sdkVersion": "23.0.0",
+    "privacy": "unlisted"
   }
 }
