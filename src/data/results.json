@@ -6,8 +6,8 @@
   "email":"andy@mycoralhealth.com",
   "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",
   "IPFSaddr":"QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6",
-  "testType":"basic heart",
-  "name": "Basic Heart Metrics",
+  "testType":"blood test",
+  "name": "Blood Test",
   "date":"2016-10-29",
   "results": [
     {"key":"Cholesterol","value":"180", "type":"marker", "valueType":"magnitude"},
@@ -23,8 +23,8 @@
   "email":"andy@mycoralhealth.com",
   "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",
   "IPFSaddr":"QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6",
-  "testType":"genetic",
-  "name": "Genetic",
+  "testType":"genetic test",
+  "name": "Genetic Test",
   "date":"2016-11-20",
   "results": [
     {"key":"BRCA1", "value":"positive", "type":"gene", "valueType":"mutation"},
