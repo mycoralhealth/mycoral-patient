@@ -41,7 +41,7 @@ export class SharedRecordsScreen extends React.Component {
             <Button
               backgroundColor={colors.red}
               icon={{name: 'qrcode', type: 'font-awesome'}}
-              title='Show QR code'
+              title='Receive Records From Others'
               onPress={() => this.props.navigation.navigate('QRCode')}
             />
           </View>
