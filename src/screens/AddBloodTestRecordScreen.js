@@ -5,7 +5,7 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { CoralHeader, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { TestRecordScreen } from './TestRecordScreen';
 
 const backAction = NavigationActions.back();
@@ -15,8 +15,8 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
     super(props);
 
     this.state = {
-      "Cholesterol" : "", 
-      "HbA1c" : "", 
+      "Cholesterol" : "",
+      "HbA1c" : "",
       "hsCRP" : ""
     };
   }
@@ -29,7 +29,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
 
   addRecord() {
     let results = [
-      {"key": "Cholesterol", "value": this.state['Cholesterol'], "type":"marker", "valueType":"magnitude"}, 
+      {"key": "Cholesterol", "value": this.state['Cholesterol'], "type":"marker", "valueType":"magnitude"},
       {"key": "HbA1c", "value": this.state['HbA1c'], "type":"marker", "valueType":"magnitude"},
       {"key": "hsCRP", "value": this.state['hsCRP'], "type":"marker", "valueType":"magnitude"}
     ];
@@ -61,12 +61,12 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
                 {"key":"hsCRP","placeholder":"2.5"}
               ].map((item, index) => (
 
-                <ListItem 
+                <ListItem
                   key={item.key}
-                  title={item.key} 
+                  title={item.key}
                   hideChevron={true}
-                  textInput={true} 
-                  textInputPlaceholder={item.placeholder} 
+                  textInput={true}
+                  textInputPlaceholder={item.placeholder}
                   textInputValue={this.state[item.key]}
                   textInputOnChangeText={(title) => this.onChangeValue(item.key, title)}
                   textInputReturnKeyType={'done'}
@@ -80,20 +80,13 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
               <Button
                 backgroundColor={colors.green}
                 icon={{name: 'ios-add-circle', type: 'ionicon'}}
-                title='Add Record' 
+                title='Save'
                 onPress={() => this.addRecord()}
-              />
-            </View>
-            <View style={{ flex: 1, marginBottom: 20}}>
-              <Button
-                backgroundColor={colors.red}
-                icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-                title='Back'
-                onPress={() => this.props.navigation.dispatch(backAction)}
               />
             </View>
           </View>
         </KeyboardAwareScrollView>
+        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
       </View>
     );
   }

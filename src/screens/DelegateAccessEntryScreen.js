@@ -4,7 +4,7 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { CoralHeader, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { blockchainAddress } from './common';
 
 export class DelegateAccessEntryScreen extends Component {
@@ -14,7 +14,7 @@ export class DelegateAccessEntryScreen extends Component {
     this.state = {'address':''};
   }
 
-  handleDone = () => { 
+  handleDone = () => {
     this.props.navigation.state.params.onManualEntry(this.state.address);
     this.props.navigation.dispatch(NavigationActions.back());
   }
@@ -24,15 +24,15 @@ export class DelegateAccessEntryScreen extends Component {
     this.props.navigation.dispatch(NavigationActions.back());
   }
 
-  render() {    
+  render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Share Record' subtitle="Enter the blockchain address of the person you'd like to share this record with"/>
+        <CoralHeader title='Share Record' subtitle="Share this record with another user."/>
 
-        <KeyboardAwareScrollView style={{ flex: 1}}>
+        <KeyboardAwareScrollView style={{ flex: 1}} centerContent={true}>
           <View>
             <Text h4 style={{textAlign: 'center', marginTop: 20}}>
-              Enter Recipient's Blockchain Address
+              Enter Recipient's Address
             </Text>
             <TextInput
               style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 10, paddingHorizontal: 10}}
@@ -52,16 +52,9 @@ export class DelegateAccessEntryScreen extends Component {
                 onPress={this.handleDone}
               />
             </View>
-            <View style={{ flex: 1, marginBottom: 20}}>
-              <Button
-                backgroundColor={colors.red}
-                icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-                title='Back'
-                onPress={this.handleCancel}
-              />
-            </View>
           </View>
         </KeyboardAwareScrollView>
+        <CoralFooter backAction={this.handleCancel}/>
       </View>
     );
   }

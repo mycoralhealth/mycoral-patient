@@ -4,7 +4,7 @@ import { View, ScrollView, Platform } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
-import { CoralHeader, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui.js';
 
 const backAction = NavigationActions.back();
 
@@ -51,20 +51,13 @@ export class ViewRecordScreen extends Component {
               <Button
                 backgroundColor={colors.gray}
                 icon={{name: 'verified-user', type: 'material'}}
-                title='Delegate Access'
+                title='Access Sharing'
                 onPress={() => this.props.navigation.navigate('DelegateAccess', {record})}
-              />
-            </View>
-            <View style={{ flex: 1, marginBottom: 20}}>
-              <Button
-                backgroundColor={colors.red}
-                icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-                title='Back'
-                onPress={() => this.props.navigation.dispatch(backAction)}
               />
             </View>
           </View>
         </ScrollView>
+        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
       </View>
     );
   }

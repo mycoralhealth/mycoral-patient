@@ -4,7 +4,7 @@ import { Text, Button, List, ListItem } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 const backAction = NavigationActions.back();
 
-import { CoralHeader, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import doctorList from '../data/doctors.json';
 
 export class RequestHealthTipScreen extends Component {
@@ -28,16 +28,8 @@ export class RequestHealthTipScreen extends Component {
               ))
             }
           </List>
-
-          <View style={{ flex: 1, marginBottom: 20}}>
-            <Button
-              backgroundColor={colors.red}
-              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-              title='Cancel'
-              onPress={() => this.props.navigation.dispatch(backAction)}
-            />
-          </View>
         </ScrollView>
+        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
       </View>
     );
   }

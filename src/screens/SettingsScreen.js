@@ -5,7 +5,7 @@ import { List, ListItem } from 'react-native-elements'
 import { CoralHeader, colors } from '../ui.js';
 
 doNothing = (menuItem) => {
-  alert(`${menuItem.title} activated. This is a demo.`);
+  //alert(`${menuItem.title} activated. This is a demo.`);
 }
 
 export const SettingsScreen = () => (

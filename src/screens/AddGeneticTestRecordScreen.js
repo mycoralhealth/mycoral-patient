@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Button, List, ListItem, Text, CheckBox } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
-import { CoralHeader, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { TestRecordScreen } from './TestRecordScreen';
 
 const backAction = NavigationActions.back();
@@ -14,7 +14,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
   constructor(props) {
     super(props);
 
-    this.state = {checked:[false, false]};   
+    this.state = {checked:[false, false]};
   }
 
   onChangeValue(index) {
@@ -75,19 +75,12 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
             <Button
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
-              title='Add Record' 
+              title='Save'
               onPress={() => this.addRecord()}
             />
           </View>
-          <View style={{ flex: 1, marginBottom: 20}}>
-            <Button
-              backgroundColor={colors.red}
-              icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-              title='Back'
-              onPress={() => this.props.navigation.dispatch(backAction)}
-            />
-          </View>
         </View>
+        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
       </View>
     );
   }

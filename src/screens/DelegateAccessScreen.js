@@ -5,7 +5,9 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import DropdownAlert from 'react-native-dropdownalert';
 
-import { CoralHeader, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui.js';
+
+const backAction = NavigationActions.back();
 
 export class DelegateAccessScreen extends Component {
   constructor(props) {
@@ -21,11 +23,11 @@ export class DelegateAccessScreen extends Component {
   }
 
   onManualEntry(data) {
-    this.showSharedAlert();    
+    this.showSharedAlert();
   }
 
   onCancel() {
-    this.setState({accessDelegated:false})    
+    this.setState({accessDelegated:false})
   }
 
   showSharedAlert() {
@@ -37,7 +39,7 @@ export class DelegateAccessScreen extends Component {
 
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Share Record' subtitle="Scan the QR code or enter the blockchain address of the person you'd like to share this record with"/>
+        <CoralHeader title='Share Record' subtitle="Share this record with another user."/>
 
         <ScrollView style={{ flex:1 }}>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
@@ -45,6 +47,9 @@ export class DelegateAccessScreen extends Component {
           </Text>
           <Text style={{textAlign: 'center'}}>
             Date: {moment(record.date).format('MMMM Do, YYYY')}
+          </Text>
+          <Text style={{padding: 20}}>
+            The decryption key for this medical record will be shared with the recipient, giving them full access to view this record.
           </Text>
 
           <View style={{ flex: 1, marginTop: 20 }}>
@@ -64,18 +69,11 @@ export class DelegateAccessScreen extends Component {
                 onPress={() => this.props.navigation.navigate('DelegateAccessEntry', {onManualEntry: this.onManualEntry.bind(this), onCancel: this.onCancel.bind(this)})}
               />
             </View>
-            <View style={{ flex: 1, marginBottom: 20}}>
-              <Button
-                backgroundColor={colors.red}
-                icon={{name: 'ios-arrow-back', type: 'ionicon'}}
-                title='Back'
-                onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
-              />
-            </View>
           </View>
         </ScrollView>
-        <DropdownAlert 
-          ref={ref => this.dropdown = ref} 
+        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
+        <DropdownAlert
+          ref={ref => this.dropdown = ref}
           infoColor={colors.darkerGray}
         />
       </View>

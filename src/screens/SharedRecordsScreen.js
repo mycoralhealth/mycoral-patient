@@ -21,7 +21,7 @@ export class SharedRecordsScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
-        <CoralHeader title='Shared Medical Records' subtitle='You have shared your records with the below people.'/>
+        <CoralHeader title='Shared Medical Records' subtitle='You have shared your records with the people below.'/>
         <ScrollView style={{ flex: 1}}>
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
