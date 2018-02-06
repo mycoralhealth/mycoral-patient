@@ -29,7 +29,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
       {"key":"BRCA2", "value": (this.state.checked[1]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"}
     ];
 
-    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, 'genetic');
+    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, 'genetic test');
 
     console.log(record);
 
