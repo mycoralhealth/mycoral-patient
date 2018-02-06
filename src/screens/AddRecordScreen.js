@@ -25,7 +25,7 @@ export class AddRecordScreen extends Component {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
         <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
-        <ScrollView centerContent={true}>
+        <ScrollView>
           <Text style={{padding: 20}}>
             Show this QR code to your lab or doctor to allow them to add your medical record from their device.
           </Text>
