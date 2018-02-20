@@ -24,7 +24,7 @@ const testKeys = () => {
     }).catch( (e) => { console.log( `Could not get public key in store (${e})` ) });
 }
 
-const makeKeys = (callback) => {
+const makeKeys = () => {
   forge.pki.rsa.generateKeyPair({bits: 2048, workers: -1}, function(err, keypair) {
     console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
     console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
@@ -33,33 +33,71 @@ const makeKeys = (callback) => {
       .then( () => { 
         SecureStore.setItemAsync(`${STORE_KEY}.${PRIVATE_KEY_TAG}`, forge.pki.privateKeyToPem(keypair.privateKey, 72))
           .then( () => { 
-              SecureStore.setItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`, 'true')
-                .then(() => {
-                  testKeys();
-                  // TODO: make the callback here letting us know the keys are in the store
-                  if (callback) {
-                    callback();
-                  }
-                }).catch( (e) => { console.log( `Could not save key marker in store (${e})` ) });
-          }).catch( (e) => { console.log( `Could not save private key in store (${e})` ) });
-        }).catch( (e) => { console.log( `Could not save public key in store (${e})` ) });
+              SecureStore.setItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`, 'true');
+          })
+        });
+    });
+}
+
+export const generateKeyPair = () => {
+  let p = new Promise(function(resolve, reject) {
+    keysExist().then((marker) => {
+        if (marker === 'true') {
+          testKeys();        
+        } else {
+          makeKeys();
+          testKeys();
+          resolve();
+        }
+      }).catch((e) => reject(`Error getting marker from store (${e})`));
   });
+
+  return p;
 }
 
-export const generateKeyPair = (callback) => {
-  SecureStore.getItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`)
-    .then((marker) => {
-      if (marker === 'true') {
-        testKeys();        
-      } else {
-        makeKeys(callback);
-      }
-    }).catch( (e) => { console.log( `Error getting marker from store (${e})` ) });
+export const invalidateKeyPair = () => {
+  let p = new Promise(function(resolve, reject) {
+    SecureStore.deleteItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`)
+      .then(() => resolve())
+      .catch((e) => reject(`Error removing key from keystore (${e})`)); 
+  });
+
+  return p;
 }
 
-export const keysExist = (callback) => {
-  SecureStore.getItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`)
-    .then((marker) => {
-      callback(marker);
-    }).catch( (e) => { console.log( `Error getting marker from store (${e})` ) });
+export const keysExist = () => {
+  let p = new Promise(function(resolve, reject) {
+    SecureStore.getItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`)
+      .then((marker) => {
+        resolve(marker);
+      }).catch((e) => reject(`Error getting marker from store (${e})`));
+  });
+
+  return p;
+}
+
+export const encryptPKI = (data) => {
+  let p = new Promise(function(resolve, reject) {
+    SecureStore.getItemAsync(`${STORE_KEY}.${PUBLIC_KEY_TAG}`)
+      .then((publicKeyPEM) => {
+        const publicKey = forge.pki.publicKeyFromPem(publicKeyPEM);
+        const encrypted = publicKey.encrypt(data);
+        resolve(encrypted);
+      }).catch((e) => reject(`Error getting public key from store (${e})`));
+  });
+
+  return p;
+}
+
+export const decryptPKI = (data) => {
+  let p = new Promise(function(resolve, reject) {
+    SecureStore.getItemAsync(`${STORE_KEY}.${PRIVATE_KEY_TAG}`)
+      .then((privateKeyPEM) => {
+        const privateKey = forge.pki.privateKeyFromPem(privateKeyPEM);
+        const decrypted = privateKey.decrypt(data);
+        resolve(decrypted);
+      }).catch((e) => reject(`Error getting private key from store (${e})`));
+  });
+
+  return p;
 }

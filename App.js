@@ -25,9 +25,10 @@ import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen.js';
 import { SettingsScreen } from './src/screens/SettingsScreen.js';
 import { QRCodeScreen } from './src/screens/QRCodeScreen.js';
 
-import { generateKeyPair } from './src/utilities/pki';
+import { invalidateKeyPair, generateKeyPair } from './src/utilities/pki';
 
-generateKeyPair();
+
+invalidateKeyPair().then(() => generateKeyPair());
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
