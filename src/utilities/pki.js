@@ -41,8 +41,8 @@ const makeKeys = () => {
 
 export const generateKeyPair = () => {
   let p = new Promise(function(resolve, reject) {
-    keysExist().then((marker) => {
-        if (marker === 'true') {
+    keysExist().then((result) => {
+        if (result) {
           testKeys();        
         } else {
           makeKeys();
@@ -69,7 +69,7 @@ export const keysExist = () => {
   let p = new Promise(function(resolve, reject) {
     SecureStore.getItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`)
       .then((marker) => {
-        resolve(marker);
+        resolve(marker && (marker === 'true'));
       }).catch((e) => reject(`Error getting marker from store (${e})`));
   });
 
