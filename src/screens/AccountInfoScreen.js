@@ -6,29 +6,73 @@ import { NavigationActions } from 'react-navigation'
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { ActivityIndicator } from 'react-native';
 
-import { keysExist, generateKeyPair } from '../utilities/pki';
+import { keysExist, generateKeyPair, invalidateKeyPair } from '../utilities/pki';
 
-
-//invalidateKeyPair().then(() => generateKeyPair());
-
-function CheckingForKeys(props) {
+function MessageIndicator(props) {
   return (
     <View>
-      <Text h4>Checking for keys</Text>
+      <Text style={{textAlign: 'center'}}>{props.message}</Text>
       <ActivityIndicator size="large" color={colors.green} style={{marginTop: 10}}/>
     </View>
   );
 }
 
-function KeyInfo(props) {
+function CheckingForKeys(props) {
   return (
-    <Text h4>Keys</Text>
+    <MessageIndicator message="Checking for keys" />
   );
+}
+
+function KeyInfo(props) {
+  if (props.opInProgress) {
+    return <MessageIndicator message={props.opInProgress.message} />
+  }
+
+  if (props.keysPresent) {
+    return (
+      <View style={{ flex: 1, marginBottom: 10}}>
+        <Text style={{padding: 20, textAlign: 'center'}}>
+          Coral Health keys generated and in use.
+        </Text>
+        <View style={{ flex: 1, marginTop: 10}}>
+          <Button
+                backgroundColor={colors.gray}
+                icon={{name: 'trash-o', type: 'font-awesome'}}
+                title='Revoke Keys'
+                onPress={() => props.revokeKeys()}
+              />
+        </View>
+      </View>
+    );
+  } else {
+    return (
+      <View style={{ flex: 1, marginBottom: 10}}>
+        <Text style={{padding: 20, textAlign: 'center'}}>
+          Coral Health keys are not present. To use the app please generate your own personal keys.
+        </Text>
+        <View style={{ flex: 1, marginTop: 10}}>
+          <Button
+                backgroundColor={colors.green}
+                icon={{name: 'ios-key', type: 'ionicon'}}
+                title='Generate Keys'
+                onPress={() => props.generateKeys()}
+              />
+        </View>
+      </View>
+    );
+  }
 }
 
 function Keys(props) {
   if (props.checkedKeys) {
-    return <KeyInfo />;
+    return (
+      <KeyInfo 
+        keysPresent={props.keysPresent}
+        opInProgress={props.opInProgress}
+        generateKeys={props.generateKeys}
+        revokeKeys={props.revokeKeys}
+        />
+    );
   } else {
     return <CheckingForKeys />;
   }
@@ -40,8 +84,21 @@ export class AccountInfoScreen extends Component {
 
     this.state = {
       keysPresent : false,
-      checkedKeys: false
+      checkedKeys: false,
+      opInProgress: null
     };
+  }
+
+  generateKeys() {
+    this.setState({opInProgress:{message:'Generating keys, please wait this may take a while...'}});
+    generateKeyPair()
+      .then(() => this.setState({keysPresent:true, opInProgress: null}));
+  }
+
+  revokeKeys() {
+    this.setState({opInProgress:{message:'Revoking keys...'}});
+    invalidateKeyPair()
+      .then(() => this.setState({keysPresent:false, opInProgress: null}));
   }
 
   render() {
@@ -54,6 +111,9 @@ export class AccountInfoScreen extends Component {
             <Keys 
               checkedKeys={this.state.checkedKeys}
               keysPresent={this.state.keysPresent}
+              generateKeys={this.generateKeys.bind(this)}
+              revokeKeys={this.revokeKeys.bind(this)}
+              opInProgress={this.state.opInProgress}
             />
           </View>
         </ScrollView>
@@ -64,6 +124,6 @@ export class AccountInfoScreen extends Component {
 
   componentDidMount() {
     keysExist()
-      .then((keysPresent) => this.setState({ keysPresent, checkedKeys: false }));
+      .then((keysPresent) => this.setState({ keysPresent, checkedKeys: true }));
   }
 }
