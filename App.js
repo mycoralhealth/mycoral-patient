@@ -21,9 +21,10 @@ import { CameraScreen } from './src/screens/CameraScreen';
 import { DelegateAccessScreen } from './src/screens/DelegateAccessScreen';
 import { DelegateAccessEntryScreen } from './src/screens/DelegateAccessEntryScreen';
 
-import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen.js';
-import { SettingsScreen } from './src/screens/SettingsScreen.js';
-import { QRCodeScreen } from './src/screens/QRCodeScreen.js';
+import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { QRCodeScreen } from './src/screens/QRCodeScreen';
+import { AccountInfoScreen } from './src/screens/AccountInfoScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
@@ -60,6 +61,14 @@ const SharedRecordsNavigator = StackNavigator({
 },{
   headerMode: 'none'
 });
+
+const SettingsNavigator = StackNavigator({
+  Settings: { screen: SettingsScreen },
+  AccountInfo: { screen: AccountInfoScreen },
+},{
+  headerMode: 'none'
+});
+
 
 const resetStack = (scene, jumpToIndex, navigation) => {
   const { route, focused, index } = scene;
@@ -101,8 +110,8 @@ const App = TabNavigator({
     }),
   },
   Settings: {
-    screen: SettingsScreen,
-    navigationOptions: {
+    screen: SettingsNavigator,
+    navigationOptions: ({ navigation }) => ({
       tabBarLabel: 'Settings',
       tabBarIcon: ({ tintColor, focused }) => (
         <Ionicons
@@ -111,7 +120,8 @@ const App = TabNavigator({
           style={{ color: tintColor }}
         />
       ),
-    },
+      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
+    }),
   }, 
 },
 {

@@ -4,16 +4,100 @@
 		"selected_items":
 		[
 			[
+				"margin",
+				"marginBottom"
+			],
+			[
+				"handle",
+				"handleCancel"
+			],
+			[
+				"acc",
+				"accessDelegated"
+			],
+			[
+				"Text",
+				"TextInput"
+			],
+			[
+				"Dele",
+				"DelegateAccess"
+			],
+			[
+				"Tex",
+				"TextInput"
+			],
+			[
+				"Deleg",
+				"DelegateAccessScreen"
+			],
+			[
+				"reset",
+				"resetAction"
+			],
+			[
+				"Test",
+				"TestRecordScreen"
+			],
+			[
+				"on",
+				"onRecordAdded"
+			],
+			[
+				"gene",
+				"geneticTestInput"
+			],
+			[
+				"selec",
+				"selectedRecordType"
+			],
+			[
+				"value",
+				"valuePlaceholder"
+			],
+			[
+				"genet",
+				"geneticRecordInput"
+			],
+			[
+				"ch",
+				"CheckBox"
+			],
+			[
+				"Add",
+				"AddGeneticTestRecord"
+			],
+			[
+				"record",
+				"recordType"
+			],
+			[
+				"sele",
+				"selectedRecordType"
+			],
+			[
+				"back",
+				"backAction"
+			],
+			[
+				"Q",
+				"QRCodeReaderScreen"
+			],
+			[
+				"Sc",
+				"ScrollView"
+			],
+			[
+				"na",
+				"navigation"
+			],
+			[
 				"bag",
 				"background-color"
 			],
 			[
 				"max-",
 				"max-width"
-			],
-			[
-				"on",
-				"onVideoSelect"
 			],
 			[
 				"o",
@@ -50,10 +134,6 @@
 			[
 				"a",
 				"articleName"
-			],
-			[
-				"ch",
-				"ChainList"
 			],
 			[
 				"name",
@@ -120,10 +200,6 @@
 				"GaugeSeriesView"
 			],
 			[
-				"value",
-				"valueFormat"
-			],
-			[
 				"dimensio",
 				"dimensionNumber"
 			],
@@ -188,10 +264,6 @@
 				"nowrap"
 			],
 			[
-				"back",
-				"background-image"
-			],
-			[
 				"ba",
 				"background-image"
 			],
@@ -236,16 +308,8 @@
 				"WorkInProgress"
 			],
 			[
-				"sele",
-				"selectedPivot"
-			],
-			[
 				"sel",
 				"selectedValue"
-			],
-			[
-				"selec",
-				"selectedPivotId"
 			],
 			[
 				"glo",
@@ -450,80 +514,54 @@
 			[
 				"hand",
 				"handsontable"
-			],
-			[
-				"h",
-				"height"
-			],
-			[
-				"re",
-				"renderer"
-			],
-			[
-				"render",
-				"renderCurrentSheet"
-			],
-			[
-				"ren",
-				"renderSheet"
-			],
-			[
-				"_re",
-				"_spreadsheetView"
-			],
-			[
-				"_ge",
-				"_getBaseFileModelUrl"
-			],
-			[
-				"js-",
-				"js-vena-announcements-new"
-			],
-			[
-				"popover",
-				"popoverView"
-			],
-			[
-				"ven",
-				"vena-announcements-html"
-			],
-			[
-				"_v",
-				"_announcementsView"
-			],
-			[
-				"expre",
-				"expressions"
-			],
-			[
-				"res",
-				"restrictions"
-			],
-			[
-				"Con",
-				"ConfirmModalView"
-			],
-			[
-				"load",
-				"loadChildren"
-			],
-			[
-				"save",
-				"saveSlices"
-			],
-			[
-				"sett",
-				"settingsModel"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
+			"file": "screens/DelegateAccessScreen.js",
+			"settings":
+			{
+				"buffer_size": 2944,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "screens/CameraScreen.js",
+			"settings":
+			{
+				"buffer_size": 4894,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 20 files for \"GallerySc\"\n\n0 matches",
+			"settings":
+			{
+				"buffer_size": 45,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "screens/AddRecordScreen.js",
+			"settings":
+			{
+				"buffer_size": 3431,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "ui.js",
 			"settings":
 			{
-				"buffer_size": 1065,
+				"buffer_size": 1172,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -698,12 +736,38 @@
 	[
 		"/Users/nino/Documents/Coral/dev/mycoral-patient",
 		"/Users/nino/Documents/Coral/dev/mycoral-patient/assets",
-		"/Users/nino/Documents/Coral/dev/mycoral-patient/mockdata",
 		"/Users/nino/Documents/Coral/dev/mycoral-patient/src",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/data",
 		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens"
 	],
 	"file_history":
 	[
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/MyRecordsScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/QRCodeReaderScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/ViewRecordScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/App.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/DelegateAccessEntryScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/ui.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/data/doctors.json",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/RequestHealthTipConfirmScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/RequestHealthTipScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/SharedRecordsScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/QRCodeScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/SettingsScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/AddBloodTestRecordScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/AddGeneticTestRecordScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/AddRecordScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/CameraScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/DelegateAccessScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/GalleryScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/common.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/TestRecordScreen.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/recordTypes.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/components/RecordInputView.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/data/results.json",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/AddGeneticTestRecord.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/src/screens/AddBloodTestRecord.js",
+		"/Users/nino/Documents/Coral/dev/mycoral-patient/mockdata/results.json",
 		"/Users/nino/Documents/Learning/react/ReduxSimpleStarter/src/components/app.js",
 		"/Users/nino/Documents/Learning/react/ReduxSimpleStarter/src/components/search_bar.js",
 		"/Users/nino/Documents/Learning/react/ReduxSimpleStarter/src/components/video_detail.js",
@@ -805,33 +869,7 @@
 		"/Users/nino/Documents/Vena/vena-git/web/app/private/new_modeler/collections/dataModelsCollection.js",
 		"/Users/nino/Documents/Vena/vena-git/web/app/private/admin/models/ipTablesIPModel.js",
 		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/dashboards.css",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/views/dashboardListView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/contributor/views/chartsView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/templates/dashboardListTemplate.html",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/new_modeler/views/dataModelSelectorView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/views/chartEdit/chartThemeView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/templates/chartEdit/chartThemeTemplate.html",
-		"/Users/nino/Documents/Vena/vena-git/web/app/modeler/data_modeler/etl/templates/etlExecution.html",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/templates/chartEdit/valueFormatTemplate.html",
-		"/Users/nino/Documents/Vena/vena-git/web/libs/dagre.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/core/views/serverSideFormProcessing/spreadsheetView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/manager/templates/processDesigner/taskDetailsTemplate.html",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/new_modeler/views/scripts/scriptsView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/new_modeler/views/scripts/dataModelsListView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/templates/permissionsTemplate.html",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/contributor/templates/taskDetailsTemplate.html",
-		"/Users/nino/Documents/Vena/vena-git/web/app/core/mixins/withHandlebarsHelpers.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/collections/widgetRelationsCollection.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/models/widgetRelationModel.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/core/views/tasksListViewBase.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/manager/models/processDesigner/reviewBindingsCollection.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/admin/views/permissionsTab/groupUserListTableView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/admin/collections/dataPermissionsCollection.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/core/views/dataTable/dataTableView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/core/fsManager/fileMenuView.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/core/handlebarsHelpers.js",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/contributor/templates/tasksListTemplate.html",
-		"/Users/nino/Documents/Vena/vena-git/web/app/private/manager/templates/new_statusTracker/statusTrackerTemplate.html"
+		"/Users/nino/Documents/Vena/vena-git/web/app/private/dashboards/views/dashboardListView.js"
 	],
 	"find":
 	{
@@ -842,6 +880,11 @@
 		"height": 102.0,
 		"where_history":
 		[
+			"/Users/nino/Documents/Coral/dev/mycoral-patient/src",
+			"/Users/nino/Documents/Coral/dev/mycoral-patient/node_modules",
+			"/Users/nino/Documents/Coral/dev/mycoral-patient/src",
+			"*.js",
+			"/Users/nino/Documents/Coral/dev/mycoral-patient/src/data",
 			""
 		]
 	},
@@ -850,6 +893,29 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"GallerySc",
+			"flipButton",
+			"galle",
+			"courier",
+			"Gallery",
+			"courier",
+			"Scroll",
+			"}}),",
+			"TabView",
+			"type:'font",
+			"gallery",
+			"isIPhoneX",
+			"react-native-is-iphonex",
+			"isIPhoneX",
+			"recordTypes",
+			"moment",
+			"font-awesome",
+			"AddBloodTestRecord",
+			"\t",
+			"<Text",
+			"Text",
+			"parse",
+			"sharedDimensions",
 			"flex",
 			"flux"
 		],
@@ -859,6 +925,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"  "
 		],
 		"reverse": false,
 		"show_context": true,
@@ -869,24 +936,24 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "ui.js",
-					"semi_transient": true,
+					"file": "screens/DelegateAccessScreen.js",
+					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1065,
+						"buffer_size": 2944,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								317,
-								330
+								312,
+								312
 							]
 						],
 						"settings":
@@ -899,7 +966,131 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "screens/CameraScreen.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4894,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1991,
+								1991
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 850.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 45,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "screens/AddRecordScreen.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3431,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1906,
+								1906
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "ui.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1172,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1172,
+								1172
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -944,7 +1135,7 @@
 	"project": "patient.sublime-project",
 	"replace":
 	{
-		"height": 42.0
+		"height": 71.0
 	},
 	"save_all_on_build": true,
 	"select_file":
