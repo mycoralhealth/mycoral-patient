@@ -75,7 +75,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [
-        NavigationActions.navigate({ routeName: 'MyRecords'})
+        NavigationActions.navigate({ routeName: 'MyRecords' })
       ]
     });
 

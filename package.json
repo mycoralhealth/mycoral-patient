@@ -26,6 +26,7 @@
     "react-native": "0.50.3",
     "react-native-dropdownalert": "^3.2.0",
     "react-native-elements": "^0.19.0",
+    "react-native-image-zoom-viewer": "^2.0.20",
     "react-native-keyboard-aware-scroll-view": "^0.4.3",
     "react-native-qrcode": "^0.2.6",
     "react-navigation": "^1.0.0-beta.26"

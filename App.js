@@ -19,6 +19,7 @@ import { AddBloodTestRecordScreen } from './src/screens/AddBloodTestRecordScreen
 import { AddGeneticTestRecordScreen } from './src/screens/AddGeneticTestRecordScreen';
 import { DelegateAccessScreen } from './src/screens/DelegateAccessScreen';
 import { DelegateAccessEntryScreen } from './src/screens/DelegateAccessEntryScreen';
+import { ViewImageScreen } from './src/screens/ViewImageScreen';
 
 import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
@@ -48,6 +49,13 @@ const MyRecordsNavigator = StackNavigator({
   AddRecordManual: { screen: AddRecordManualScreen },
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
+  ViewImage: { 
+    screen: ViewImageScreen,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Photo Record View',
+      tabBarVisible: false
+    })
+  },
   QRCodeReader: { 
     screen: QRCodeReaderScreen,
     navigationOptions: ({ navigation }) => ({

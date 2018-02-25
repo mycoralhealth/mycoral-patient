@@ -5,8 +5,43 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { PHOTO_RECORD_TEST } from './common';
 
 const backAction = NavigationActions.back();
+
+const RecordDetails = (props) => {
+  console.log('Record type', props.record.testType);
+
+  if (props.record.testType === PHOTO_RECORD_TEST) {
+    return (
+      <View style={{ flex: 1, marginBottom: 20, marginTop: 10}}>
+        <Button
+          backgroundColor={colors.white}
+          color='#000'
+          icon={{name: 'ios-image', type: 'ionicon', color:'#000'}}
+          title='View Photo Record'
+          onPress={() => props.navigation.navigate('ViewImage', { images: [{ url: props.record.results.uri }] })}
+        />
+      </View>
+    );
+  } else {
+    return (
+      <List containerStyle={{marginBottom: 20}}>
+        {
+          props.record.results.map((item) => (
+            <ListItem
+              key={item.key}
+              title={item.key}
+              hideChevron={true}
+              rightTitle={(item.value == '') ? ' ' : item.value}
+              rightTitleStyle={{ color: 'black', fontSize: 20, fontFamily: (Platform.OS === 'ios') ? 'Courier' : 'monospace', fontWeight: 'bold'}}
+            />
+          ))
+        }
+      </List>
+    );
+  }
+}
 
 export class ViewRecordScreen extends Component {
   onRecordDeleted(record) {
@@ -29,19 +64,7 @@ export class ViewRecordScreen extends Component {
             Date: {moment(record.date).format('MMMM Do, YYYY')}
           </Text>
 
-          <List containerStyle={{marginBottom: 20}}>
-            {
-              record.results.map((item) => (
-                <ListItem
-                  key={item.key}
-                  title={item.key}
-                  hideChevron={true}
-                  rightTitle={(item.value == '') ? ' ' : item.value}
-                  rightTitleStyle={{ color: 'black', fontSize: 20, fontFamily: (Platform.OS === 'ios') ? 'Courier' : 'monospace', fontWeight: 'bold'}}
-                />
-              ))
-            }
-          </List>
+          <RecordDetails record={record} navigation={this.props.navigation} />
 
           <View style={{ flex: 1}}>
             <View style={{ flex: 1, marginBottom: 10}}>
