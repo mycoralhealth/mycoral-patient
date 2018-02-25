@@ -19,3 +19,5 @@ yarn-error.log*
 # json templates
 genetic.json
 basicblood.json
+src/patient.sublime-project
+src/patient.sublime-workspace
