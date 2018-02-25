@@ -13,11 +13,6 @@ const backAction = NavigationActions.back();
 export class AddRecordScreen extends Component {
   onRecordAdded(record) {
     this.props.navigation.state.params.onRecordAdded(record);
-    this.dropdown.alertWithType('info', 'New Record Added', 'You can add more medical records or go back to the records list.');
-  }
-
-  onRecordUploaded(record) {
-    this.dropdown.alertWithType('info', 'New Photo Record Uploaded', 'You can add more medical records or go back to the records list.');
   }
 
   render() {

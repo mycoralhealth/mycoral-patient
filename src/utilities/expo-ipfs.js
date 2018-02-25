@@ -22,13 +22,13 @@ const tempRandomName = () => {
   return md.digest().toHex();
 }
 
-const add = (data) => {
+const add = async (data) => {
   if (typeof data !== 'string')
     return null;
 
   let p = new Promise(function(resolve, reject) {
     if (isURI(data)) {
-      uploadFileAsync(uri)
+      uploadFileAsync(data)
         .then((response) => response.json())
           .then((responseJson) => {
             resolve(responseJson.Hash);
@@ -74,7 +74,7 @@ function uploadFileAsync(uri) {
   return fetch(apiUrl, options);
 }
 
-const cat = (hash) => {
+const cat = async (hash) => {
   if (typeof hash !== 'string')
     return null;
 

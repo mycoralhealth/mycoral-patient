@@ -4,18 +4,10 @@ import { Button, Avatar, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation'
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
-import { ActivityIndicator } from 'react-native';
 
 import { keysExist, generateKeyPair, invalidateKeyPair } from '../utilities/pki';
 
-function MessageIndicator(props) {
-  return (
-    <View>
-      <Text style={{textAlign: 'center'}}>{props.message}</Text>
-      <ActivityIndicator size="large" color={colors.green} style={{marginTop: 10}}/>
-    </View>
-  );
-}
+import MessageIndicator from './MessageIndicator';
 
 function CheckingForKeys(props) {
   return (
