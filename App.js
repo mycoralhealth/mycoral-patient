@@ -26,7 +26,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { QRCodeScreen } from './src/screens/QRCodeScreen';
 import { AccountInfoScreen } from './src/screens/AccountInfoScreen';
 
-import ipfs from './src/utilities/expo-ipfs';
+/*import ipfs from './src/utilities/expo-ipfs';
 import { FileSystem } from 'expo';
 
 ipfs.add('This is a test for IPFS').then((hash) => {
@@ -36,6 +36,7 @@ ipfs.add('This is a test for IPFS').then((hash) => {
     FileSystem.readAsStringAsync(uri).then((text) => console.log(text));
   });
 });
+*/
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },

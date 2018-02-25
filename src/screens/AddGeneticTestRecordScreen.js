@@ -7,6 +7,8 @@ import { NavigationActions } from 'react-navigation';
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { TestRecordScreen } from './TestRecordScreen';
 
+import { GENETIC_TEST, recordTypes } from './common';
+
 const backAction = NavigationActions.back();
 
 export class AddGeneticTestRecordScreen extends TestRecordScreen {
@@ -29,7 +31,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
       {"key":"BRCA2", "value": (this.state.checked[1]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"}
     ];
 
-    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, 'genetic test');
+    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, GENETIC_TEST);
 
     console.log(record);
 
@@ -40,10 +42,10 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Genetic Test' subtitle='Enter your results below.'/>
+        <CoralHeader title={`Add ${recordTypes[GENETIC_TEST]}`} subtitle='Enter your results below.'/>
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-          Genetic Test
+          {recordTypes[GENETIC_TEST]}
         </Text>
         <Text style={{textAlign: 'center'}}>
           Date: {moment().format('MMMM Do, YYYY')}

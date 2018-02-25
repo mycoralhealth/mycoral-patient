@@ -8,6 +8,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { TestRecordScreen } from './TestRecordScreen';
 
+import { BLOOD_TEST, recordTypes } from './common';
+
 const backAction = NavigationActions.back();
 
 export class AddBloodTestRecordScreen extends TestRecordScreen {
@@ -34,7 +36,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
       {"key": "hsCRP", "value": this.state['hsCRP'], "type":"marker", "valueType":"magnitude"}
     ];
 
-    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, 'blood test');
+    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, BLOOD_TEST);
 
     this.props.navigation.state.params.onRecordAdded(record);
     this.props.navigation.dispatch(backAction);
@@ -43,11 +45,11 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Blood Test' subtitle='Enter your results below.'/>
+        <CoralHeader title={`Add ${recordTypes[BLOOD_TEST]}`} subtitle='Enter your results below.'/>
 
         <KeyboardAwareScrollView style={{ flex: 1 }}>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-            Blood Test
+            {recordTypes[BLOOD_TEST]}
           </Text>
           <Text style={{textAlign: 'center'}}>
             Date: {moment().format('MMMM Do, YYYY')}

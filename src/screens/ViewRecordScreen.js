@@ -9,6 +9,11 @@ import { CoralHeader, CoralFooter, colors } from '../ui.js';
 const backAction = NavigationActions.back();
 
 export class ViewRecordScreen extends Component {
+  onRecordDeleted(record) {
+    this.props.navigation.state.params.onRecordDeleted(record);
+    this.props.navigation.dispatch(backAction);
+  }
+
   render() {
     const record = this.props.navigation.state.params.record;
 
@@ -53,6 +58,14 @@ export class ViewRecordScreen extends Component {
                 icon={{name: 'verified-user', type: 'material'}}
                 title='Access Sharing'
                 onPress={() => this.props.navigation.navigate('DelegateAccess', {record})}
+              />
+            </View>
+            <View style={{ flex: 1, marginBottom: 10, marginTop: 10}}>
+              <Button
+                backgroundColor={colors.darkerGray}
+                icon={{name: 'trash-o', type: 'font-awesome'}}
+                title='Delete'
+                onPress={() => this.onRecordDeleted(record)}
               />
             </View>
           </View>

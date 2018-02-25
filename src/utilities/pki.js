@@ -1,7 +1,7 @@
 import forge from 'node-forge';
 import { SecureStore } from 'expo';
+import { STORE_KEY } from './constants';
 
-const STORE_KEY = 'com.mycoralhealth.mycoral-patient';
 const PRIVATE_KEY_TAG = 'privateKey';
 const PUBLIC_KEY_TAG = 'publicKey';
 const KEYS_MARKER_TAG = 'keyPairMarker';

@@ -4,7 +4,7 @@ import { View, ScrollView } from 'react-native';
 import { Button, List, ListItem } from 'react-native-elements';
 
 import { CoralHeader, colors } from '../ui.js';
-import recordsList from '../data/results.json';
+import store from '../utilities/store';
 
 export class MyRecordsScreen extends Component {
   constructor(props) {
@@ -17,13 +17,21 @@ export class MyRecordsScreen extends Component {
    * but this will set us on a way to eventually load from elsewhere.
    */
   componentDidMount() {
-    this.setState({recordsList});
+    store.records()
+      .then((recordsList) => {this.setState({recordsList}); console.log('Records: ',recordsList);})
+      .catch((e) => console.log(`Error fetching records from store (${e})`));      
   }
 
   newRecord(record) {
-    let recordsList = this.state.recordsList;
-    recordsList.push(record);
-    this.setState({recordsList});
+    store.addRecord(record)
+      .then((recordsList) => this.setState({recordsList}))
+      .catch((e) => console.log(`Error adding record to store (${e})`));
+  }
+
+  removeRecord(record) {
+    store.removeRecord(record)
+      .then((recordsList) => this.setState({recordsList}))
+      .catch((e) => console.log(`Error removing record from store (${e})`));
   }
 
   render() {
@@ -41,7 +49,10 @@ export class MyRecordsScreen extends Component {
                   rightTitle={moment(record.date).format('MMM Do, YYYY')}
                   chevronColor={colors.red}
                   leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
-                  onPress={() => this.props.navigation.navigate('ViewRecord', {record})}
+                  onPress={() => this.props.navigation.navigate('ViewRecord', {
+                    record,
+                    onRecordDeleted: this.removeRecord.bind(this)
+                  })}
                 />
               ))
             }
@@ -51,7 +62,10 @@ export class MyRecordsScreen extends Component {
               backgroundColor={colors.red}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record' 
-              onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
+              onPress={() => this.props.navigation.navigate('AddRecord', {
+                recordsList: this.state.recordsList, 
+                onRecordAdded: this.newRecord.bind(this)
+              })}
             />
           </View>
         </ScrollView>

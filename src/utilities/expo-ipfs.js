@@ -94,10 +94,6 @@ const cat = (hash) => {
 
 
 module.exports = {
-  get add() {
-    return add;
-  },
-  get cat() {
-    return cat;
-  }
+  add,
+  cat
 };
