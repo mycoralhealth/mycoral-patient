@@ -14,7 +14,7 @@ const RecordDetails = (props) => {
 
   if (props.record.testType === PHOTO_RECORD_TEST) {
     return (
-      <View style={{ flex: 1, marginBottom: 20, marginTop: 10}}>
+      <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
         <Button
           backgroundColor={colors.white}
           color='#000'
