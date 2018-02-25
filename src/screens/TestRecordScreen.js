@@ -1,13 +1,16 @@
 import moment from 'moment'
+import FlakeIdGen from 'flakeid';
 import React, { Component } from 'react';
 
 import { recordTypes } from './common.js';
 
+const IdGenerator = new FlakeIdGen();
+
 export class TestRecordScreen extends Component {
 
-  createRecord(recordsList, results, selectedRecordType) {
+  createRecord(results, selectedRecordType) {
     return {
-      "record_id": "NR" + recordsList.length,
+      "id": IdGenerator.gen(),
       "username":"123456",
       "email":"andy@mycoralhealth.com",
       "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",

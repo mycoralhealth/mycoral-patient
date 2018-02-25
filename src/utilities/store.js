@@ -43,6 +43,10 @@ const removeRecord = (r) => {
     try {
       records()
         .then (async (records) => {
+          console.log('Removing in records', records);
+          console.log('Removing record', r);
+
+
           let newRecords = records.filter((record) => (record.id !== r.id));
           await AsyncStorage.setItem(`${STORE_KEY}.records`, JSON.stringify(newRecords));
           resolve(newRecords);

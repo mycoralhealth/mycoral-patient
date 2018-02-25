@@ -36,7 +36,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
       {"key": "hsCRP", "value": this.state['hsCRP'], "type":"marker", "valueType":"magnitude"}
     ];
 
-    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, BLOOD_TEST);
+    let record = this.createRecord(results, BLOOD_TEST);
 
     this.props.navigation.state.params.onRecordAdded(record);
     this.props.navigation.dispatch(backAction);

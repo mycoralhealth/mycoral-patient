@@ -44,7 +44,7 @@ export class MyRecordsScreen extends Component {
             {
               this.state.recordsList.map((record) => (
                 <ListItem
-                  key={record.record_id}
+                  key={record.id}
                   title={record.name}
                   rightTitle={moment(record.date).format('MMM Do, YYYY')}
                   chevronColor={colors.red}
@@ -63,7 +63,6 @@ export class MyRecordsScreen extends Component {
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record' 
               onPress={() => this.props.navigation.navigate('AddRecord', {
-                recordsList: this.state.recordsList, 
                 onRecordAdded: this.newRecord.bind(this)
               })}
             />

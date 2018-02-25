@@ -25,6 +25,8 @@ export class AddRecordManualScreen extends TestRecordScreen {
   }
 
   takePhoto = async () => {
+    this.dropdown.close();
+
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
@@ -34,6 +36,8 @@ export class AddRecordManualScreen extends TestRecordScreen {
   }
 
   pickImage = async () => {
+    this.dropdown.close();
+
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
@@ -65,7 +69,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
   addPhotoRecord(uri, hash) {
     let results = {uri, hash};
 
-    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, PHOTO_RECORD_TEST);
+    let record = this.createRecord(results, PHOTO_RECORD_TEST);
 
     this.setState({ uploadingImage: false });
     this.onRecordAdded(record);
@@ -120,7 +124,6 @@ export class AddRecordManualScreen extends TestRecordScreen {
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Blood Test'
               onPress={() => this.props.navigation.navigate('AddBloodTestRecord', {
-                recordsList: this.props.navigation.state.params.recordsList,
                 onRecordAdded: this.onRecordAdded.bind(this)})}
             />
           </View>
@@ -130,7 +133,6 @@ export class AddRecordManualScreen extends TestRecordScreen {
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Genetic Test'
               onPress={() => this.props.navigation.navigate('AddGeneticTestRecord', {
-                recordsList: this.props.navigation.state.params.recordsList,
                 onRecordAdded: this.onRecordAdded.bind(this)})}
             />
           </View>

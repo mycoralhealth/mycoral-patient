@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "expo": "^23.0.4",
+    "flakeid": "^0.1.0",
     "moment": "^2.20.1",
     "node-forge": "^0.7.1",
     "react": "16.0.0",

@@ -39,7 +39,6 @@ export class AddRecordScreen extends Component {
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record Manually'
               onPress={() => this.props.navigation.navigate('AddRecordManual', {
-                recordsList: this.props.navigation.state.params.recordsList,
                 onRecordAdded: this.onRecordAdded.bind(this)
               })}
             />
