@@ -11,6 +11,7 @@ import { blockchainAddress, PHOTO_RECORD_TEST } from './common';
 import MessageIndicator from './MessageIndicator';
 import ipfs from '../utilities/expo-ipfs';
 import { TestRecordScreen } from './TestRecordScreen';
+import cryptoHelpers from '../utilities/crypto_helpers';
 
 export class AddRecordManualScreen extends TestRecordScreen {
   constructor(props) {
@@ -29,6 +30,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
 
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
+      base64: true,
       aspect: [4, 3],
     });
 
@@ -40,6 +42,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
+      base64: true,
       aspect: [4, 3],
     });
 
@@ -53,10 +56,13 @@ export class AddRecordManualScreen extends TestRecordScreen {
       this.setState({ uploadingImage: true });
 
       if (!pickerResult.cancelled) {
-        console.log('FILE URI:', pickerResult.uri);
+        let encryptedInfo = await cryptoHelpers.encryptFile(pickerResult.uri, pickerResult.base64);
 
-        uploadResponse = await ipfs.add(pickerResult.uri);
-        this.addPhotoRecord(pickerResult.uri, uploadResponse);
+        uploadResponse = await ipfs.add(encryptedInfo.uri);
+
+        console.log({uploadResponse});
+
+        this.addPhotoRecord(encryptedInfo.uri, uploadResponse, encryptedInfo);
       }
     } catch (e) {
       console.log({ uploadResponse });
@@ -66,10 +72,10 @@ export class AddRecordManualScreen extends TestRecordScreen {
     }
   }
 
-  addPhotoRecord(uri, hash) {
+  addPhotoRecord(uri, hash, encryptedInfo) {
     let results = {uri, hash};
 
-    let record = this.createRecord(results, PHOTO_RECORD_TEST);
+    let record = this.createRecord(results, PHOTO_RECORD_TEST, true, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
 
     this.setState({ uploadingImage: false });
     this.onRecordAdded(record);

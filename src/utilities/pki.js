@@ -46,7 +46,6 @@ export const generateKeyPair = () => {
           testKeys();        
         } else {
           makeKeys();
-          testKeys();
           resolve();
         }
       }).catch((e) => reject(`Error getting marker from store (${e})`));
@@ -76,7 +75,7 @@ export const keysExist = () => {
   return p;
 }
 
-export const encryptPKI = (data) => {
+export const encryptPKI = async (data) => {
   let p = new Promise(function(resolve, reject) {
     SecureStore.getItemAsync(`${STORE_KEY}.${PUBLIC_KEY_TAG}`)
       .then((publicKeyPEM) => {
@@ -89,7 +88,7 @@ export const encryptPKI = (data) => {
   return p;
 }
 
-export const decryptPKI = (data) => {
+export const decryptPKI = async (data) => {
   let p = new Promise(function(resolve, reject) {
     SecureStore.getItemAsync(`${STORE_KEY}.${PRIVATE_KEY_TAG}`)
       .then((privateKeyPEM) => {
