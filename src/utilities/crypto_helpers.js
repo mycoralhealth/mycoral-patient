@@ -24,12 +24,12 @@ const encryptFile = async (uri, data) => {
   let encryptedKey = await encryptPKI(symKeyInfo.key);
   let encryptedIv = await encryptPKI(symKeyInfo.iv);
 
-  return { uri: encryptedUri, encryptedKey: encryptedKey, encryptedIv: encryptedIv };
+  return { uri: encryptedUri, encryptedKey: forge.util.encode64(encryptedKey), encryptedIv: forge.util.encode64(encryptedIv) };
 }
 
 const decryptFile = async (uri, encryptedKey, encryptedIv) => {
-  let key = await decryptPKI(encryptedKey);
-  let iv = await decryptPKI(encryptedIv);
+  let key = await decryptPKI(forge.util.decode64(encryptedKey));
+  let iv = await decryptPKI(forge.util.decode64(encryptedIv));
 
   let encryptedData = await FileSystem.readAsStringAsync(uri);
 

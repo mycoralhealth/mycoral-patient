@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { View, ScrollView, Platform } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
+import { FileSystem } from 'expo';
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { PHOTO_RECORD_TEST } from './common';
@@ -20,7 +21,14 @@ const RecordDetails = (props) => {
           color='#000'
           icon={{name: 'ios-image', type: 'ionicon', color:'#000'}}
           title='View Photo Record'
-          onPress={() => props.navigation.navigate('ViewImage', { images: [{ url: props.record.results.uri }] })}
+          onPress={async () => {
+            let url = props.record.decryptedData;
+            if (props.record.decryptedData) {
+              let imgData = await FileSystem.readAsStringAsync(props.record.results.uri);
+              url = `data:image/jpeg;base64,${imgData}`;
+            }
+            props.navigation.navigate('ViewImage', { images: [{ url }] })
+          }}
         />
       </View>
     );

@@ -26,7 +26,7 @@ const RecordListItem = (props) => {
     );
   } else {
     new Promise(async function(resolve) {
-      let decryptionResult = await cryptoHelpers.decryptFile(record.results.uri);
+      let decryptionResult = await cryptoHelpers.decryptFile(record.results.uri, record.encryptionInfo.key, record.encryptionInfo.iv);
       record.results.uri = decryptionResult.decryptedUri;
 
       props.onRecordDecrypted(record);
@@ -73,7 +73,8 @@ export class MyRecordsScreen extends Component {
   }
 
   recordDecrypted(record) {
-    record.decrypted = true;
+    record.encrypted = false;
+    record.decryptedData = true;
     this.setState({ recordsList: this.state.recordsList.map(function(r) { return (r.id === record.id) ? record : r; }) });
   }
 
