@@ -11,9 +11,13 @@ import { PHOTO_RECORD_TEST } from './common';
 const backAction = NavigationActions.back();
 
 const RecordDetails = (props) => {
-  console.log('Record type', props.record.testType);
+  console.log('Record type', props.record.metadata.testType);
 
-  if (props.record.testType === PHOTO_RECORD_TEST) {
+  if (!props.recordInitialized) {
+    return (<View />);
+  }
+
+  if (props.record.metadata.testType === PHOTO_RECORD_TEST) {
     return (
       <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
         <Button
@@ -22,6 +26,9 @@ const RecordDetails = (props) => {
           icon={{name: 'ios-image', type: 'ionicon', color:'#000'}}
           title='View Photo Record'
           onPress={async () => {
+            //let decryptionResult = await cryptoHelpers.decryptFile(record.results.uri, record.encryptionInfo.key, record.encryptionInfo.iv);
+            //record.results.uri = decryptionResult.decryptedUri;
+
             let url = props.record.decryptedData;
             if (props.record.decryptedData) {
               let imgData = await FileSystem.readAsStringAsync(props.record.results.uri);
@@ -51,11 +58,20 @@ const RecordDetails = (props) => {
   }
 }
 
-export class ViewRecordScreen extends Component {
+export class ViewRecordScreen extends Component {  
+  constructor(props) {
+    super(props);
+    this.state = { recordInitialized: false };
+  }
   onRecordDeleted(record) {
     this.props.navigation.state.params.onRecordDeleted(record);
     this.props.navigation.dispatch(backAction);
   }
+
+  componentDidMount() {
+    // Check if the record needs to be decrypted, change state to decrypting, kick off decryption, set state to image or text
+  }
+
 
   render() {
     const record = this.props.navigation.state.params.record;
@@ -66,13 +82,16 @@ export class ViewRecordScreen extends Component {
 
         <ScrollView style={{ flex: 1}}>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-            {record.name}
+            {record.metadata.name}
           </Text>
           <Text style={{textAlign: 'center'}}>
-            Date: {moment(record.date).format('MMMM Do, YYYY')}
+            Date: {moment(record.metadata.date).format('MMMM Do, YYYY')}
           </Text>
 
-          <RecordDetails record={record} navigation={this.props.navigation} />
+          <RecordDetails 
+            record={record} 
+            recordInitialized={this.state.recordInitialized}
+            navigation={this.props.navigation} />
 
           <View style={{ flex: 1}}>
             <View style={{ flex: 1, marginBottom: 10}}>

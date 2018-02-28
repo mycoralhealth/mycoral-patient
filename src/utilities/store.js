@@ -7,6 +7,18 @@ const getIPFSProvider = () => {
   return { protocol:'http', address:'localhost', port:'5001' };
 }
 
+const getUserName = () => {
+  return '123456';
+}
+
+const getEmail = () => {
+  return 'andy@mycoralhealth.com';
+}
+
+const getEthAddress = () => {
+  return '0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29';
+}
+
 const records = () => {
   let p = new Promise(async function(resolve, reject) {
     try {
@@ -63,5 +75,8 @@ module.exports = {
   records,
   addRecord,
   removeRecord,
-  getIPFSProvider
+  getIPFSProvider,
+  getUserName,
+  getEmail,
+  getEthAddress
 }

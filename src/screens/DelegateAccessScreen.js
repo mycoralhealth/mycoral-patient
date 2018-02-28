@@ -43,10 +43,10 @@ export class DelegateAccessScreen extends Component {
 
         <ScrollView style={{ flex:1 }}>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-            {record.name}
+            {record.metadata.name}
           </Text>
           <Text style={{textAlign: 'center'}}>
-            Date: {moment(record.date).format('MMMM Do, YYYY')}
+            Date: {moment(record.metadata.date).format('MMMM Do, YYYY')}
           </Text>
           <Text style={{padding: 20}}>
             The decryption key for this medical record will be shared with the recipient, giving them full access to view this record.

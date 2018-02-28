@@ -56,13 +56,15 @@ export class AddRecordManualScreen extends TestRecordScreen {
       this.setState({ uploadingImage: true });
 
       if (!pickerResult.cancelled) {
-        let encryptedInfo = await cryptoHelpers.encryptFile(pickerResult.uri, pickerResult.base64);
+        let metadata = this.createRecordMetadata(PHOTO_RECORD_TEST);
+
+        let encryptedInfo = await cryptoHelpers.encryptFile(pickerResult.uri, pickerResult.base64, metadata);
 
         uploadResponse = await ipfs.add(encryptedInfo.uri);
 
         console.log({uploadResponse});
 
-        this.addPhotoRecord(encryptedInfo.uri, uploadResponse, encryptedInfo);
+        this.addPhotoRecord(uploadResponse, encryptedInfo);
       }
     } catch (e) {
       console.log({ uploadResponse });
@@ -72,10 +74,10 @@ export class AddRecordManualScreen extends TestRecordScreen {
     }
   }
 
-  addPhotoRecord(uri, hash, encryptedInfo) {
-    let results = {uri, hash};
+  addPhotoRecord(hash, encryptedInfo) {
+    let results = { uri: encryptedInfo.uri, hash };
 
-    let record = this.createRecord(results, PHOTO_RECORD_TEST, true, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
+    let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, results, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
 
     this.setState({ uploadingImage: false });
     this.onRecordAdded(record);
@@ -143,7 +145,10 @@ export class AddRecordManualScreen extends TestRecordScreen {
             />
           </View>
         </ScrollView>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(resetAction)}/>
+        <CoralFooter backAction={() => {     
+            this.dropdown.close();
+            this.props.navigation.dispatch(resetAction)
+          }} />
         <DropdownAlert
           ref={ref => this.dropdown = ref}
           infoColor={colors.darkerGray}

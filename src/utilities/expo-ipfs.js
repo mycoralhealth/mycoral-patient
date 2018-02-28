@@ -95,5 +95,6 @@ const cat = async (hash) => {
 
 module.exports = {
   add,
-  cat
+  cat,
+  tempRandomName
 };

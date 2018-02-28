@@ -14,8 +14,8 @@ const RecordListItem = (props) => {
   if (!record.encrypted) {
     return (
       <ListItem
-        title={record.name}
-        rightTitle={moment(record.date).format('MMM Do, YYYY')}
+        title={record.metadata.name}
+        rightTitle={moment(record.metadata.date).format('MMM Do, YYYY')}
         chevronColor={colors.red}
         leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
         onPress={() => props.navigation.navigate('ViewRecord', {
@@ -26,8 +26,9 @@ const RecordListItem = (props) => {
     );
   } else {
     new Promise(async function(resolve) {
-      let decryptionResult = await cryptoHelpers.decryptFile(record.results.uri, record.encryptionInfo.key, record.encryptionInfo.iv);
-      record.results.uri = decryptionResult.decryptedUri;
+      let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
+      record.metadata = decryptedResult.metadata;
+      console.log({record});
 
       props.onRecordDecrypted(record);
     });
@@ -74,7 +75,6 @@ export class MyRecordsScreen extends Component {
 
   recordDecrypted(record) {
     record.encrypted = false;
-    record.decryptedData = true;
     this.setState({ recordsList: this.state.recordsList.map(function(r) { return (r.id === record.id) ? record : r; }) });
   }
 
