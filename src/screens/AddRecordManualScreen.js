@@ -4,7 +4,7 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 import DropdownAlert from 'react-native-dropdownalert';
-import { ImagePicker } from 'expo';
+import { ImagePicker, FileSystem } from 'expo';
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { blockchainAddress, PHOTO_RECORD_TEST } from './common';
@@ -64,6 +64,9 @@ export class AddRecordManualScreen extends TestRecordScreen {
 
         console.log({uploadResponse});
 
+        FileSystem.deleteAsync(encryptedInfo.uri, { idempotent: true });
+        FileSystem.deleteAsync(pickerResult.uri, { idempotent: true });
+        
         this.addPhotoRecord(uploadResponse, encryptedInfo);
       }
     } catch (e) {
@@ -75,7 +78,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
   }
 
   addPhotoRecord(hash, encryptedInfo) {
-    let results = { uri: encryptedInfo.uri, hash };
+    let results = { hash };
 
     let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, results, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
 

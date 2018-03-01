@@ -5,8 +5,11 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui';
 import { PHOTO_RECORD_TEST } from './common';
+import MessageIndicator from './MessageIndicator';
+import cryptoHelpers from '../utilities/crypto_helpers';
+import ipfs from '../utilities/expo-ipfs';
 
 const backAction = NavigationActions.back();
 
@@ -14,7 +17,15 @@ const RecordDetails = (props) => {
   console.log('Record type', props.record.metadata.testType);
 
   if (!props.recordInitialized) {
-    return (<View />);
+    return (<View style={{ flex: 1, marginBottom: 40, marginTop: 20}} />);
+  }
+
+  if (props.decrypting) {
+    return (
+      <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
+        <MessageIndicator message="Decrypting record..." />
+      </View>
+    ); 
   }
 
   if (props.record.metadata.testType === PHOTO_RECORD_TEST) {
@@ -26,14 +37,9 @@ const RecordDetails = (props) => {
           icon={{name: 'ios-image', type: 'ionicon', color:'#000'}}
           title='View Photo Record'
           onPress={async () => {
-            //let decryptionResult = await cryptoHelpers.decryptFile(record.results.uri, record.encryptionInfo.key, record.encryptionInfo.iv);
-            //record.results.uri = decryptionResult.decryptedUri;
+            let imgData = await FileSystem.readAsStringAsync(props.record.results.uri);
+            let url = `data:image/jpeg;base64,${imgData}`;
 
-            let url = props.record.decryptedData;
-            if (props.record.decryptedData) {
-              let imgData = await FileSystem.readAsStringAsync(props.record.results.uri);
-              url = `data:image/jpeg;base64,${imgData}`;
-            }
             props.navigation.navigate('ViewImage', { images: [{ url }] })
           }}
         />
@@ -63,15 +69,29 @@ export class ViewRecordScreen extends Component {
     super(props);
     this.state = { recordInitialized: false };
   }
+
   onRecordDeleted(record) {
     this.props.navigation.state.params.onRecordDeleted(record);
     this.props.navigation.dispatch(backAction);
   }
 
   componentDidMount() {
-    // Check if the record needs to be decrypted, change state to decrypting, kick off decryption, set state to image or text
-  }
+    const record = this.props.navigation.state.params.record;
 
+    if (record.results.uri) {
+      this.setState({ recordInitialized: true });
+    } else if (record.results.hash) {
+      this.setState({ recordInitialized: true, decrypting: true });
+      ipfs.cat(record.results.hash)
+        .then((uri) => {
+          cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv)
+            .then((decryptionResult) => {
+              record.results.uri = decryptionResult.decryptedUri;
+              this.setState({ decrypting: false });
+            });
+          });
+    }
+  }
 
   render() {
     const record = this.props.navigation.state.params.record;
@@ -91,6 +111,7 @@ export class ViewRecordScreen extends Component {
           <RecordDetails 
             record={record} 
             recordInitialized={this.state.recordInitialized}
+            decrypting={this.state.decrypting}
             navigation={this.props.navigation} />
 
           <View style={{ flex: 1}}>

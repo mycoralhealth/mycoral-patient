@@ -52,12 +52,9 @@ const decryptFile = async (uri, encryptedKey, encryptedIv) => {
 
   let data = await symmetricEncryption.decrypt(forge.util.decode64(encryptedData), key, iv);
 
-  let fileType = getFileType(uri);
-
-  let decryptedUri = uri + '.decrypted.' + fileType;
+  let decryptedUri = uri + '.decrypted';
 
   await FileSystem.writeAsStringAsync(decryptedUri, data.toString());
-
 
   return { decryptedUri };
 }
