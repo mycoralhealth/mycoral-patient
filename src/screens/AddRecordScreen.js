@@ -3,7 +3,6 @@ import { View, ScrollView } from 'react-native';
 import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
-import DropdownAlert from 'react-native-dropdownalert';
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
 import { blockchainAddress } from './common.js';
@@ -45,10 +44,6 @@ export class AddRecordScreen extends Component {
           </View>
         </ScrollView>
         <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
-        <DropdownAlert
-          ref={ref => this.dropdown = ref}
-          infoColor={colors.darkerGray}
-        />
       </View>
     );
   }

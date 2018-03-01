@@ -38,7 +38,6 @@ const add = async (data) => {
 
       Expo.FileSystem.writeAsStringAsync(uri, data)
         .then(() => {
-          console.log('Finished saving to file:', uri);
           uploadFileAsync(uri)
             .then((response) => response.json())
               .then((responseJson) => {
@@ -60,8 +59,6 @@ function uploadFileAsync(uri) {
 
   let formData = new FormData();
   formData.append('file', { uri, name });
-
-  console.log(formData);
 
   let options = {
     method: 'POST',

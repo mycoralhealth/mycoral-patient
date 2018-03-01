@@ -29,14 +29,14 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
     this.setState(state);
   }
 
-  addRecord() {
+  async addRecord() {
     let results = [
       {"key": "Cholesterol", "value": this.state['Cholesterol'], "type":"marker", "valueType":"magnitude"},
       {"key": "HbA1c", "value": this.state['HbA1c'], "type":"marker", "valueType":"magnitude"},
       {"key": "hsCRP", "value": this.state['hsCRP'], "type":"marker", "valueType":"magnitude"}
     ];
 
-    let record = this.createRecord(results, BLOOD_TEST);
+    let record = await this.createRecord(JSON.stringify(results), BLOOD_TEST);
 
     this.props.navigation.state.params.onRecordAdded(record);
     this.props.navigation.dispatch(backAction);
@@ -83,7 +83,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
                 backgroundColor={colors.green}
                 icon={{name: 'ios-add-circle', type: 'ionicon'}}
                 title='Save'
-                onPress={() => this.addRecord()}
+                onPress={async () => this.addRecord()}
               />
             </View>
           </View>

@@ -17,8 +17,6 @@ const testKeys = () => {
         .then((privateKeyPEM) => {
           const privateKey = forge.pki.privateKeyFromPem(privateKeyPEM);
           const decrypted = privateKey.decrypt(encrypted);
-
-          console.log('Decrypted text: ', decrypted);
         }).catch( (e) => { console.log( `Could not get private key in store (${e})` ) });
 
     }).catch( (e) => { console.log( `Could not get public key in store (${e})` ) });

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Modal, TouchableHighlight } from 'react-native';
 import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
-import DropdownAlert from 'react-native-dropdownalert';
 import { ImagePicker, FileSystem } from 'expo';
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
@@ -17,17 +16,15 @@ export class AddRecordManualScreen extends TestRecordScreen {
   constructor(props) {
     super(props);
 
-    this.state = { uploadingImage: false };
+    this.state = { uploadingImage: false, modalVisible: false };
   }
 
   onRecordAdded(record) {
     this.props.navigation.state.params.onRecordAdded(record);
-    this.dropdown.alertWithType('info', 'New Record Added', 'You can add more medical records or go back to the records list.');
+    this.setState({ modalVisible: true });
   }
 
   takePhoto = async () => {
-    this.dropdown.close();
-
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       base64: true,
@@ -38,8 +35,6 @@ export class AddRecordManualScreen extends TestRecordScreen {
   }
 
   pickImage = async () => {
-    this.dropdown.close();
-
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       base64: true,
@@ -50,40 +45,25 @@ export class AddRecordManualScreen extends TestRecordScreen {
   }
 
   handleImagePicked = async (pickerResult) => {
-    let uploadResponse;
-
     try {
       this.setState({ uploadingImage: true });
 
       if (!pickerResult.cancelled) {
-        let metadata = this.createRecordMetadata(PHOTO_RECORD_TEST);
+        let record = await this.createRecord(pickerResult.base64, PHOTO_RECORD_TEST);
 
-        let encryptedInfo = await cryptoHelpers.encryptFile(pickerResult.uri, pickerResult.base64, metadata);
-
-        uploadResponse = await ipfs.add(encryptedInfo.uri);
-
-        console.log({uploadResponse});
-
-        FileSystem.deleteAsync(encryptedInfo.uri, { idempotent: true });
         FileSystem.deleteAsync(pickerResult.uri, { idempotent: true });
-        
-        this.addPhotoRecord(uploadResponse, encryptedInfo);
+
+        this.onRecordAdded(record);
       }
     } catch (e) {
-      console.log({ uploadResponse });
       console.log({ e });
     } finally {
       this.setState({ uploadingImage: false });
     }
   }
 
-  addPhotoRecord(hash, encryptedInfo) {
-    let results = { hash };
-
-    let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, results, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
-
-    this.setState({ uploadingImage: false });
-    this.onRecordAdded(record);
+  hideModal() {
+    this.setState({ modalVisible: false });
   }
 
   render() {
@@ -109,6 +89,30 @@ export class AddRecordManualScreen extends TestRecordScreen {
         <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
 
         <ScrollView centerContent={true}>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            onRequestClose={this.hideModal.bind(this)}
+            visible={this.state.modalVisible} >
+            <View style={{marginTop: 25, alignItems: 'center'}}>
+              <View style={{ flex: 1 }}>
+                <Text h3 style={{textAlign: 'center', marginTop: 20}}>
+                  New Record Added
+                </Text>
+                <Text style={{textAlign: 'center', marginTop: 20}}>
+                  You can add more medical records or go back to the records list.
+                </Text>
+
+                <View style={{ flex: 1, marginTop: 20, width: 180, height: 40, alignSelf: 'center'}}>
+                  <Button
+                    backgroundColor={colors.lighterGray}
+                    title='Close'
+                    onPress={this.hideModal.bind(this)}
+                  />
+                </View>
+              </View>
+            </View>
+          </Modal>
           <Text style={{padding: 20}}>
             Upload your own medical record to the blockchain by taking a photo, or filling out a questionaire.
           </Text>
@@ -148,14 +152,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
             />
           </View>
         </ScrollView>
-        <CoralFooter backAction={() => {     
-            this.dropdown.close();
-            this.props.navigation.dispatch(resetAction)
-          }} />
-        <DropdownAlert
-          ref={ref => this.dropdown = ref}
-          infoColor={colors.darkerGray}
-        />
+        <CoralFooter backAction={() => this.props.navigation.dispatch(resetAction)} />
       </View>
     );
   }

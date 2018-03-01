@@ -11,14 +11,12 @@ const getFileType = (uri) => {
   return fileType;
 }
 
-const encryptFile = async (uri, data, metadata) => {
+const encryptFile = async (data, metadata) => {
   let symKeyInfo = await symmetricEncryption.generateKey();
-
-  let fileType = (uri) ? getFileType(uri) : 'txt';
 
   let encryptedOutput = await symmetricEncryption.encrypt(data, symKeyInfo.key, symKeyInfo.iv);
   
-  let encryptedUri = (uri) ? `${uri}.encrypted.${fileType}` : `${FileSystem.documentDirectory}${ipfs.tempRandomName()}.encrypted.${fileType}`;
+  let encryptedUri = `${FileSystem.documentDirectory}${ipfs.tempRandomName()}.encrypted`;
 
   await FileSystem.writeAsStringAsync(encryptedUri, forge.util.encode64(encryptedOutput.bytes()));
 

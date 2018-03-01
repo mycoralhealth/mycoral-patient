@@ -28,7 +28,6 @@ const RecordListItem = (props) => {
     new Promise(async function(resolve) {
       let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
       record.metadata = decryptedResult.metadata;
-      console.log({record});
 
       props.onRecordDecrypted(record);
     });

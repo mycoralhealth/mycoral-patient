@@ -14,8 +14,6 @@ import ipfs from '../utilities/expo-ipfs';
 const backAction = NavigationActions.back();
 
 const RecordDetails = (props) => {
-  console.log('Record type', props.record.metadata.testType);
-
   if (!props.recordInitialized) {
     return (<View style={{ flex: 1, marginBottom: 40, marginTop: 20}} />);
   }
@@ -36,9 +34,8 @@ const RecordDetails = (props) => {
           color='#000'
           icon={{name: 'ios-image', type: 'ionicon', color:'#000'}}
           title='View Photo Record'
-          onPress={async () => {
-            let imgData = await FileSystem.readAsStringAsync(props.record.results.uri);
-            let url = `data:image/jpeg;base64,${imgData}`;
+          onPress={() => {
+            let url = `data:image/jpeg;base64,${props.record.results.imgData}`;
 
             props.navigation.navigate('ViewImage', { images: [{ url }] })
           }}
@@ -78,16 +75,24 @@ export class ViewRecordScreen extends Component {
   componentDidMount() {
     const record = this.props.navigation.state.params.record;
 
-    if (record.results.uri) {
+    if (record.results) {
       this.setState({ recordInitialized: true });
-    } else if (record.results.hash) {
+    } else if (record.hash) {
       this.setState({ recordInitialized: true, decrypting: true });
-      ipfs.cat(record.results.hash)
+      ipfs.cat(record.hash)
         .then((uri) => {
           cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv)
             .then((decryptionResult) => {
-              record.results.uri = decryptionResult.decryptedUri;
-              this.setState({ decrypting: false });
+              FileSystem.readAsStringAsync(decryptionResult.decryptedUri)
+                .then((decryptedData) => {
+                  if (record.metadata.testType === PHOTO_RECORD_TEST) {
+                    record.results = { imgData: decryptedData };
+                  } else {
+                    record.results = JSON.parse(decryptedData);
+                  }
+                  this.setState({ decrypting: false });
+                  FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
+                });
             });
           });
     }

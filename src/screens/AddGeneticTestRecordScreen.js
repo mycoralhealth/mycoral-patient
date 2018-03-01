@@ -25,15 +25,13 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
     this.setState(state);
   }
 
-  addRecord() {
+  async addRecord() {
     let results = [
       {"key":"BRCA1", "value": (this.state.checked[0]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"},
       {"key":"BRCA2", "value": (this.state.checked[1]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"}
     ];
 
-    let record = this.createRecord(results, GENETIC_TEST);
-
-    console.log(record);
+    let record = await this.createRecord(JSON.stringify(results), GENETIC_TEST);
 
     this.props.navigation.state.params.onRecordAdded(record);
     this.props.navigation.dispatch(backAction);
@@ -78,7 +76,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Save'
-              onPress={() => this.addRecord()}
+              onPress={async () => this.addRecord()}
             />
           </View>
         </View>
