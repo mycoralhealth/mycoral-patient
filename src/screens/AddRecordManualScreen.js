@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView, Modal, TouchableHighlight } from 'react-native';
-import { Button, Text } from 'react-native-elements'
+import { Button, Text, Icon } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 import { ImagePicker, FileSystem } from 'expo';
@@ -99,14 +99,18 @@ export class AddRecordManualScreen extends TestRecordScreen {
                 <Text h3 style={{textAlign: 'center', marginTop: 20}}>
                   New Record Added
                 </Text>
-                <Text style={{textAlign: 'center', marginTop: 20}}>
+                <View style={{ flex: 1, marginTop: 60, marginBottom: 20, alignSelf: 'center'}}>
+                  <Icon name='ios-medkit' type='ionicon' size={100} color={colors.green} style={{textAlign: 'center'}} />
+                </View>
+                <Text style={{textAlign: 'center', marginTop: 20, padding: 20}}>
                   You can add more medical records or go back to the records list.
                 </Text>
 
-                <View style={{ flex: 1, marginTop: 20, width: 180, height: 40, alignSelf: 'center'}}>
+                <View style={{ flex: 1, marginTop: 20, width: 120, height: 40, alignSelf: 'center'}}>
                   <Button
                     backgroundColor={colors.lighterGray}
                     title='Close'
+                    style={{height:30}}
                     onPress={this.hideModal.bind(this)}
                   />
                 </View>

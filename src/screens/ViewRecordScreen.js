@@ -94,7 +94,7 @@ export class ViewRecordScreen extends Component {
                   FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
                 });
             });
-          });
+          });          
     }
   }
 

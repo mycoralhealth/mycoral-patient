@@ -2,8 +2,9 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { View, ScrollView, ActivityIndicator } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements';
+import nextFrame from 'next-frame';
 
-import { CoralHeader, colors } from '../ui.js';
+import { CoralHeader, colors } from '../ui';
 import store from '../utilities/store';
 import MessageIndicator from './MessageIndicator';
 import cryptoHelpers from '../utilities/crypto_helpers';
@@ -25,13 +26,6 @@ const RecordListItem = (props) => {
       />
     );
   } else {
-    new Promise(async function(resolve) {
-      let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
-      record.metadata = decryptedResult.metadata;
-
-      props.onRecordDecrypted(record);
-    });
-
     return (
       <ListItem
         avatar={<ActivityIndicator size="small" color={colors.gray} style={{marginRight: 10}} />} 
@@ -49,32 +43,50 @@ export class MyRecordsScreen extends Component {
     this.state = { recordsList: [], loading: true };
   }
 
-  /* We could load the data straight in the constructor
-   * but this will set us on a way to eventually load from elsewhere.
-   */
   componentDidMount() {
-    store.records()
-      .then((recordsList) => {
-        this.setState({recordsList, loading: false}); 
-      })
-      .catch((e) => console.log(`Error fetching records from store (${e})`));      
+    this.loadAndDecryptRecords();
+    console.log('COMPONENT MOUNTED');
+  }
+
+  async loadAndDecryptRecords() {
+    let recordsList = await store.records();
+    this.setState({recordsList, loading: false});
+    this.decryptRecords(recordsList);
+  }
+
+  async decryptRecords(recordsList) {
+    let that = this;
+
+    for (let record of recordsList) {
+      if (record.encrypted) {
+        await nextFrame();
+        await this.decryptRecord(record);
+        this.setState({ recordsList });
+      }      
+    }
+  }
+
+  async decryptRecord(record) {
+    let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
+    record.metadata = decryptedResult.metadata;
+    record.encrypted = false;
   }
 
   newRecord(record) {
     store.addRecord(record)
-      .then((recordsList) => this.setState({recordsList}))
+      .then(async () => {
+        let newRecords = [...this.state.recordsList, record];
+        await nextFrame();
+        decryptRecord(newRecords, newRecords.length - 1, record);
+      })
       .catch((e) => console.log(`Error adding record to store (${e})`));
   }
 
   removeRecord(record) {
-    store.removeRecord(record)
-      .then((recordsList) => this.setState({recordsList}))
-      .catch((e) => console.log(`Error removing record from store (${e})`));
-  }
+    this.setState({ recordsList: this.state.recordsList.filter((r) => (record.id !== r.id)) });
 
-  recordDecrypted(record) {
-    record.encrypted = false;
-    this.setState({ recordsList: this.state.recordsList.map(function(r) { return (r.id === record.id) ? record : r; }) });
+    store.removeRecord(record)
+      .catch((e) => console.log(`Error removing record from store (${e})`));
   }
 
   render() {
@@ -99,7 +111,6 @@ export class MyRecordsScreen extends Component {
                   record={record}
                   navigation={this.props.navigation}
                   onRecordDeleted={this.removeRecord.bind(this)}
-                  onRecordDecrypted={this.recordDecrypted.bind(this)}
                 />
               ))
             }
@@ -109,9 +120,11 @@ export class MyRecordsScreen extends Component {
               backgroundColor={colors.red}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record' 
-              onPress={() => this.props.navigation.navigate('AddRecord', {
+              onPress={() => {
+                console.log('BUTTON PRESSED.');
+                this.props.navigation.navigate('AddRecord', {
                 onRecordAdded: this.newRecord.bind(this)
-              })}
+              })}}
             />
           </View>
         </ScrollView>
