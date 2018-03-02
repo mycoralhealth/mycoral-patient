@@ -55,7 +55,11 @@ export const generateKeyPair = () => {
 export const invalidateKeyPair = () => {
   let p = new Promise(function(resolve, reject) {
     SecureStore.deleteItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`)
-      .then(() => resolve())
+      .then(() => {
+        SecureStore.deleteItemAsync(`${STORE_KEY}.${PRIVATE_KEY_TAG}`)
+          .then(() => resolve())
+          .catch((e) => reject(`Error removing key from keystore (${e})`)); 
+      })
       .catch((e) => reject(`Error removing key from keystore (${e})`)); 
   });
 

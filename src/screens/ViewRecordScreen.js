@@ -18,6 +18,12 @@ const RecordDetails = (props) => {
     return (<View style={{ flex: 1, marginBottom: 40, marginTop: 20}} />);
   }
 
+  if (props.record.error) {
+    return (
+      <View style={{ flex: 1, marginBottom: 20, marginTop: 20}} />
+    );
+  }
+
   if (props.decrypting) {
     return (
       <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
@@ -77,7 +83,7 @@ export class ViewRecordScreen extends Component {
 
     if (record.results) {
       this.setState({ recordInitialized: true });
-    } else if (record.hash) {
+    } else if (record.hash && !record.error) {
       this.setState({ recordInitialized: true, decrypting: true });
       ipfs.cat(record.hash)
         .then((uri) => {
@@ -107,10 +113,10 @@ export class ViewRecordScreen extends Component {
 
         <ScrollView style={{ flex: 1}}>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-            {record.metadata.name}
+            {(record.error) ? 'Decryption error' : record.metadata.name }
           </Text>
           <Text style={{textAlign: 'center'}}>
-            Date: {moment(record.metadata.date).format('MMMM Do, YYYY')}
+            {(record.error) ? 'Encryption keys missing or corrupted' : `Date: ${moment(record.metadata.date).format('MMMM Do, YYYY')}`}
           </Text>
 
           <RecordDetails 
@@ -120,7 +126,7 @@ export class ViewRecordScreen extends Component {
             navigation={this.props.navigation} />
 
           <View style={{ flex: 1}}>
-            <View style={{ flex: 1, marginBottom: 10}}>
+            <View style={(record.error) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
               <Button
                 backgroundColor={colors.green}
                 icon={{name: 'stethoscope', type: 'font-awesome'}}
@@ -128,7 +134,7 @@ export class ViewRecordScreen extends Component {
                 onPress={() => this.props.navigation.navigate('RequestHealthTip')}
               />
             </View>
-            <View style={{ flex: 1, marginBottom: 10}}>
+            <View style={(record.error) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
               <Button
                 backgroundColor={colors.gray}
                 icon={{name: 'verified-user', type: 'material'}}

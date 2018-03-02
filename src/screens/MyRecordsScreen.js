@@ -15,10 +15,10 @@ const RecordListItem = (props) => {
   if (!record.encrypted) {
     return (
       <ListItem
-        title={record.metadata.name}
-        rightTitle={moment(record.metadata.date).format('MMM Do, YYYY')}
+        title={ (record.error) ? 'Decryption Error' : record.metadata.name }
+        rightTitle={ (record.error) ? null : moment(record.metadata.date).format('MMM Do, YYYY') }
         chevronColor={colors.red}
-        leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
+        leftIcon={ (record.error) ? {name:'ios-key', type:'ionicon', color: '#f00' } : {name:'ios-document', type:'ionicon', color: '#ddd'}}
         onPress={() => props.navigation.navigate('ViewRecord', {
           record,
           onRecordDeleted: props.onRecordDeleted
@@ -45,7 +45,6 @@ export class MyRecordsScreen extends Component {
 
   componentDidMount() {
     this.loadAndDecryptRecords();
-    console.log('COMPONENT MOUNTED');
   }
 
   async loadAndDecryptRecords() {
@@ -67,9 +66,14 @@ export class MyRecordsScreen extends Component {
   }
 
   async decryptRecord(record) {
-    let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
-    record.metadata = decryptedResult.metadata;
-    record.encrypted = false;
+    try {
+      let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
+      record.metadata = decryptedResult.metadata;
+      record.encrypted = false;
+    } catch (e) {
+      record.encrypted = false;
+      record.error = true;
+    }
   }
 
   newRecord(record) {
@@ -77,7 +81,8 @@ export class MyRecordsScreen extends Component {
       .then(async () => {
         let newRecords = [...this.state.recordsList, record];
         await nextFrame();
-        decryptRecord(newRecords, newRecords.length - 1, record);
+        await decryptRecord(record);
+        this.setState({ recordsList: newRecords });
       })
       .catch((e) => console.log(`Error adding record to store (${e})`));
   }
@@ -120,11 +125,7 @@ export class MyRecordsScreen extends Component {
               backgroundColor={colors.red}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record' 
-              onPress={() => {
-                console.log('BUTTON PRESSED.');
-                this.props.navigation.navigate('AddRecord', {
-                onRecordAdded: this.newRecord.bind(this)
-              })}}
+              onPress={() => this.props.navigation.navigate('AddRecord', {onRecordAdded: this.newRecord.bind(this)})}
             />
           </View>
         </ScrollView>
