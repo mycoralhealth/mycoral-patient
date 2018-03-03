@@ -3,7 +3,7 @@ import FlakeIdGen from 'flakeid';
 import React, { Component } from 'react';
 import { FileSystem } from 'expo';
 
-import { recordTypes } from './common';
+import { recordTypes } from '../utilities/recordTypes';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
@@ -12,11 +12,11 @@ const IdGenerator = new FlakeIdGen();
 
 export class TestRecordScreen extends Component {
 
-  createRecordMetadata(selectedRecordType) {
+  async createRecordMetadata(selectedRecordType) {
     return {
-      username: store.getUserName(),
-      email: store.getEmail(),
-      ethAddress: store.getEthAddress(),
+      username: await store.getUserName(),
+      email: await store.getEmail(),
+      ethAddress: await store.getEthAddress(),
       testType: selectedRecordType,
       name: recordTypes[selectedRecordType],
       date: moment().format("YYYY-MM-DD")
@@ -34,7 +34,7 @@ export class TestRecordScreen extends Component {
   }
 
   async encryptAndUploadRecord(data, selectedRecordType) {
-    let metadata = this.createRecordMetadata(selectedRecordType);
+    let metadata = await this.createRecordMetadata(selectedRecordType);
 
     let encryptedInfo = await cryptoHelpers.encryptFile(data, metadata);
 

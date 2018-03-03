@@ -6,7 +6,7 @@ import QRCode from 'react-native-qrcode';
 import { ImagePicker, FileSystem } from 'expo';
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
-import { blockchainAddress, PHOTO_RECORD_TEST } from './common';
+import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import MessageIndicator from './MessageIndicator';
 import ipfs from '../utilities/expo-ipfs';
 import { TestRecordScreen } from './TestRecordScreen';
@@ -22,6 +22,10 @@ export class AddRecordManualScreen extends TestRecordScreen {
   onRecordAdded(record) {
     this.props.navigation.state.params.onRecordAdded(record);
     this.setState({ modalVisible: true });
+  }
+
+  onRecordAddFailed() {
+    this.setState({ modalVisible: true, uploadError: true });
   }
 
   takePhoto = async () => {
@@ -46,7 +50,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
 
   handleImagePicked = async (pickerResult) => {
     try {
-      this.setState({ uploadingImage: true });
+      this.setState({ uploadingImage: true, uploadError: false });
 
       if (!pickerResult.cancelled) {
         let record = await this.createRecord(pickerResult.base64, PHOTO_RECORD_TEST);
@@ -57,8 +61,9 @@ export class AddRecordManualScreen extends TestRecordScreen {
       }
     } catch (e) {
       console.log({ e });
+      onRecordAddFailed();
     } finally {
-      this.setState({ uploadingImage: false });
+      this.setState({ uploadingImage: false });      
     }
   }
 
@@ -97,13 +102,18 @@ export class AddRecordManualScreen extends TestRecordScreen {
             <View style={{marginTop: 25, alignItems: 'center'}}>
               <View style={{ flex: 1 }}>
                 <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-                  New Record Added
+                  { (this.state.uploadError) ? 'Error uploading to IPFS' : 'New Record Added' }
                 </Text>
                 <View style={{ flex: 1, marginTop: 60, marginBottom: 20, alignSelf: 'center'}}>
-                  <Icon name='ios-medkit' type='ionicon' size={100} color={colors.green} style={{textAlign: 'center'}} />
+                  <Icon 
+                    name={(this.state.uploadError) ? 'wrench' : 'ios-medkit'} 
+                    type={(this.state.uploadError) ? 'font-awesome' : 'ionicon'} 
+                    size={100} 
+                    color={(this.state.uploadError) ? colors.red : colors.green} 
+                    style={{textAlign: 'center'}} />
                 </View>
-                <Text style={{textAlign: 'center', marginTop: 20, padding: 20}}>
-                  You can add more medical records or go back to the records list.
+                <Text style={{textAlign: 'center', marginTop: 30, padding: 20}}>
+                  { (this.state.uploadError) ? 'Please verify that you have internet connection and Coral Health encryption keys.' : 'You can add more medical records or go back to the records list.' }
                 </Text>
 
                 <View style={{ flex: 1, marginTop: 20, width: 120, height: 40, alignSelf: 'center'}}>
@@ -143,7 +153,9 @@ export class AddRecordManualScreen extends TestRecordScreen {
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Blood Test'
               onPress={() => this.props.navigation.navigate('AddBloodTestRecord', {
-                onRecordAdded: this.onRecordAdded.bind(this)})}
+                onRecordAdded: this.onRecordAdded.bind(this),
+                onRecordAddFailed: this.onRecordAddFailed.bind(this)
+              })}
             />
           </View>
           <View style={{ flex: 1, marginBottom: 20}}>
@@ -152,7 +164,9 @@ export class AddRecordManualScreen extends TestRecordScreen {
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Genetic Test'
               onPress={() => this.props.navigation.navigate('AddGeneticTestRecord', {
-                onRecordAdded: this.onRecordAdded.bind(this)})}
+                onRecordAdded: this.onRecordAdded.bind(this),
+                onRecordAddFailed: this.onRecordAddFailed.bind(this)
+              })}
             />
           </View>
         </ScrollView>

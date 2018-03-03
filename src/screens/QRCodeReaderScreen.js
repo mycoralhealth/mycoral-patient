@@ -42,7 +42,9 @@ export class QRCodeReaderScreen extends Component {
   }
 
   handleCancel = () => {
-    this.props.navigation.state.params.onCancel();
+    if (this.props.navigation.state.params.onCancel) { 
+      this.props.navigation.state.params.onCancel();
+    }
     this.props.navigation.dispatch(NavigationActions.back());
   }
 

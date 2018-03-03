@@ -5,10 +5,10 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui';
 import { TestRecordScreen } from './TestRecordScreen';
 
-import { BLOOD_TEST, recordTypes } from './common';
+import { BLOOD_TEST, recordTypes } from '../utilities/recordTypes';
 
 const backAction = NavigationActions.back();
 
@@ -36,10 +36,14 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
       {"key": "hsCRP", "value": this.state['hsCRP'], "type":"marker", "valueType":"magnitude"}
     ];
 
-    let record = await this.createRecord(JSON.stringify(results), BLOOD_TEST);
-
-    this.props.navigation.state.params.onRecordAdded(record);
-    this.props.navigation.dispatch(backAction);
+    try {
+      let record = await this.createRecord(JSON.stringify(results), BLOOD_TEST);
+      this.props.navigation.state.params.onRecordAdded(record);
+    } catch(e) {
+      this.props.navigation.state.params.onRecordAddFailed();
+    } finally {
+      this.props.navigation.dispatch(backAction);
+    }
   }
 
   render() {

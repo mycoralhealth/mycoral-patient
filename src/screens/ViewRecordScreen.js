@@ -6,7 +6,7 @@ import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 
 import { CoralHeader, CoralFooter, colors } from '../ui';
-import { PHOTO_RECORD_TEST } from './common';
+import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import MessageIndicator from './MessageIndicator';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
@@ -30,6 +30,16 @@ const RecordDetails = (props) => {
         <MessageIndicator message="Decrypting record..." />
       </View>
     ); 
+  }
+
+  if (props.record.downloadError) {
+    return (
+      <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
+        <Text style={{textAlign: 'center', color: colors.red}}>
+          Error downloading file from IPFS. Please check your internet connection.
+        </Text>
+      </View>
+    );
   }
 
   if (props.record.metadata.testType === PHOTO_RECORD_TEST) {
@@ -85,6 +95,7 @@ export class ViewRecordScreen extends Component {
       this.setState({ recordInitialized: true });
     } else if (record.hash && !record.error) {
       this.setState({ recordInitialized: true, decrypting: true });
+      record.downloadError = false;
       ipfs.cat(record.hash)
         .then((uri) => {
           cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv)
@@ -100,7 +111,11 @@ export class ViewRecordScreen extends Component {
                   FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
                 });
             });
-          });          
+          })
+        .catch((e) => {
+          record.downloadError = true;
+          this.setState({ decrypting: false });
+        });          
     }
   }
 

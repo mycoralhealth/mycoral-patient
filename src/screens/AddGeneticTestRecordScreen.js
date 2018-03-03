@@ -4,10 +4,10 @@ import { View } from 'react-native';
 import { Button, List, ListItem, Text, CheckBox } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui';
 import { TestRecordScreen } from './TestRecordScreen';
 
-import { GENETIC_TEST, recordTypes } from './common';
+import { GENETIC_TEST, recordTypes } from '../utilities/recordTypes';
 
 const backAction = NavigationActions.back();
 
@@ -31,10 +31,14 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
       {"key":"BRCA2", "value": (this.state.checked[1]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"}
     ];
 
-    let record = await this.createRecord(JSON.stringify(results), GENETIC_TEST);
-
-    this.props.navigation.state.params.onRecordAdded(record);
-    this.props.navigation.dispatch(backAction);
+    try {
+      let record = await this.createRecord(JSON.stringify(results), GENETIC_TEST);
+      this.props.navigation.state.params.onRecordAdded(record);
+    } catch (e) {
+      this.props.navigation.state.params.onRecordAddFailed();
+    } finally {
+      this.props.navigation.dispatch(backAction);
+    }
   }
 
   render() {

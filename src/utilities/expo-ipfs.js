@@ -6,8 +6,8 @@ const ROOT_API_URL='/api/v0/';
 const ADD_API='add';
 const CAT_API='cat';
 
-const ipfsRootURL = () => {
-  let ipfsConfig = getIPFSProvider();
+const ipfsRootURL = async () => {
+  let ipfsConfig = await getIPFSProvider();
   return `${ipfsConfig.protocol}://${ipfsConfig.address}:${ipfsConfig.port}${ROOT_API_URL}`;
 }
 
@@ -51,8 +51,8 @@ const add = async (data) => {
   return p;
 }
 
-function uploadFileAsync(uri) {
-  let apiUrl = `${ipfsRootURL()}${ADD_API}`;
+async function uploadFileAsync(uri) {
+  let apiUrl = `${await ipfsRootURL()}${ADD_API}`;
 
   let uriParts = uri.split('/');
   let name = uriParts[uriParts.length - 1];
@@ -75,9 +75,9 @@ const cat = async (hash) => {
   if (typeof hash !== 'string')
     return null;
 
-  let p = new Promise(function(resolve, reject) {
+  let p = new Promise(async function(resolve, reject) {
     FileSystem.downloadAsync(
-      `${ipfsRootURL()}${CAT_API}/${hash}`,
+      `${await ipfsRootURL()}${CAT_API}/${hash}`,
       `${FileSystem.documentDirectory}${tempRandomName()}`
     )
     .then(({ uri }) => {

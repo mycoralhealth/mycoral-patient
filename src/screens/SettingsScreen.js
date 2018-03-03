@@ -21,16 +21,16 @@ export class SettingsScreen extends Component {
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
               [
-                {"icon":"user", "title":"Profile"},
+                {"icon":"user-circle", "title":"Profile", color: colors.green },
+                {"icon":"user-secret", "title":"Account", "screen": "AccountInfo", color: colors.green},
                 {"icon":"paint-brush", "title":"Appearance"},
-                {"icon":"bell", "title":"Notifications"},
-                {"icon":"circle", "title":"Account", "screen": "AccountInfo" }
+                {"icon":"bell", "title":"Notifications"}
               ].map((item, i) => (
                 <ListItem
                   key={i}
                   title={item.title}
                   chevronColor={colors.red}
-                  leftIcon={{name:item.icon, type:'font-awesome', color: '#ddd'}}
+                  leftIcon={{name:item.icon, type:'font-awesome', color: item.color, style:{ width: 30, textAlign: 'center' }}}
                   onPress={() => this.menuAction(item)}
                 />
               ))

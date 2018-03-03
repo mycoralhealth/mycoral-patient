@@ -4,14 +4,25 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
-import { blockchainAddress } from './common.js';
+import { CoralHeader, CoralFooter, colors } from '../ui';
+import store from '../utilities/store';
 
 const backAction = NavigationActions.back();
 
 export class AddRecordScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { ethAddress:'' };
+  }
+
   onRecordAdded(record) {
     this.props.navigation.state.params.onRecordAdded(record);
+  }
+
+  async componentDidMount() {
+    let ethAddress = await store.getEthAddress();
+    this.setState({ ethAddress });
   }
 
   render() {
@@ -20,14 +31,18 @@ export class AddRecordScreen extends Component {
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
         <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
         <ScrollView>
-          <Text style={{padding: 20}}>
-            Show this QR code to your lab or doctor to allow them to add your medical record from their device.
+          <Text style={{padding: 20, color: (this.state.ethAddress) ? 'black' : colors.red}}>
+            {
+              (this.state.ethAddress) ?
+                'Show this QR code to your lab or doctor to allow them to add your medical record from their device.' :
+                'Please setup your blockchain ETH address in Settings > Account to get a QR code you can show to your lab or doctor, so they can add your medical record from their device.'
+            }
           </Text>
 
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 20}}>
             <QRCode
-              value={blockchainAddress}
-              size={300}
+              value={(this.state.ethAddress) ? this.state.ethAddress : ''}
+              size={(this.state.ethAddress) ? 300 : 0}
               bgColor='#333'
               fgColor={colors.bg}/>
           </View>

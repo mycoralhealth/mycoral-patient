@@ -4,8 +4,8 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
-import { blockchainAddress } from './common';
+import { CoralHeader, CoralFooter, colors } from '../ui';
+import store from '../utilities/store';
 
 export class DelegateAccessEntryScreen extends Component {
   constructor(props) {
@@ -37,7 +37,7 @@ export class DelegateAccessEntryScreen extends Component {
             <TextInput
               style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 10, paddingHorizontal: 10}}
               onChangeText={(text) => this.setState({address: text})}
-              placeholder={blockchainAddress}
+              placeholder='0x8A09990601E7FF5Cdcc...'
               returnKeyType='done'
               value={this.state.address}
             />

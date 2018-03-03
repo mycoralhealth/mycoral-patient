@@ -18,7 +18,11 @@ const RecordListItem = (props) => {
         title={ (record.error) ? 'Decryption Error' : record.metadata.name }
         rightTitle={ (record.error) ? null : moment(record.metadata.date).format('MMM Do, YYYY') }
         chevronColor={colors.red}
-        leftIcon={ (record.error) ? {name:'ios-key', type:'ionicon', color: '#f00' } : {name:'ios-document', type:'ionicon', color: '#ddd'}}
+        leftIcon={{ 
+          style: { width: 30, textAlign: 'center' }, 
+          name: (record.error) ? 'ios-key' : 'ios-document', 
+          type: 'ionicon', 
+          color: (record.error) ? colors.red : '#ddd' }}
         onPress={() => props.navigation.navigate('ViewRecord', {
           record,
           onRecordDeleted: props.onRecordDeleted
