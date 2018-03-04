@@ -138,6 +138,8 @@ export class AccountInfoScreen extends Component {
           <FormInput 
             value={this.state.ethAddress}
             placeholder='0x8A09990601E7FF5Cdcc...'
+            returnKeyType='done'
+            autoCapitalize='none'
             onChangeText={(text) => this.updateEthAddress(text)}/>
           <View style={{ flex: 1, marginBottom: 10}}>
             <Button
@@ -155,30 +157,40 @@ export class AccountInfoScreen extends Component {
           <FormInput 
             value={this.state.ipfsInfo.protocol}
             placeholder='http'
+            returnKeyType='done'
+            autoCapitalize='none'
             onChangeText={(text) => this.updateIpfsInfo('protocol', text)}/>
 
           <FormLabel>IPFS address</FormLabel>
           <FormInput 
             value={this.state.ipfsInfo.address}
             placeholder='localhost'
+            autoCapitalize='none'
+            returnKeyType='done'
             onChangeText={(text) => this.updateIpfsInfo('address', text)}/>
 
           <FormLabel>IPFS port</FormLabel>
           <FormInput 
-            value={this.state.ipfsInfo.address}
+            value={this.state.ipfsInfo.port}
             placeholder='50001'
+            autoCapitalize='none'
+            returnKeyType='done'
             onChangeText={(text) => this.updateIpfsInfo('port', text)}/>
 
           <FormLabel>IPFS user name</FormLabel>
           <FormInput 
             value={this.state.ipfsInfo.userName}
             placeholder='(optional)'
+            autoCapitalize='none'
+            returnKeyType='done'
             onChangeText={(text) => this.updateIpfsInfo('userName', text)}/>
 
           <FormLabel>IPFS password</FormLabel>
           <FormInput 
             value={this.state.ipfsInfo.password}
             placeholder='(optional)'
+            autoCapitalize='none'
+            returnKeyType='done'
             onChangeText={(text) => this.updateIpfsInfo('password', text)}/>
 
           <View style={{ height: 100 }}/>

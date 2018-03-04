@@ -75,6 +75,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
                   textInputPlaceholder={item.placeholder}
                   textInputValue={this.state[item.key]}
                   textInputOnChangeText={(title) => this.onChangeValue(item.key, title)}
+                  textInputKeyboardType='numeric'
                   textInputReturnKeyType={'done'}
                 />
               ))

@@ -21,7 +21,7 @@ export class SettingsScreen extends Component {
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
               [
-                {"icon":"user-circle", "title":"Profile", color: colors.green },
+                {"icon":"user-circle", "title":"Profile", "screen": "Profile", color: colors.green },
                 {"icon":"user-secret", "title":"Account", "screen": "AccountInfo", color: colors.green},
                 {"icon":"paint-brush", "title":"Appearance"},
                 {"icon":"bell", "title":"Notifications"}

@@ -25,18 +25,7 @@ import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { QRCodeScreen } from './src/screens/QRCodeScreen';
 import { AccountInfoScreen } from './src/screens/AccountInfoScreen';
-
-/*import ipfs from './src/utilities/expo-ipfs';
-import { FileSystem } from 'expo';
-
-ipfs.add('This is a test for IPFS').then((hash) => {
-  console.log(hash);
-  ipfs.cat(hash).then((uri) => {
-    console.log('Downloaded file uri', uri);
-    FileSystem.readAsStringAsync(uri).then((text) => console.log(text));
-  });
-});
-*/
+import { ProfileScreen } from './src/screens/ProfileScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
@@ -77,6 +66,7 @@ const SharedRecordsNavigator = StackNavigator({
 const SettingsNavigator = StackNavigator({
   Settings: { screen: SettingsScreen },
   AccountInfo: { screen: AccountInfoScreen },
+  Profile: { screen: ProfileScreen },
   QRCodeReader: { 
     screen: QRCodeReaderScreen,
     navigationOptions: ({ navigation }) => ({
