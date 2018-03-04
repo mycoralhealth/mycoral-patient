@@ -4,8 +4,10 @@ import { View } from 'react-native';
 import { Button, List, ListItem, Text, CheckBox } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors } from '../ui';
 import { TestRecordScreen } from './TestRecordScreen';
+
+import { GENETIC_TEST, recordTypes } from '../utilities/recordTypes';
 
 const backAction = NavigationActions.back();
 
@@ -23,27 +25,29 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
     this.setState(state);
   }
 
-  addRecord() {
+  async addRecord() {
     let results = [
       {"key":"BRCA1", "value": (this.state.checked[0]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"},
       {"key":"BRCA2", "value": (this.state.checked[1]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"}
     ];
 
-    let record = this.createRecord(this.props.navigation.state.params.recordsList, results, 'genetic test');
-
-    console.log(record);
-
-    this.props.navigation.state.params.onRecordAdded(record);
-    this.props.navigation.dispatch(backAction);
+    try {
+      let record = await this.createRecord(JSON.stringify(results), GENETIC_TEST);
+      this.props.navigation.state.params.onRecordAdded(record);
+    } catch (e) {
+      this.props.navigation.state.params.onRecordAddFailed();
+    } finally {
+      this.props.navigation.dispatch(backAction);
+    }
   }
 
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Genetic Test' subtitle='Enter your results below.'/>
+        <CoralHeader title={`Add ${recordTypes[GENETIC_TEST]}`} subtitle='Enter your results below.'/>
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-          Genetic Test
+          {recordTypes[GENETIC_TEST]}
         </Text>
         <Text style={{textAlign: 'center'}}>
           Date: {moment().format('MMMM Do, YYYY')}
@@ -76,7 +80,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Save'
-              onPress={() => this.addRecord()}
+              onPress={async () => this.addRecord()}
             />
           </View>
         </View>

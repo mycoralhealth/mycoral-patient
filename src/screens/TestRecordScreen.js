@@ -1,21 +1,57 @@
 import moment from 'moment'
+import FlakeIdGen from 'flakeid';
 import React, { Component } from 'react';
+import { FileSystem } from 'expo';
 
-import { recordTypes } from './common.js';
+import { recordTypes } from '../utilities/recordTypes';
+import store from '../utilities/store';
+import cryptoHelpers from '../utilities/crypto_helpers';
+import ipfs from '../utilities/expo-ipfs';
+
+const IdGenerator = new FlakeIdGen();
 
 export class TestRecordScreen extends Component {
 
-  createRecord(recordsList, results, selectedRecordType) {
+  async createRecordMetadata(selectedRecordType) {
     return {
-      "record_id": "NR" + recordsList.length,
-      "username":"123456",
-      "email":"andy@mycoralhealth.com",
-      "ethAddress":"0x8A09990601E7FF5CdccBEc6E9dd0684620a21a29",
-      "IPFSaddr":"QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6",
-      "testType":selectedRecordType,
-      "name": recordTypes[selectedRecordType],
-      "date": moment().format("YYYY-MM-DD"),
-      "results":results
+      username: await store.getUserName(),
+      email: await store.getEmail(),
+      ethAddress: await store.getEthAddress(),
+      testType: selectedRecordType,
+      name: recordTypes[selectedRecordType],
+      date: moment().format("YYYY-MM-DD")
     };
+  }
+
+  createEncryptedRecord(metadata, hash, encryptionInfo) {
+    return {
+      id: IdGenerator.gen(),
+      metadata,
+      hash,
+      encryptionInfo,
+      encrypted: true
+    }
+  }
+
+  async encryptAndUploadRecord(data, selectedRecordType) {
+    let metadata = await this.createRecordMetadata(selectedRecordType);
+
+    let encryptedInfo = await cryptoHelpers.encryptFile(data, metadata);
+
+    let hash = await ipfs.add(encryptedInfo.uri);
+
+    FileSystem.deleteAsync(encryptedInfo.uri, { idempotent: true });
+
+    return { hash, encryptedInfo };
+  }
+
+  async createRecord(data, recordType) {
+    let uploadResponse = await this.encryptAndUploadRecord(data, recordType);
+    let encryptedInfo = uploadResponse.encryptedInfo;
+    let hash = uploadResponse.hash;
+
+    let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, hash, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
+
+    return record;
   }
 }

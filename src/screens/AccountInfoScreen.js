@@ -1,25 +1,19 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Button, Avatar, Text } from 'react-native-elements';
+import { Button, Text, FormLabel, FormInput } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { CoralHeader, CoralFooter, colors } from '../ui.js';
-import { ActivityIndicator } from 'react-native';
 
 import { keysExist, generateKeyPair, invalidateKeyPair } from '../utilities/pki';
+import store from '../utilities/store';
 
-function MessageIndicator(props) {
-  return (
-    <View>
-      <Text style={{textAlign: 'center'}}>{props.message}</Text>
-      <ActivityIndicator size="large" color={colors.green} style={{marginTop: 10}}/>
-    </View>
-  );
-}
+import MessageIndicator from './MessageIndicator';
 
-function CheckingForKeys(props) {
+function Loading(props) {
   return (
-    <MessageIndicator message="Checking for keys" />
+    <MessageIndicator message="Loading info..." />
   );
 }
 
@@ -30,11 +24,11 @@ function KeyInfo(props) {
 
   if (props.keysPresent) {
     return (
-      <View style={{ flex: 1, marginBottom: 10}}>
+      <View style={{ flex: 1, marginBottom: 10, backgroundColor: 'white'}}>
         <Text style={{padding: 20, textAlign: 'center'}}>
           Coral Health keys generated and in use.
         </Text>
-        <View style={{ flex: 1, marginTop: 10}}>
+        <View style={{ flex: 1, marginTop: 10, marginBottom: 20}}>
           <Button
                 backgroundColor={colors.gray}
                 icon={{name: 'trash-o', type: 'font-awesome'}}
@@ -46,11 +40,11 @@ function KeyInfo(props) {
     );
   } else {
     return (
-      <View style={{ flex: 1, marginBottom: 10}}>
+      <View style={{ flex: 1, marginBottom: 10, backgroundColor: 'white'}}>
         <Text style={{padding: 20, textAlign: 'center'}}>
           Coral Health keys are not present. To use the app please generate your own personal keys.
         </Text>
-        <View style={{ flex: 1, marginTop: 10}}>
+        <View style={{ flex: 1, marginTop: 10, marginBottom: 20}}>
           <Button
                 backgroundColor={colors.green}
                 icon={{name: 'ios-key', type: 'ionicon'}}
@@ -63,30 +57,27 @@ function KeyInfo(props) {
   }
 }
 
-function Keys(props) {
-  if (props.checkedKeys) {
-    return (
-      <KeyInfo 
-        keysPresent={props.keysPresent}
-        opInProgress={props.opInProgress}
-        generateKeys={props.generateKeys}
-        revokeKeys={props.revokeKeys}
-        />
-    );
-  } else {
-    return <CheckingForKeys />;
-  }
-}
-
 export class AccountInfoScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      keysPresent : false,
-      checkedKeys: false,
-      opInProgress: null
-    };
+      loading: true
+    }
+  }
+
+  async componentDidMount() {
+    let ethAddress = await store.getEthAddress();
+    let ipfsInfo = await store.getIPFSProvider();
+    let keysPresent = keysExist();
+
+    this.setState({
+      keysPresent,
+      loading: false,
+      opInProgress: null,
+      ethAddress,
+      ipfsInfo
+    });
   }
 
   generateKeys() {
@@ -101,29 +92,112 @@ export class AccountInfoScreen extends Component {
       .then(() => this.setState({keysPresent:false, opInProgress: null}));
   }
 
+  updateEthAddress(ethAddress) {
+    this.setState({ethAddress});
+    store.setEthAddress(ethAddress);
+  }
+
+  updateIpfsInfo(field, text) {
+    let ipfsInfo = this.state.ipfsInfo;
+    ipfsInfo[field] = text;
+
+    this.setState({ipfsInfo});
+    store.setIPFSProvider(ipfsInfo);
+  }
+
+  onQRCodeETHScanned(type, data) {
+    this.updateEthAddress(data);
+  }
+
   render() {
+    if (this.state.loading) {
+      return (
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.bg }}>
+          <Loading />
+        </View>
+      );
+    }
+
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg }}>
-        <CoralHeader title='Your Account' subtitle='Security and blockchain settings'/>
+        <CoralHeader title='Your Account' subtitle='Security, IPFS and blockchain settings'/>
 
-        <ScrollView centerContent={true}>
+        <KeyboardAwareScrollView style={{ flex: 1 }}>
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Keys 
-              checkedKeys={this.state.checkedKeys}
+            <KeyInfo 
               keysPresent={this.state.keysPresent}
               generateKeys={this.generateKeys.bind(this)}
               revokeKeys={this.revokeKeys.bind(this)}
               opInProgress={this.state.opInProgress}
             />
           </View>
-        </ScrollView>
+          <Text h4 style={{textAlign: 'left', marginTop: 20, marginLeft: 20}}>
+            Blockchain info
+          </Text>
+          <FormLabel>Blockchain ETH address</FormLabel>
+          <FormInput 
+            value={this.state.ethAddress}
+            placeholder='0x8A09990601E7FF5Cdcc...'
+            returnKeyType='done'
+            autoCapitalize='none'
+            onChangeText={(text) => this.updateEthAddress(text)}/>
+          <View style={{ flex: 1, marginBottom: 10}}>
+            <Button
+              backgroundColor={colors.darkerGray}
+              icon={{name: 'qrcode', type: 'font-awesome'}}
+              title="Scan from QR Code"
+              onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeETHScanned.bind(this)})}
+            />
+          </View>
+
+          <Text h4 style={{textAlign: 'left', marginTop: 20, marginLeft: 20}}>
+            IPFS settings
+          </Text>
+          <FormLabel>IPFS protocol</FormLabel>
+          <FormInput 
+            value={this.state.ipfsInfo.protocol}
+            placeholder='http'
+            returnKeyType='done'
+            autoCapitalize='none'
+            onChangeText={(text) => this.updateIpfsInfo('protocol', text)}/>
+
+          <FormLabel>IPFS address</FormLabel>
+          <FormInput 
+            value={this.state.ipfsInfo.address}
+            placeholder='localhost'
+            autoCapitalize='none'
+            returnKeyType='done'
+            onChangeText={(text) => this.updateIpfsInfo('address', text)}/>
+
+          <FormLabel>IPFS port</FormLabel>
+          <FormInput 
+            value={this.state.ipfsInfo.port}
+            placeholder='50001'
+            autoCapitalize='none'
+            returnKeyType='done'
+            onChangeText={(text) => this.updateIpfsInfo('port', text)}/>
+
+          <FormLabel>IPFS user name</FormLabel>
+          <FormInput 
+            value={this.state.ipfsInfo.userName}
+            placeholder='(optional)'
+            autoCapitalize='none'
+            returnKeyType='done'
+            onChangeText={(text) => this.updateIpfsInfo('userName', text)}/>
+
+          <FormLabel>IPFS password</FormLabel>
+          <FormInput 
+            value={this.state.ipfsInfo.password}
+            placeholder='(optional)'
+            autoCapitalize='none'
+            returnKeyType='done'
+            onChangeText={(text) => this.updateIpfsInfo('password', text)}/>
+
+          <View style={{ height: 100 }}/>
+
+        </KeyboardAwareScrollView>
         <CoralFooter backAction={() => this.props.navigation.dispatch(NavigationActions.back())}/>
       </View>
     );
-  }
-
-  componentDidMount() {
-    keysExist()
-      .then((keysPresent) => this.setState({ keysPresent, checkedKeys: true }));
   }
 }

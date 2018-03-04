@@ -1,7 +1,7 @@
 import forge from 'node-forge';
 import { SecureStore } from 'expo';
+import { STORE_KEY } from './constants';
 
-const STORE_KEY = 'com.mycoralhealth.mycoral-patient';
 const PRIVATE_KEY_TAG = 'privateKey';
 const PUBLIC_KEY_TAG = 'publicKey';
 const KEYS_MARKER_TAG = 'keyPairMarker';
@@ -17,8 +17,6 @@ const testKeys = () => {
         .then((privateKeyPEM) => {
           const privateKey = forge.pki.privateKeyFromPem(privateKeyPEM);
           const decrypted = privateKey.decrypt(encrypted);
-
-          console.log('Decrypted text: ', decrypted);
         }).catch( (e) => { console.log( `Could not get private key in store (${e})` ) });
 
     }).catch( (e) => { console.log( `Could not get public key in store (${e})` ) });
@@ -46,7 +44,6 @@ export const generateKeyPair = () => {
           testKeys();        
         } else {
           makeKeys();
-          testKeys();
           resolve();
         }
       }).catch((e) => reject(`Error getting marker from store (${e})`));
@@ -58,7 +55,11 @@ export const generateKeyPair = () => {
 export const invalidateKeyPair = () => {
   let p = new Promise(function(resolve, reject) {
     SecureStore.deleteItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`)
-      .then(() => resolve())
+      .then(() => {
+        SecureStore.deleteItemAsync(`${STORE_KEY}.${PRIVATE_KEY_TAG}`)
+          .then(() => resolve())
+          .catch((e) => reject(`Error removing key from keystore (${e})`)); 
+      })
       .catch((e) => reject(`Error removing key from keystore (${e})`)); 
   });
 
@@ -76,7 +77,7 @@ export const keysExist = () => {
   return p;
 }
 
-export const encryptPKI = (data) => {
+export const encryptPKI = async (data) => {
   let p = new Promise(function(resolve, reject) {
     SecureStore.getItemAsync(`${STORE_KEY}.${PUBLIC_KEY_TAG}`)
       .then((publicKeyPEM) => {
@@ -89,7 +90,7 @@ export const encryptPKI = (data) => {
   return p;
 }
 
-export const decryptPKI = (data) => {
+export const decryptPKI = async (data) => {
   let p = new Promise(function(resolve, reject) {
     SecureStore.getItemAsync(`${STORE_KEY}.${PRIVATE_KEY_TAG}`)
       .then((privateKeyPEM) => {

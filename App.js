@@ -17,14 +17,15 @@ import { AddRecordManualScreen } from './src/screens/AddRecordManualScreen.js';
 import { QRCodeReaderScreen } from './src/screens/QRCodeReaderScreen.js';
 import { AddBloodTestRecordScreen } from './src/screens/AddBloodTestRecordScreen';
 import { AddGeneticTestRecordScreen } from './src/screens/AddGeneticTestRecordScreen';
-import { CameraScreen } from './src/screens/CameraScreen';
 import { DelegateAccessScreen } from './src/screens/DelegateAccessScreen';
 import { DelegateAccessEntryScreen } from './src/screens/DelegateAccessEntryScreen';
+import { ViewImageScreen } from './src/screens/ViewImageScreen';
 
 import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { QRCodeScreen } from './src/screens/QRCodeScreen';
 import { AccountInfoScreen } from './src/screens/AccountInfoScreen';
+import { ProfileScreen } from './src/screens/ProfileScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
@@ -37,10 +38,10 @@ const MyRecordsNavigator = StackNavigator({
   AddRecordManual: { screen: AddRecordManualScreen },
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
-  Camera: { 
-    screen: CameraScreen,
+  ViewImage: { 
+    screen: ViewImageScreen,
     navigationOptions: ({ navigation }) => ({
-      title: 'Camera',
+      title: 'Photo Record View',
       tabBarVisible: false
     })
   },
@@ -65,6 +66,14 @@ const SharedRecordsNavigator = StackNavigator({
 const SettingsNavigator = StackNavigator({
   Settings: { screen: SettingsScreen },
   AccountInfo: { screen: AccountInfoScreen },
+  Profile: { screen: ProfileScreen },
+  QRCodeReader: { 
+    screen: QRCodeReaderScreen,
+    navigationOptions: ({ navigation }) => ({
+      title: 'QR Code',
+      tabBarVisible: false
+    })
+  }
 },{
   headerMode: 'none'
 });

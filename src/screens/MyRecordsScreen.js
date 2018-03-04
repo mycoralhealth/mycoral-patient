@@ -1,32 +1,112 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { View, ScrollView } from 'react-native';
-import { Button, List, ListItem } from 'react-native-elements';
+import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { Button, List, ListItem, Text } from 'react-native-elements';
+import nextFrame from 'next-frame';
 
-import { CoralHeader, colors } from '../ui.js';
-import recordsList from '../data/results.json';
+import { CoralHeader, colors } from '../ui';
+import store from '../utilities/store';
+import MessageIndicator from './MessageIndicator';
+import cryptoHelpers from '../utilities/crypto_helpers';
+
+const RecordListItem = (props) => {
+  let record = props.record;
+
+  if (!record.encrypted) {
+    return (
+      <ListItem
+        title={ (record.error) ? 'Decryption Error' : record.metadata.name }
+        rightTitle={ (record.error) ? null : moment(record.metadata.date).format('MMM Do, YYYY') }
+        chevronColor={colors.red}
+        leftIcon={{ 
+          style: { width: 30, textAlign: 'center' }, 
+          name: (record.error) ? 'ios-key' : 'ios-document', 
+          type: 'ionicon', 
+          color: (record.error) ? colors.red : '#ddd' }}
+        onPress={() => props.navigation.navigate('ViewRecord', {
+          record,
+          onRecordDeleted: props.onRecordDeleted
+        })}
+      />
+    );
+  } else {
+    return (
+      <ListItem
+        avatar={<ActivityIndicator size="small" color={colors.gray} style={{marginRight: 10}} />} 
+        chevronColor='#fff'
+        title='Decrypting...'
+      />
+    );
+  }
+}
 
 export class MyRecordsScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { recordsList: [] };
+    this.state = { recordsList: [], loading: true };
   }
 
-  /* We could load the data straight in the constructor
-   * but this will set us on a way to eventually load from elsewhere.
-   */
   componentDidMount() {
-    this.setState({recordsList});
+    this.loadAndDecryptRecords();
+  }
+
+  async loadAndDecryptRecords() {
+    let recordsList = await store.records();
+    this.setState({recordsList, loading: false});
+    this.decryptRecords(recordsList);
+  }
+
+  async decryptRecords(recordsList) {
+    let that = this;
+
+    for (let record of recordsList) {
+      if (record.encrypted) {
+        await nextFrame();
+        await this.decryptRecord(record);
+        this.setState({ recordsList });
+      }      
+    }
+  }
+
+  async decryptRecord(record) {
+    try {
+      let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
+      record.metadata = decryptedResult.metadata;
+      record.encrypted = false;
+    } catch (e) {
+      record.encrypted = false;
+      record.error = true;
+    }
   }
 
   newRecord(record) {
-    let recordsList = this.state.recordsList;
-    recordsList.push(record);
-    this.setState({recordsList});
+    store.addRecord(record)
+      .then(async () => {
+        let newRecords = [...this.state.recordsList, record];
+        await nextFrame();
+        await decryptRecord(record);
+        this.setState({ recordsList: newRecords });
+      })
+      .catch((e) => console.log(`Error adding record to store (${e})`));
+  }
+
+  removeRecord(record) {
+    this.setState({ recordsList: this.state.recordsList.filter((r) => (record.id !== r.id)) });
+
+    store.removeRecord(record)
+      .catch((e) => console.log(`Error removing record from store (${e})`));
   }
 
   render() {
+    if (this.state.loading) {
+      return(
+        <ScrollView centerContent={true}>
+          <MessageIndicator message='Loading...' />
+        </ScrollView>
+      );
+    }
+
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
         <CoralHeader style={{ flex: 1}} title='My Medical Records' subtitle='View your records on the blockchain.'/>
@@ -35,13 +115,11 @@ export class MyRecordsScreen extends Component {
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
               this.state.recordsList.map((record) => (
-                <ListItem
-                  key={record.record_id}
-                  title={record.name}
-                  rightTitle={moment(record.date).format('MMM Do, YYYY')}
-                  chevronColor={colors.red}
-                  leftIcon={{name:'ios-document', type:'ionicon', color: '#ddd'}}
-                  onPress={() => this.props.navigation.navigate('ViewRecord', {record})}
+                <RecordListItem
+                  key={record.id}
+                  record={record}
+                  navigation={this.props.navigation}
+                  onRecordDeleted={this.removeRecord.bind(this)}
                 />
               ))
             }
@@ -51,7 +129,7 @@ export class MyRecordsScreen extends Component {
               backgroundColor={colors.red}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record' 
-              onPress={() => this.props.navigation.navigate('AddRecord', {recordsList: recordsList, onRecordAdded: this.newRecord.bind(this)})}
+              onPress={() => this.props.navigation.navigate('AddRecord', {onRecordAdded: this.newRecord.bind(this)})}
             />
           </View>
         </ScrollView>
