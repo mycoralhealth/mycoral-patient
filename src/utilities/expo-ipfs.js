@@ -53,6 +53,7 @@ const add = async (data) => {
 
 async function uploadFileAsync(uri) {
   let apiUrl = `${await ipfsRootURL()}${ADD_API}`;
+  let ipfsConfig = await getIPFSProvider();
 
   let uriParts = uri.split('/');
   let name = uriParts[uriParts.length - 1];
@@ -60,12 +61,18 @@ async function uploadFileAsync(uri) {
   let formData = new FormData();
   formData.append('file', { uri, name });
 
+  let headers = {
+    'Accept': 'application/json'
+  };
+
+  if (ipfsConfig.userName && ipfsConfig.password) {
+    headers['Authorization'] = `Basic ${forge.util.encode64(ipfsConfig.userName + ':' + ipfsConfig.password)}`;
+  }
+
   let options = {
     method: 'POST',
     body: formData,
-    headers: {
-      'Accept': 'application/json',
-    },
+    headers
   };
 
   return fetch(apiUrl, options);
@@ -75,15 +82,30 @@ const cat = async (hash) => {
   if (typeof hash !== 'string')
     return null;
 
+  let ipfsConfig = await getIPFSProvider();
+
+  let options = {};
+
+  if (ipfsConfig.userName && ipfsConfig.password) {
+    options = {
+      'headers' : {
+        'Authorization' : `Basic ${forge.util.encode64(ipfsConfig.userName + ':' + ipfsConfig.password)}`
+      }
+    }
+  }
+
   let p = new Promise(async function(resolve, reject) {
-    FileSystem.downloadAsync(
+    const downloadResumable = FileSystem.createDownloadResumable(
       `${await ipfsRootURL()}${CAT_API}/${hash}`,
-      `${FileSystem.documentDirectory}${tempRandomName()}`
-    )
-    .then(({ uri }) => {
-      resolve(uri);
-    })
-    .catch((e) => reject(`Error downloading file from IPFS (${e})`));
+      `${FileSystem.documentDirectory}${tempRandomName()}`,
+      options
+    );
+
+    downloadResumable.downloadAsync()
+      .then(({ uri }) => {
+        resolve(uri)
+      })
+      .catch((e) => reject(`Error downloading file from IPFS (${e})`));
   });
 
   return p;

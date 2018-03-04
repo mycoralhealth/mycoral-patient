@@ -140,6 +140,7 @@ export class AccountInfoScreen extends Component {
             placeholder='0x8A09990601E7FF5Cdcc...'
             returnKeyType='done'
             autoCapitalize='none'
+            autoCorrect={false}
             onChangeText={(text) => this.updateEthAddress(text)}/>
           <View style={{ flex: 1, marginBottom: 10}}>
             <Button
@@ -159,6 +160,7 @@ export class AccountInfoScreen extends Component {
             placeholder='http'
             returnKeyType='done'
             autoCapitalize='none'
+            autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('protocol', text)}/>
 
           <FormLabel>IPFS address</FormLabel>
@@ -167,6 +169,7 @@ export class AccountInfoScreen extends Component {
             placeholder='localhost'
             autoCapitalize='none'
             returnKeyType='done'
+            autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('address', text)}/>
 
           <FormLabel>IPFS port</FormLabel>
@@ -175,6 +178,8 @@ export class AccountInfoScreen extends Component {
             placeholder='50001'
             autoCapitalize='none'
             returnKeyType='done'
+            keyboardType='numeric'
+            autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('port', text)}/>
 
           <FormLabel>IPFS user name</FormLabel>
@@ -183,6 +188,7 @@ export class AccountInfoScreen extends Component {
             placeholder='(optional)'
             autoCapitalize='none'
             returnKeyType='done'
+            autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('userName', text)}/>
 
           <FormLabel>IPFS password</FormLabel>
@@ -191,6 +197,8 @@ export class AccountInfoScreen extends Component {
             placeholder='(optional)'
             autoCapitalize='none'
             returnKeyType='done'
+            secureTextEntry={true}
+            autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('password', text)}/>
 
           <View style={{ height: 100 }}/>
