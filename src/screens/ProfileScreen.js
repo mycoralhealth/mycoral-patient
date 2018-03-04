@@ -69,6 +69,7 @@ export class ProfileScreen extends Component {
             keyboardType='email-address'
             returnKeyType='done'
             autoCapitalize='none'
+            autoCorrect={false}
             placeholder='someone@example.com'
             onChangeText={(text) => this.updateEmail(text)}/>
           <FormLabel>User name</FormLabel>
@@ -76,6 +77,7 @@ export class ProfileScreen extends Component {
             value={this.state.userName}
             placeholder='someone'
             autoCapitalize='none'
+            autoCorrect={false}
             returnKeyType='done'
             onChangeText={(text) => this.updateUserName(text)}/>
           <View style={{ height: 100 }}/>
