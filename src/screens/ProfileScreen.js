@@ -70,6 +70,7 @@ export class ProfileScreen extends Component {
             returnKeyType='done'
             autoCapitalize='none'
             autoCorrect={false}
+            inputStyle={{color:'black'}}
             placeholder='someone@example.com'
             onChangeText={(text) => this.updateEmail(text)}/>
           <FormLabel>User name</FormLabel>
@@ -78,6 +79,7 @@ export class ProfileScreen extends Component {
             placeholder='someone'
             autoCapitalize='none'
             autoCorrect={false}
+            inputStyle={{color:'black'}}
             returnKeyType='done'
             onChangeText={(text) => this.updateUserName(text)}/>
           <View style={{ height: 100 }}/>

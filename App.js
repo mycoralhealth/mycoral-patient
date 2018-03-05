@@ -78,16 +78,15 @@ const SettingsNavigator = StackNavigator({
   headerMode: 'none'
 });
 
-
-const resetStack = (scene, jumpToIndex, navigation) => {
-  const { route, focused, index } = scene;
-  if (!focused && (route.index > 0)) {
-    const { routeName, key } = route.routes[1]
-    navigation.dispatch(NavigationActions.back({ key }))
-  } else {
-    jumpToIndex(index);
+function resetStack(navigation, routes) {
+  if (routes.length > 1) {
+    const { routeName } = routes[0];
+    navigation.dispatch(NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName })],
+    }));
   }
-};
+}
 
 const App = TabNavigator({
   MyRecords: {
@@ -101,7 +100,10 @@ const App = TabNavigator({
           style={{ color: tintColor }}
         />
       ),
-      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
+      tabBarOnPress: ({ previousScene, scene, jumpToIndex }) => {
+        resetStack(navigation, previousScene.routes);
+        jumpToIndex(scene.index);
+      }
     }),
   },
   Friends: {
@@ -115,7 +117,10 @@ const App = TabNavigator({
           style={{ color: tintColor }}
         />
       ),
-      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
+      tabBarOnPress: ({ previousScene, scene, jumpToIndex }) => {
+        resetStack(navigation, previousScene.routes);
+        jumpToIndex(scene.index);
+      }
     }),
   },
   Settings: {
@@ -129,7 +134,10 @@ const App = TabNavigator({
           style={{ color: tintColor }}
         />
       ),
-      tabBarOnPress: ({ scene, jumpToIndex }) => resetStack(scene, jumpToIndex, navigation)
+      tabBarOnPress: ({ previousScene, scene, jumpToIndex }) => {
+        resetStack(navigation, previousScene.routes);
+        jumpToIndex(scene.index);
+      }
     }),
   }, 
 },
