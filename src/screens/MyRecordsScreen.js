@@ -85,7 +85,7 @@ export class MyRecordsScreen extends Component {
       .then(async () => {
         let newRecords = [...this.state.recordsList, record];
         await nextFrame();
-        await decryptRecord(record);
+        await this.decryptRecord(record);
         this.setState({ recordsList: newRecords });
       })
       .catch((e) => console.log(`Error adding record to store (${e})`));
