@@ -9,11 +9,44 @@ import store from '../utilities/store';
 
 const backAction = NavigationActions.back();
 
+function QRCodeView(props) {
+  if (!props.loaded) {
+    return (
+      <View style={{height: 20}}/>
+    );
+  }
+
+  if (props.ethAddress) {
+    return (
+      <View style={{flex: 1}}>
+        <Text style={{padding: 20, color: 'black'}}>
+          Show this QR code to your lab or doctor to allow them to add your medical record from their device.
+        </Text>
+
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 20}}>
+          <QRCode
+            value={props.ethAddress}
+            size={300}
+            bgColor='#333'
+            fgColor={colors.bg}/>
+        </View>
+      </View>
+    );
+  } else {
+    return (
+      <Text style={{padding: 20, color: colors.red}}>
+        Please setup your blockchain ETH address in Settings > Account to get a QR code you can show to your lab or doctor, so they can add your medical record from their device.
+      </Text>
+    );
+  }
+
+}
+
 export class AddRecordScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { ethAddress:'' };
+    this.state = { ethAddress:'', loaded: false };
   }
 
   onRecordAdded(record) {
@@ -22,7 +55,7 @@ export class AddRecordScreen extends Component {
 
   async componentDidMount() {
     let ethAddress = await store.getEthAddress();
-    this.setState({ ethAddress });
+    this.setState({ ethAddress, loaded: true });
   }
 
   render() {
@@ -31,21 +64,10 @@ export class AddRecordScreen extends Component {
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
         <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
         <ScrollView>
-          <Text style={{padding: 20, color: (this.state.ethAddress) ? 'black' : colors.red}}>
-            {
-              (this.state.ethAddress) ?
-                'Show this QR code to your lab or doctor to allow them to add your medical record from their device.' :
-                'Please setup your blockchain ETH address in Settings > Account to get a QR code you can show to your lab or doctor, so they can add your medical record from their device.'
-            }
-          </Text>
-
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 20}}>
-            <QRCode
-              value={(this.state.ethAddress) ? this.state.ethAddress : ''}
-              size={(this.state.ethAddress) ? 300 : 0}
-              bgColor='#333'
-              fgColor={colors.bg}/>
-          </View>
+          <QRCodeView
+            ethAddress={this.state.ethAddress}
+            loaded={this.state.loaded}
+          />
 
           <View style={{ flex: 1, marginBottom: 10}}>
             <Button

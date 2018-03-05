@@ -59,7 +59,7 @@ async function uploadFileAsync(uri) {
   let name = uriParts[uriParts.length - 1];
 
   let formData = new FormData();
-  formData.append('file', { uri, name });
+  formData.append('file', { uri, name, type: 'text/plain' });
 
   let headers = {
     'Accept': 'application/json'
@@ -74,6 +74,9 @@ async function uploadFileAsync(uri) {
     body: formData,
     headers
   };
+
+  console.log({apiUrl});
+  console.log({options});
 
   return fetch(apiUrl, options);
 }
