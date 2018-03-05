@@ -130,7 +130,7 @@ export class ViewRecordScreen extends Component {
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
             {(record.error) ? 'Decryption error' : record.metadata.name }
           </Text>
-          <Text style={{textAlign: 'center'}}>
+          <Text style={{textAlign: 'center', marginTop: 5}}>
             {(record.error) ? 'Encryption keys missing or corrupted' : `Date: ${moment(record.metadata.date).format('MMMM Do, YYYY')}`}
           </Text>
 

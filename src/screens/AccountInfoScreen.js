@@ -141,8 +141,9 @@ export class AccountInfoScreen extends Component {
             returnKeyType='done'
             autoCapitalize='none'
             autoCorrect={false}
+            inputStyle={{color:'black'}}
             onChangeText={(text) => this.updateEthAddress(text)}/>
-          <View style={{ flex: 1, marginBottom: 10}}>
+          <View style={{ flex: 1, marginBottom: 10, marginTop: 5}}>
             <Button
               backgroundColor={colors.darkerGray}
               icon={{name: 'qrcode', type: 'font-awesome'}}
@@ -160,6 +161,7 @@ export class AccountInfoScreen extends Component {
             placeholder='http'
             returnKeyType='done'
             autoCapitalize='none'
+            inputStyle={{color:'black'}}
             autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('protocol', text)}/>
 
@@ -169,6 +171,7 @@ export class AccountInfoScreen extends Component {
             placeholder='localhost'
             autoCapitalize='none'
             returnKeyType='done'
+            inputStyle={{color:'black'}}
             autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('address', text)}/>
 
@@ -179,6 +182,7 @@ export class AccountInfoScreen extends Component {
             autoCapitalize='none'
             returnKeyType='done'
             keyboardType='numeric'
+            inputStyle={{color:'black'}}
             autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('port', text)}/>
 
@@ -188,6 +192,7 @@ export class AccountInfoScreen extends Component {
             placeholder='(optional)'
             autoCapitalize='none'
             returnKeyType='done'
+            inputStyle={{color:'black'}}
             autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('userName', text)}/>
 
@@ -198,6 +203,7 @@ export class AccountInfoScreen extends Component {
             autoCapitalize='none'
             returnKeyType='done'
             secureTextEntry={true}
+            inputStyle={{color:'black'}}
             autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('password', text)}/>
 
