@@ -69,7 +69,7 @@ export class AccountInfoScreen extends Component {
   async componentDidMount() {
     let ethAddress = await store.getEthAddress();
     let ipfsInfo = await store.getIPFSProvider();
-    let keysPresent = keysExist();
+    let keysPresent = await keysExist();
 
     this.setState({
       keysPresent,
