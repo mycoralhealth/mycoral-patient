@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Modal, TouchableOpacity, Platform } from 'react-native';
 import { Button, Text, Icon } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
@@ -32,7 +32,8 @@ export class AddRecordManualScreen extends TestRecordScreen {
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       base64: true,
-      aspect: [4, 3],
+      aspect: [3, 4],
+      quality: 0.2
     });
 
     this.handleImagePicked(pickerResult);
@@ -42,7 +43,8 @@ export class AddRecordManualScreen extends TestRecordScreen {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       base64: true,
-      aspect: [4, 3],
+      aspect: [3, 4],
+      quality: 0.2
     });
 
     this.handleImagePicked(pickerResult);
