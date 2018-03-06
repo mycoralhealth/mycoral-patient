@@ -75,9 +75,6 @@ async function uploadFileAsync(uri) {
     headers
   };
 
-  console.log({apiUrl});
-  console.log({options});
-
   return fetch(apiUrl, options);
 }
 
