@@ -35,6 +35,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
       let record = await this.createRecord(JSON.stringify(results), GENETIC_TEST);
       this.props.navigation.state.params.onRecordAdded(record);
     } catch (e) {
+      console.log({e});
       this.props.navigation.state.params.onRecordAddFailed();
     } finally {
       this.props.navigation.dispatch(backAction);

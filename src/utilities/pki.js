@@ -6,26 +6,10 @@ const PRIVATE_KEY_TAG = 'privateKey';
 const PUBLIC_KEY_TAG = 'publicKey';
 const KEYS_MARKER_TAG = 'keyPairMarker';
 
-const testKeys = () => {
-  SecureStore.getItemAsync(`${STORE_KEY}.${PUBLIC_KEY_TAG}`)
-    .then((publicKeyPEM) => {
-      const publicKey = forge.pki.publicKeyFromPem(publicKeyPEM);
-      const encrypted = publicKey.encrypt('This is a test');
-      console.log('Encrypted text: ', encrypted);
-
-      SecureStore.getItemAsync(`${STORE_KEY}.${PRIVATE_KEY_TAG}`)
-        .then((privateKeyPEM) => {
-          const privateKey = forge.pki.privateKeyFromPem(privateKeyPEM);
-          const decrypted = privateKey.decrypt(encrypted);
-        }).catch( (e) => { console.log( `Could not get private key in store (${e})` ) });
-
-    }).catch( (e) => { console.log( `Could not get public key in store (${e})` ) });
-}
-
 const makeKeys = () => {
   forge.pki.rsa.generateKeyPair({bits: 2048, workers: -1}, function(err, keypair) {
-    console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
-    console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
+    //console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
+    //console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
     
     SecureStore.setItemAsync(`${STORE_KEY}.${PUBLIC_KEY_TAG}`, forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72))
       .then( () => { 
@@ -33,19 +17,18 @@ const makeKeys = () => {
           .then( () => { 
               SecureStore.setItemAsync(`${STORE_KEY}.${KEYS_MARKER_TAG}`, 'true');
           })
-        });
+        })
+      .catch((e) => { console.log( `Could not store keys in store (${e})` ) });
     });
 }
 
 export const generateKeyPair = () => {
   let p = new Promise(function(resolve, reject) {
     keysExist().then((result) => {
-        if (result) {
-          testKeys();        
-        } else {
+        if (!result) {
           makeKeys();
-          resolve();
         }
+        resolve();
       }).catch((e) => reject(`Error getting marker from store (${e})`));
   });
 
