@@ -92,6 +92,9 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
               />
             </View>
           </View>
+
+          <View style={{ height: 200 }}/>
+          
         </KeyboardAwareScrollView>
         <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
       </View>

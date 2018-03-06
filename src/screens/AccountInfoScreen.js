@@ -207,7 +207,7 @@ export class AccountInfoScreen extends Component {
             autoCorrect={false}
             onChangeText={(text) => this.updateIpfsInfo('password', text)}/>
 
-          <View style={{ height: 100 }}/>
+          <View style={{ height: 300 }}/>
 
         </KeyboardAwareScrollView>
         <CoralFooter backAction={() => this.props.navigation.dispatch(NavigationActions.back())}/>

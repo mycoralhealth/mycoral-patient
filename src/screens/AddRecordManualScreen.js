@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Modal, TouchableHighlight } from 'react-native';
+import { View, ScrollView, Modal, TouchableOpacity, Platform } from 'react-native';
 import { Button, Text, Icon } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
@@ -32,7 +32,8 @@ export class AddRecordManualScreen extends TestRecordScreen {
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       base64: true,
-      aspect: [4, 3],
+      aspect: [3, 4],
+      quality: 0.2
     });
 
     this.handleImagePicked(pickerResult);
@@ -42,7 +43,8 @@ export class AddRecordManualScreen extends TestRecordScreen {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       base64: true,
-      aspect: [4, 3],
+      aspect: [3, 4],
+      quality: 0.2
     });
 
     this.handleImagePicked(pickerResult);
@@ -61,7 +63,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
       }
     } catch (e) {
       console.log({ e });
-      onRecordAddFailed();
+      this.onRecordAddFailed();
     } finally {
       this.setState({ uploadingImage: false });      
     }
@@ -83,9 +85,9 @@ export class AddRecordManualScreen extends TestRecordScreen {
 
     if (this.state.uploadingImage) {
       return (
-        <ScrollView centerContent={true}>
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.bg }}>
           <MessageIndicator message='Encrypting and uploading your photo record' />
-        </ScrollView>
+        </View>
       );
     }
 
@@ -104,25 +106,27 @@ export class AddRecordManualScreen extends TestRecordScreen {
                 <Text h3 style={{textAlign: 'center', marginTop: 20}}>
                   { (this.state.uploadError) ? 'Error uploading to IPFS' : 'New Record Added' }
                 </Text>
-                <View style={{ flex: 1, marginTop: 60, marginBottom: 20, alignSelf: 'center'}}>
-                  <Icon 
-                    name={(this.state.uploadError) ? 'wrench' : 'ios-medkit'} 
-                    type={(this.state.uploadError) ? 'font-awesome' : 'ionicon'} 
-                    size={100} 
-                    color={(this.state.uploadError) ? colors.red : colors.green} 
-                    style={{textAlign: 'center'}} />
+                <View style={{ flex: 1, marginTop: 10, marginBottom: 70, alignSelf: 'center'}}>
+                  <TouchableOpacity
+                    style={{alignItems: 'center', width: 100, height: 100 }}>
+                    <Icon 
+                      name={(this.state.uploadError) ? 'wrench' : 'ios-medkit'} 
+                      type={(this.state.uploadError) ? 'font-awesome' : 'ionicon'} 
+                      size={100} 
+                      color={(this.state.uploadError) ? colors.red : colors.green} 
+                      style={{textAlign: 'center'}} />
+                   </TouchableOpacity>
                 </View>
                 <Text style={{textAlign: 'center', marginTop: 30, padding: 20}}>
                   { (this.state.uploadError) ? 'Please verify that you have internet connection and Coral Health encryption keys.' : 'You can add more medical records or go back to the records list.' }
                 </Text>
 
                 <View style={{ flex: 1, marginTop: 20, width: 120, height: 40, alignSelf: 'center'}}>
-                  <Button
-                    backgroundColor={colors.lighterGray}
-                    title='Close'
-                    style={{height:30}}
-                    onPress={this.hideModal.bind(this)}
-                  />
+                  <TouchableOpacity
+                     style={{alignItems: 'center', backgroundColor: '#DDDDDD', padding: 5, width: 120, height: 30}}
+                     onPress={this.hideModal.bind(this)}>
+                     <Text> Close </Text>
+                   </TouchableOpacity>
                 </View>
               </View>
             </View>

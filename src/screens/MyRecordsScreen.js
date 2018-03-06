@@ -85,7 +85,8 @@ export class MyRecordsScreen extends Component {
       .then(async () => {
         let newRecords = [...this.state.recordsList, record];
         await nextFrame();
-        await this.decryptRecord(record);
+        // Not needed, the screen refreshes anyway. We may need to investigate this in the future.
+        //await this.decryptRecord(record);
         this.setState({ recordsList: newRecords });
       })
       .catch((e) => console.log(`Error adding record to store (${e})`));
