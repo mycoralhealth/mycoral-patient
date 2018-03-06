@@ -15,16 +15,34 @@ function toQueryString(params) {
 
 export class LoginScreen extends Component {
   state = {
-    name: undefined,
-  };
+    name: undefined
+  }
+
+  constructor(props) {
+    super(props);
+
+    if (this.state.name === undefined) {
+      console.log("No name, doing login");
+      this._loginWithAuth0();
+    } else {
+      console.log("already logged in");
+      this.continueToApp();
+    }
+
+  }
+
+  continueToApp() {
+    this.props.navigation.navigate('MainTabs');
+  }
 
   _logout = async() => {
+    // FIXME: This should logout from Auth0 too
     this.setState({ "name": undefined });
   }
 
   _loginWithAuth0 = async () => {
     const redirectUrl = AuthSession.getRedirectUrl();
-    console.log(`Redirect URL (add this to Auth0): ${redirectUrl}`);
+    console.log(`Redirect URL: ${redirectUrl}`);
     const result = await AuthSession.startAsync({
       authUrl: `${auth0Domain}/authorize` + toQueryString({
         client_id: auth0ClientId,
@@ -35,37 +53,21 @@ export class LoginScreen extends Component {
     });
 
     console.log(result);
+
     if (result.type === 'success') {
-      this.handleParams(result.params);
+      if (result.params.error) {
+        Alert.alert('Error', result.params.error_description
+          || 'something went wrong while logging in');
+        return;
+      }
+
+      this.getUserInfo(result.params);
     }
   }
 
-  handleParams = (responseObj) => {
-    if (responseObj.error) {
-      Alert.alert('Error', responseObj.error_description
-        || 'something went wrong while logging in');
-      return;
-    }
+  // Get user metadata via corald
+  getUserInfo = (responseObj) => {
 
-    /*
-    // Get user metadata directly from Auth0
-    fetch(`${auth0Domain}/userinfo?access_token=${responseObj.access_token}`)
-      .then(response => {
-        if (response.status === 200) {
-          response.json().then(parsedResponse => {
-            console.log(parsedResponse);
-            const { name, email, picture } = parsedResponse
-
-            this.setState({ name });
-          })
-        }
-        else {
-          console.log('Something went wrong. ErrorCode: ', response.status);
-        }
-      })
-     */
-
-    // Get user metadata via our server
     fetch(`${coraldServer}/session`, {"headers": {"X-MyCoral-AccessToken": responseObj.access_token}})
       .then(response => {
         if (response.status === 200) {
@@ -74,10 +76,11 @@ export class LoginScreen extends Component {
             const { name, picture } = parsedResponse
 
             this.setState({ name });
+            this.continueToApp();
           })
         }
         else {
-          console.log('Something went wrong. ErrorCode: ', response.status);
+          Alert.alert('Corald Error' + response.status, response.body || 'Connection failed');
         }
       })
   }
@@ -85,20 +88,9 @@ export class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.name !== undefined ?
-          <View>
-            <Text style={styles.title}>Hi {this.state.name}!</Text>
-            <Button
-              title='Continue'
-              onPress={() => this.props.navigation.navigate('MainTabs')}
-              style={styles.continue}
-            />
-            <Button title="Logout" onPress={this._logout} />
-          </View> :
-          <View>
-            <Button title="Login with Auth0" onPress={this._loginWithAuth0} />
-          </View>
-        }
+        <View>
+          <Button title="Login with Auth0" onPress={this._loginWithAuth0} />
+        </View>
       </View>
     );
   }
@@ -110,13 +102,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    textAlign: 'center',
-    marginTop: 40,
-  },
-  continue: {
-    marginBottom: 20
   }
 });
