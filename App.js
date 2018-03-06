@@ -8,6 +8,7 @@ import { Constants } from 'expo';
 
 import { CoralHeader, colors } from './src/ui.js';
 
+import { LoginScreen } from './src/screens/LoginScreen.js';
 import { MyRecordsScreen } from './src/screens/MyRecordsScreen.js';
 import { ViewRecordScreen } from './src/screens/ViewRecordScreen.js';
 import { RequestHealthTipScreen } from './src/screens/RequestHealthTipScreen.js';
@@ -38,14 +39,14 @@ const MyRecordsNavigator = StackNavigator({
   AddRecordManual: { screen: AddRecordManualScreen },
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
-  ViewImage: { 
+  ViewImage: {
     screen: ViewImageScreen,
     navigationOptions: ({ navigation }) => ({
       title: 'Photo Record View',
       tabBarVisible: false
     })
   },
-  QRCodeReader: { 
+  QRCodeReader: {
     screen: QRCodeReaderScreen,
     navigationOptions: ({ navigation }) => ({
       title: 'QR Code',
@@ -67,7 +68,7 @@ const SettingsNavigator = StackNavigator({
   Settings: { screen: SettingsScreen },
   AccountInfo: { screen: AccountInfoScreen },
   Profile: { screen: ProfileScreen },
-  QRCodeReader: { 
+  QRCodeReader: {
     screen: QRCodeReaderScreen,
     navigationOptions: ({ navigation }) => ({
       title: 'QR Code',
@@ -88,7 +89,7 @@ function resetStack(navigation, routes) {
   }
 }
 
-const App = TabNavigator({
+const MainTabs = TabNavigator({
   MyRecords: {
     screen: MyRecordsNavigator,
     navigationOptions: ({ navigation }) => ( {
@@ -139,7 +140,7 @@ const App = TabNavigator({
         jumpToIndex(scene.index);
       }
     }),
-  }, 
+  },
 },
 {
   tabBarOptions:{
@@ -147,6 +148,13 @@ const App = TabNavigator({
   }
 }
 );
+
+const App = StackNavigator({
+  Login: { screen: LoginScreen },
+  MainTabs: { screen: MainTabs }
+},{
+  headerMode: 'none'
+});
 
 export default App;
 
