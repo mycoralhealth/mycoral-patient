@@ -44,6 +44,8 @@ export class LoginScreen extends Component {
   }
 
   _loginWithAuth0 = async () => {
+    this.setState({needsLogin: false});
+    
     const redirectUrl = AuthSession.getRedirectUrl();
     console.log(`Redirect URL: ${redirectUrl}`);
     const result = await AuthSession.startAsync({
@@ -65,6 +67,8 @@ export class LoginScreen extends Component {
       }
 
       this.getUserInfo(result.params);
+    } else {
+      this.setState({needsLogin: true});
     }
   }
 
@@ -93,9 +97,19 @@ export class LoginScreen extends Component {
   }
 
   render() {
+    if (!this.state.needsLogin) {
+      return (
+        <View style={styles.container}>
+          <MessageIndicator message='Logging in...' />
+        </View>
+      );
+    }
+
     return (
       <View style={styles.container}>
-        <MessageIndicator message='Logging in...' />
+        <View>
+          <Button title="Login with Auth0" onPress={this._loginWithAuth0} />
+        </View>
       </View>
     );
   }
