@@ -39,6 +39,8 @@ const getPerUserStoreKey = async () => {
 
   let sanitizedName = emailAddress.replace(/\W/g, '_');
 
+  console.log({sanitizedName});
+
   return `${STORE_KEY}.${sanitizedName}`;
 }
 

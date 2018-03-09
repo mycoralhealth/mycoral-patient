@@ -23,24 +23,24 @@ export class LoginScreen extends Component {
 
   constructor(props) {
     super(props);
+  }
 
-    if (this.state.name === undefined) {
+  async componentDidMount() {
+    let userInfo = await store.getUserInfo();
+
+    this.setState({userInfo});
+
+    if (!this.state.userInfo) {
       console.log("No name, doing login");
       this._loginWithAuth0();
     } else {
       console.log("already logged in");
       this.continueToApp();
     }
-
   }
 
   continueToApp() {
     this.props.navigation.navigate('MainTabs');
-  }
-
-  _logout = async() => {
-    // FIXME: This should logout from Auth0 too
-    this.setState({ "name": undefined });
   }
 
   _loginWithAuth0 = async () => {
@@ -81,9 +81,7 @@ export class LoginScreen extends Component {
 
             await store.setUserInfo(userInfo);
 
-            const { name, picture } = userInfo;
-
-            this.setState({ name });
+            this.setState({ userInfo });
 
             this.continueToApp();
           })

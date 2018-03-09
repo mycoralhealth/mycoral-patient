@@ -46,7 +46,6 @@ export class MyRecordsScreen extends Component {
   constructor(props) {
     super(props);
 
-    console.log({cachedRecords});
     this.state = { recordsList: cachedRecords, loading: true };
   }
 
