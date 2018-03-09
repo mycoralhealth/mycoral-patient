@@ -107,7 +107,7 @@ export class MyRecordsScreen extends Component {
     if (this.state.loading) {
       return(
         <ScrollView centerContent={true}>
-          <MessageIndicator message='Loading...' />
+          <MessageIndicator message='Loading data...' />
         </ScrollView>
       );
     }

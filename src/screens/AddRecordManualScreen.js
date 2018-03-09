@@ -29,14 +29,16 @@ export class AddRecordManualScreen extends TestRecordScreen {
   }
 
   takePhoto = async () => {
-    let pickerResult = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      base64: true,
-      aspect: [3, 4],
-      quality: 0.2
-    });
-
-    this.handleImagePicked(pickerResult);
+    try {
+      let pickerResult = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        base64: true,
+        aspect: [3, 4],
+        quality: 0.2
+      });
+      this.handleImagePicked(pickerResult);
+    } catch (e) {
+    }
   }
 
   pickImage = async () => {

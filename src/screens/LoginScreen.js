@@ -3,6 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { AuthSession } from 'expo';
 
+import store from '../utilities/store';
+import MessageIndicator from './MessageIndicator';
+
 const auth0ClientId = 'u79wUql80IzN7AuLDqv3NIeC8XmtMEuq';
 const auth0Domain = 'https://mycoralhealth.auth0.com';
 const coraldServer = 'https://api.mycoralhealth.com/v0';
@@ -71,11 +74,17 @@ export class LoginScreen extends Component {
     fetch(`${coraldServer}/session`, {"headers": {"X-MyCoral-AccessToken": responseObj.access_token}})
       .then(response => {
         if (response.status === 200) {
-          response.json().then(parsedResponse => {
-            console.log(parsedResponse);
-            const { name, picture } = parsedResponse
+          response.json().then(async (userInfo) => {
+            console.log(userInfo);
+            
+            userInfo.accessToken = responseObj.access_token;
+
+            await store.setUserInfo(userInfo);
+
+            const { name, picture } = userInfo;
 
             this.setState({ name });
+
             this.continueToApp();
           })
         }
@@ -88,9 +97,7 @@ export class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View>
-          <Button title="Login with Auth0" onPress={this._loginWithAuth0} />
-        </View>
+        <MessageIndicator message='Logging in...' />
       </View>
     );
   }
