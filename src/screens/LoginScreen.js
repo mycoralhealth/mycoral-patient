@@ -5,6 +5,7 @@ import { AuthSession } from 'expo';
 
 import store from '../utilities/store';
 import MessageIndicator from './MessageIndicator';
+import { colors } from '../ui';
 
 const auth0ClientId = 'u79wUql80IzN7AuLDqv3NIeC8XmtMEuq';
 const auth0Domain = 'https://mycoralhealth.auth0.com';
@@ -23,19 +24,27 @@ export class LoginScreen extends Component {
 
   constructor(props) {
     super(props);
+
+    if (this.props.navigation.state &&
+      this.props.navigation.state.params &&
+      this.props.navigation.state.params.logout) {
+      this.state = {needsLogin: true};
+    }
   }
 
   async componentDidMount() {
-    let userInfo = await store.getUserInfo();
+    if (!this.state.needsLogin) {
+      let userInfo = await store.getUserInfo();
 
-    this.setState({userInfo});
+      this.setState({userInfo});
 
-    if (!this.state.userInfo) {
-      console.log("No name, doing login");
-      this._loginWithAuth0();
-    } else {
-      console.log("already logged in");
-      this.continueToApp();
+      if (!this.state.userInfo) {
+        console.log("No name, doing login");
+        this._loginWithAuth0();
+      } else {
+        console.log("already logged in");
+        this.continueToApp();
+      }
     }
   }
 
@@ -108,7 +117,13 @@ export class LoginScreen extends Component {
     return (
       <View style={styles.container}>
         <View>
-          <Button title="Login with Auth0" onPress={this._loginWithAuth0} />
+          <Text style={{textAlign: 'center', marginBottom: 20, marginLeft: 20, marginRight: 20}}>
+            You are logged-out of My Coral Health
+          </Text>
+          <Button 
+            backgroundColor={colors.green}
+            title="Login with Auth0" 
+            onPress={this._loginWithAuth0} />
         </View>
       </View>
     );

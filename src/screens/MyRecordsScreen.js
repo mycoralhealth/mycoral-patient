@@ -42,6 +42,10 @@ const RecordListItem = (props) => {
 
 let cachedRecords = [];
 
+export function cleanUpRecordsCache() {
+  cachedRecords = [];
+}
+
 export class MyRecordsScreen extends Component {
   constructor(props) {
     super(props);
