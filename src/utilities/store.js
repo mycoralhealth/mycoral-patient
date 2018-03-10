@@ -163,7 +163,9 @@ const addContact = (data) => {
     try {
       contacts()
         .then(async (contacts) => {
-          let newContacts = [...contacts, data];
+          // We remove the contact first in case they duplicate it.
+          let adjustedContacts = await removeContact(data);
+          let newContacts = [...adjustedContacts, data];
           await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${CONTACTS}`, JSON.stringify(newContacts));
           resolve(newContacts);
         })
@@ -180,7 +182,7 @@ const removeContact = (c) => {
     try {
       contacts()
         .then (async (contacts) => {
-          let newContacts = contacts.filter((contact) => (contact.id !== c.id));
+          let newContacts = contacts.filter((contact) => (contact.name !== c.name));
           await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${CONTACTS}`, JSON.stringify(newContacts));
           resolve(newContacts);
         })

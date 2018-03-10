@@ -21,6 +21,15 @@ export class ContactsScreen extends Component {
     this.setState({ contacts, loading: false });
   }
 
+  removeContact(contact) {
+    store.removeContact(contact)
+      .then(async (contacts) => {
+        await nextFrame();
+        this.setState({ contacts });
+      })
+      .catch((e) => console.log(`Error removing contact from store (${e})`));
+  }
+
   onQRCodeContactScanned(type, data) {
     let invalidCode = !store.isSharedInfoData(data);
     if (!invalidCode) {
@@ -73,6 +82,7 @@ export class ContactsScreen extends Component {
                   key={contact.name}
                   title={`${contact.nickname} [${contact.name}]`}
                   chevronColor={colors.red}
+                  onPress={() => this.props.navigation.navigate('MyContact', {contact, onRemoveContact: this.removeContact.bind(this)})}
                 />
               ))
             }
