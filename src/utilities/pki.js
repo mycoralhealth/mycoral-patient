@@ -1,6 +1,6 @@
 import forge from 'node-forge';
 import { SecureStore } from 'expo';
-import { getPerUserStoreKey } from './store';
+import { getPerUserStoreKey, invalidateSharedPublicKey } from './store';
 
 const PRIVATE_KEY_TAG = 'privateKey';
 const PUBLIC_KEY_TAG = 'publicKey';
@@ -43,7 +43,10 @@ export const invalidateKeyPair = () => {
     SecureStore.deleteItemAsync(`${storeKey}.${KEYS_MARKER_TAG}`)
       .then(() => {
         SecureStore.deleteItemAsync(`${storeKey}.${PRIVATE_KEY_TAG}`)
-          .then(() => resolve())
+          .then(async () => {
+              await invalidateSharedPublicKey();
+              resolve();
+            })
           .catch((e) => reject(`Error removing key from keystore (${e})`)); 
       })
       .catch((e) => reject(`Error removing key from keystore (${e})`)); 
@@ -90,6 +93,19 @@ export const decryptPKI = async (data) => {
         const decrypted = privateKey.decrypt(data);
         resolve(decrypted);
       }).catch((e) => reject(`Error getting private key from store (${e})`));
+  });
+
+  return p;
+}
+
+export const publicKeyPEM = async () => {
+  let p = new Promise(async function(resolve, reject) {
+    let storeKey = await getPerUserStoreKey();
+
+    SecureStore.getItemAsync(`${storeKey}.${PUBLIC_KEY_TAG}`)
+      .then((publicKeyPEM) => {
+        resolve(publicKeyPEM);
+      }).catch((e) => reject(`Error getting public key from store (${e})`));
   });
 
   return p;

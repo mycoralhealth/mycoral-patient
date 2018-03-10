@@ -5,7 +5,6 @@ import QRCode from 'react-native-qrcode';
 import { NavigationActions } from 'react-navigation';
 
 import { CoralHeader, CoralFooter, colors } from '../ui';
-import store from '../utilities/store';
 import MessageIndicator from './MessageIndicator';
 
 const backAction = NavigationActions.back();
@@ -17,22 +16,22 @@ function QRCodeDisplay(props) {
     );
   }
 
-  if (props.ethAddress) {
+  if (props.data) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 10}}>
         <QRCode
-          value={props.ethAddress}
+          value={props.data}
           size={300}
           bgColor='#333'
           fgColor={colors.bg}/>
-        <Text style={{ margin: 20, fontSize: 12, color: 'rgba(0, 0, 0, 0.6)' }}>{props.ethAddress}</Text>
+        <Text style={{ margin: 20, fontSize: 12, color: 'rgba(0, 0, 0, 0.6)' }}>{props.data}</Text>
       </View>
     );
   } else {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
         <Text style={{ padding: 20, color: colors.red}}>
-          You haven't setup your blockchain ETH address. Please complete the setup process in Settings > Account.
+          You haven't setup your account info. Please complete the setup process in Settings > Account.
         </Text>
       </View>
     );
@@ -43,13 +42,13 @@ export class QRCodeScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { ethAddress: null, loading: true };
+    this.state = { data: null, loading: true };
   }
 
-  async componentDidMount() {
-    let ethAddress = await store.getEthAddress();
+  componentDidMount() {
+    const data = this.props.navigation.state.params.data;
 
-    this.setState({ ethAddress, loading: false });
+    this.setState({ data, loading: false });
   }
 
   render() {
@@ -59,7 +58,7 @@ export class QRCodeScreen extends React.Component {
 
         <ScrollView style={{ flex: 1}}>
           <QRCodeDisplay
-            ethAddress={this.state.ethAddress}
+            data={this.state.data}
             loading={this.state.loading}
           />
         </ScrollView>

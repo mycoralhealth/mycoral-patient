@@ -27,6 +27,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { QRCodeScreen } from './src/screens/QRCodeScreen';
 import { AccountInfoScreen } from './src/screens/AccountInfoScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
+import { ContactsScreen } from './src/screens/ContactsScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
@@ -68,6 +69,7 @@ const SettingsNavigator = StackNavigator({
   Settings: { screen: SettingsScreen },
   AccountInfo: { screen: AccountInfoScreen },
   Profile: { screen: ProfileScreen },
+  Contacts: { screen: ContactsScreen },
   QRCodeReader: {
     screen: QRCodeReaderScreen,
     navigationOptions: ({ navigation }) => ({
