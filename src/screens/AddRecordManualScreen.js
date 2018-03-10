@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Modal, TouchableOpacity, Platform } from 'react-native';
+import { View, ScrollView, Platform } from 'react-native';
 import { Button, Text, Icon } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 import { ImagePicker, FileSystem } from 'expo';
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors, MessageModal } from '../ui.js';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import MessageIndicator from './MessageIndicator';
 import ipfs from '../utilities/expo-ipfs';
@@ -98,41 +98,16 @@ export class AddRecordManualScreen extends TestRecordScreen {
         <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
 
         <ScrollView centerContent={true}>
-          <Modal
-            animationType="slide"
-            transparent={false}
-            onRequestClose={this.hideModal.bind(this)}
-            visible={this.state.modalVisible} >
-            <View style={{marginTop: 25, alignItems: 'center'}}>
-              <View style={{ flex: 1 }}>
-                <Text h3 style={{textAlign: 'center', marginTop: 20}}>
-                  { (this.state.uploadError) ? 'Error uploading to IPFS' : 'New Record Added' }
-                </Text>
-                <View style={{ flex: 1, marginTop: 10, marginBottom: 70, alignSelf: 'center'}}>
-                  <TouchableOpacity
-                    style={{alignItems: 'center', width: 100, height: 100 }}>
-                    <Icon 
-                      name={(this.state.uploadError) ? 'wrench' : 'ios-medkit'} 
-                      type={(this.state.uploadError) ? 'font-awesome' : 'ionicon'} 
-                      size={100} 
-                      color={(this.state.uploadError) ? colors.red : colors.green} 
-                      style={{textAlign: 'center'}} />
-                   </TouchableOpacity>
-                </View>
-                <Text style={{textAlign: 'center', marginTop: 30, padding: 20}}>
-                  { (this.state.uploadError) ? 'Please verify that you have internet connection and Coral Health encryption keys.' : 'You can add more medical records or go back to the records list.' }
-                </Text>
-
-                <View style={{ flex: 1, marginTop: 20, width: 120, height: 40, alignSelf: 'center'}}>
-                  <TouchableOpacity
-                     style={{alignItems: 'center', backgroundColor: '#DDDDDD', padding: 5, width: 120, height: 30}}
-                     onPress={this.hideModal.bind(this)}>
-                     <Text> Close </Text>
-                   </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
+          <MessageModal
+            visible={this.state.modalVisible}
+            onClose={this.hideModal.bind(this)}
+            error={this.state.uploadError}
+            errorTitle='Error uploading to IPFS'
+            title='New Record Added'
+            errorMessage='Please verify that you have internet connection and Coral Health encryption keys.'
+            message='You can add more medical records or go back to the records list.'
+            ionIcon='ios-medkit'
+          />
           <Text style={{padding: 20}}>
             Upload your own medical record to the blockchain by taking a photo, or filling out a questionaire.
           </Text>

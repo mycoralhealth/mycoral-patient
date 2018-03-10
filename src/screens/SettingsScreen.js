@@ -25,7 +25,7 @@ export class SettingsScreen extends Component {
               [
                 {"icon":"user-circle", "title":"Profile", "screen": "Profile", color: colors.green },
                 {"icon":"user-secret", "title":"Account", "screen": "AccountInfo", color: colors.green},
-                {"icon":"paint-brush", "title":"Appearance"},
+                {"icon":"users", "title":"Contacts", "screen": "Contacts", color: colors.green},
                 {"icon":"bell", "title":"Notifications"}
               ].map((item, i) => (
                 <ListItem

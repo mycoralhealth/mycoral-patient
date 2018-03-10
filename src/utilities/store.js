@@ -1,4 +1,5 @@
 import { AsyncStorage } from 'react-native';
+import forge from 'node-forge';
 
 const STORE_KEY = 'com.mycoralhealth.mycoral-patient';
 
@@ -6,6 +7,12 @@ const RECORDS = 'records';
 const ETH_ADDRESS = 'ethAddress';
 const IPFS_INFO = 'ipfsInfo';
 const USER_INFO = 'userInfo';
+
+const CONTACTS = 'contacts';
+
+const PUBLIC_KEY_SHARED_HASH = 'public_key_shared_hash';
+
+const QR_INFO_SEPARATOR = ':';
 
 /**
  * Basic store info. It uses STORE_KEY directly.
@@ -106,7 +113,7 @@ const removeRecord = (r) => {
           resolve(newRecords);
         })
     } catch (e) {
-      reject(`Error adding records to async storage (${e})`);
+      reject(`Error removing records from async storage (${e})`);
     }
   });
 
@@ -133,6 +140,109 @@ const getUserName = async () => {
   return userInfo.nickname;
 }
 
+/**
+ * Contacts storage
+ */
+
+const contacts = () => {
+  let p = new Promise(async function(resolve, reject) {
+    try {
+      let response = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${CONTACTS}`); 
+      let result = await JSON.parse(response) || [];
+      resolve(result);
+    } catch (e) {
+      reject(`Error retrieving contacts from async storage (${e})`);
+    }
+  });
+
+  return p;
+}
+
+const addContact = (data) => {
+  let p = new Promise(function(resolve, reject) {
+    try {
+      contacts()
+        .then(async (contacts) => {
+          // We remove the contact first in case they duplicate it.
+          let adjustedContacts = await removeContact(data);
+          let newContacts = [...adjustedContacts, data];
+          await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${CONTACTS}`, JSON.stringify(newContacts));
+          resolve(newContacts);
+        })
+    } catch (e) {
+      reject(`Error adding contacts to async storage (${e})`);
+    }
+  });
+
+  return p;
+}
+
+const removeContact = (c) => {
+  let p = new Promise(function(resolve, reject) {
+    try {
+      contacts()
+        .then (async (contacts) => {
+          let newContacts = contacts.filter((contact) => (contact.name !== c.name));
+          await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${CONTACTS}`, JSON.stringify(newContacts));
+          resolve(newContacts);
+        })
+    } catch (e) {
+      reject(`Error removing contacts from async storage (${e})`);
+    }
+  });
+
+  return p;
+}
+
+/**
+ * My records delegation
+ */
+
+const sharedPublickKey = async () => {
+  return await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${PUBLIC_KEY_SHARED_HASH}`); 
+}
+
+const setSharedPublicKey = async (hash) => {
+  await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${PUBLIC_KEY_SHARED_HASH}`, hash);
+}
+
+const invalidateSharedPublicKey = async () => {
+  await AsyncStorage.removeItem(`${await getPerUserStoreKey()}.${PUBLIC_KEY_SHARED_HASH}`);
+}
+
+const publicUserInfo = async () => {
+  const { name, nickname, picture } = await getUserInfo();
+
+  return { name, nickname, picture }; 
+}
+
+const mySharedInfo = async () => {
+  try {
+    let info = await publicUserInfo();
+    let sharedKey = await sharedPublickKey();
+
+    return `${forge.util.encode64(JSON.stringify(info))}${QR_INFO_SEPARATOR}${sharedKey}`;
+  } catch (e) {
+    console.log('Error getting shared info', e);
+  }
+}
+
+const isSharedInfoData = (data) => {
+  if (!data) {
+    return false;
+  }
+
+  return data.indexOf(QR_INFO_SEPARATOR) > 0;
+}
+
+const decodeSharedInfoData = (data) => {
+  let parts = data.split(QR_INFO_SEPARATOR);
+  let info = JSON.parse(forge.util.decode64(parts[0]));
+  info.publicKeyHash = parts[1];
+
+  return info;
+}
+
 module.exports = {
   records,
   addRecord,
@@ -145,5 +255,15 @@ module.exports = {
   getUserInfo,
   getEmail,
   getUserName,
-  getPerUserStoreKey
+  getPerUserStoreKey,
+  contacts,
+  addContact,
+  removeContact,
+  sharedPublickKey,
+  invalidateSharedPublicKey,
+  setSharedPublicKey,
+  mySharedInfo,
+  publicUserInfo,
+  isSharedInfoData,
+  decodeSharedInfoData
 }
