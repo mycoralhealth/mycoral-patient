@@ -41,3 +41,18 @@ export class CoralFooter extends React.Component {
     );
   }
 }
+
+export class LogoutFooter extends React.Component {
+  render() {
+    return (
+      <View style={{ paddingBottom: 15, paddingTop: 15}}>
+        <Button
+          backgroundColor={colors.gray}
+          icon={{name: 'ios-log-out', type: 'ionicon'}}
+          title='Log-Out'
+          onPress={this.props.backAction}
+        />
+      </View>
+    );
+  }
+}

@@ -3,6 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { AuthSession } from 'expo';
 
+import store from '../utilities/store';
+import MessageIndicator from './MessageIndicator';
+
 const auth0ClientId = 'u79wUql80IzN7AuLDqv3NIeC8XmtMEuq';
 const auth0Domain = 'https://mycoralhealth.auth0.com';
 const coraldServer = 'https://api.mycoralhealth.com/v0';
@@ -20,27 +23,29 @@ export class LoginScreen extends Component {
 
   constructor(props) {
     super(props);
+  }
 
-    if (this.state.name === undefined) {
+  async componentDidMount() {
+    let userInfo = await store.getUserInfo();
+
+    this.setState({userInfo});
+
+    if (!this.state.userInfo) {
       console.log("No name, doing login");
       this._loginWithAuth0();
     } else {
       console.log("already logged in");
       this.continueToApp();
     }
-
   }
 
   continueToApp() {
     this.props.navigation.navigate('MainTabs');
   }
 
-  _logout = async() => {
-    // FIXME: This should logout from Auth0 too
-    this.setState({ "name": undefined });
-  }
-
   _loginWithAuth0 = async () => {
+    this.setState({needsLogin: false});
+    
     const redirectUrl = AuthSession.getRedirectUrl();
     console.log(`Redirect URL: ${redirectUrl}`);
     const result = await AuthSession.startAsync({
@@ -62,6 +67,8 @@ export class LoginScreen extends Component {
       }
 
       this.getUserInfo(result.params);
+    } else {
+      this.setState({needsLogin: true});
     }
   }
 
@@ -71,11 +78,15 @@ export class LoginScreen extends Component {
     fetch(`${coraldServer}/session`, {"headers": {"X-MyCoral-AccessToken": responseObj.access_token}})
       .then(response => {
         if (response.status === 200) {
-          response.json().then(parsedResponse => {
-            console.log(parsedResponse);
-            const { name, picture } = parsedResponse
+          response.json().then(async (userInfo) => {
+            console.log(userInfo);
+            
+            userInfo.accessToken = responseObj.access_token;
 
-            this.setState({ name });
+            await store.setUserInfo(userInfo);
+
+            this.setState({ userInfo });
+
             this.continueToApp();
           })
         }
@@ -86,6 +97,14 @@ export class LoginScreen extends Component {
   }
 
   render() {
+    if (!this.state.needsLogin) {
+      return (
+        <View style={styles.container}>
+          <MessageIndicator message='Logging in...' />
+        </View>
+      );
+    }
+
     return (
       <View style={styles.container}>
         <View>

@@ -40,11 +40,13 @@ const RecordListItem = (props) => {
   }
 }
 
+let cachedRecords = [];
+
 export class MyRecordsScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { recordsList: [], loading: true };
+    this.state = { recordsList: cachedRecords, loading: true };
   }
 
   componentDidMount() {
@@ -52,9 +54,11 @@ export class MyRecordsScreen extends Component {
   }
 
   async loadAndDecryptRecords() {
-    let recordsList = await store.records();
-    this.setState({recordsList, loading: false});
-    this.decryptRecords(recordsList);
+    if (!cachedRecords || cachedRecords.length === 0) {
+      cachedRecords = await store.records();
+    }
+    this.setState({recordsList: cachedRecords, loading: false});
+    this.decryptRecords(cachedRecords);
   }
 
   async decryptRecords(recordsList) {
@@ -83,17 +87,16 @@ export class MyRecordsScreen extends Component {
   newRecord(record) {
     store.addRecord(record)
       .then(async () => {
-        let newRecords = [...this.state.recordsList, record];
+        cachedRecords = [...cachedRecords, record];
         await nextFrame();
-        // Not needed, the screen refreshes anyway. We may need to investigate this in the future.
-        //await this.decryptRecord(record);
-        this.setState({ recordsList: newRecords });
+        this.setState({ recordsList: cachedRecords });
       })
       .catch((e) => console.log(`Error adding record to store (${e})`));
   }
 
   removeRecord(record) {
-    this.setState({ recordsList: this.state.recordsList.filter((r) => (record.id !== r.id)) });
+    cachedRecords = cachedRecords.filter((r) => (record.id !== r.id))
+    this.setState({ recordsList: cachedRecords });
 
     store.removeRecord(record)
       .catch((e) => console.log(`Error removing record from store (${e})`));
@@ -103,7 +106,7 @@ export class MyRecordsScreen extends Component {
     if (this.state.loading) {
       return(
         <ScrollView centerContent={true}>
-          <MessageIndicator message='Loading...' />
+          <MessageIndicator message='Loading data...' />
         </ScrollView>
       );
     }

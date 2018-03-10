@@ -36,16 +36,6 @@ export class ProfileScreen extends Component {
     });
   }
 
-  updateUserName(userName) {
-    this.setState({ userName });
-    store.setUserName(userName);
-  }
-
-  updateEmail(email) {
-    this.setState({ email });
-    store.setEmail(email);
-  }
-
   render() {
     if (this.state.loading) {
       return (
@@ -70,18 +60,18 @@ export class ProfileScreen extends Component {
             returnKeyType='done'
             autoCapitalize='none'
             autoCorrect={false}
-            inputStyle={{color:'black'}}
-            placeholder='someone@example.com'
-            onChangeText={(text) => this.updateEmail(text)}/>
+            editable={false}
+            inputStyle={{color:colors.darkerGray}}/>
+
           <FormLabel>User name</FormLabel>
           <FormInput 
             value={this.state.userName}
             placeholder='someone'
             autoCapitalize='none'
             autoCorrect={false}
-            inputStyle={{color:'black'}}
-            returnKeyType='done'
-            onChangeText={(text) => this.updateUserName(text)}/>
+            inputStyle={{color:colors.darkerGray}}
+            editable={false}
+            returnKeyType='done'/>
 
           <View style={{ height: 300 }}/>
           

@@ -6,6 +6,7 @@ import QRCode from 'react-native-qrcode';
 
 import { CoralHeader, CoralFooter, colors } from '../ui';
 import store from '../utilities/store';
+import MessageIndicator from './MessageIndicator';
 
 const backAction = NavigationActions.back();
 
@@ -59,6 +60,14 @@ export class AddRecordScreen extends Component {
   }
 
   render() {
+    if (!this.state.loaded) {
+      return (
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.bg }}>
+          <MessageIndicator message='Loading...' />
+        </View>
+      );
+    }
+
     const state = this.props.navigation.state;
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
