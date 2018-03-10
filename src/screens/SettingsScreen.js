@@ -5,6 +5,7 @@ import { NavigationActions } from 'react-navigation';
 
 import { CoralHeader, LogoutFooter, colors } from '../ui';
 import store from '../utilities/store';
+import { cleanUpRecordsCache } from './MyRecordsScreen';
 
 export class SettingsScreen extends Component {
   
@@ -43,14 +44,15 @@ export class SettingsScreen extends Component {
         <LogoutFooter backAction={async () => {
 
           await store.setUserInfo(null);
+          cleanUpRecordsCache();
 
           const { navigate } = this.props.navigation;
           const resetAction = NavigationActions.reset({
               index: 0,
               actions: [
-                NavigationActions.navigate({ routeName: 'Login'})
+                NavigationActions.navigate({ routeName: 'Login', params: { logout: true }})
               ],
-              key: null // THIS LINE
+              key: null 
             });
           this.props.navigation.dispatch(resetAction);
 
