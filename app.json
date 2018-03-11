@@ -3,6 +3,7 @@
     "name": "Coral Health Patient App",
     "slug": "mycoral-patient",
     "sdkVersion": "23.0.0",
-    "privacy": "unlisted"
+    "privacy": "unlisted",
+    "scheme": "coralhealth"
   }
 }

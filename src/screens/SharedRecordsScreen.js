@@ -118,8 +118,6 @@ export class SharedRecordsScreen extends Component {
 
                     await nextFrame();
                     await store.setSharedPublicKey(keyHash);
-
-                    sharedKey = keyHash;
                   }
 
                   await nextFrame();
@@ -127,7 +125,12 @@ export class SharedRecordsScreen extends Component {
 
                   console.log({sharedInfo});
 
-                  this.props.navigation.navigate('QRCode', {data: sharedInfo});
+                  this.props.navigation.navigate('QRCode', {
+                    title:'Your Account QR Code',
+                    subTitle: 'Show this to a friend or doctor to let them share or send you a medical record.',
+                    shareMessage: 'This is my Coral Health medical record sharing public information. You can use this link to add me as a contact.',
+                    data: sharedInfo, 
+                    type: 'contact'});
                 } catch (e) {
                   console.log('Error uploading to ipfs: ', e);
                   this.onShareKeyUploadFailed();

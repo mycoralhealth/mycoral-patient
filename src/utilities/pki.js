@@ -7,20 +7,21 @@ const PUBLIC_KEY_TAG = 'publicKey';
 const KEYS_MARKER_TAG = 'keyPairMarker';
 
 const makeKeys = () => {
-  forge.pki.rsa.generateKeyPair({bits: 2048, workers: -1}, async function(err, keypair) {
+  forge.pki.rsa.generateKeyPair({bits: 2048, workers: -1}, function(err, keypair) {
     //console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
     //console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
-    let storeKey = await getPerUserStoreKey();
-
-    SecureStore.setItemAsync(`${storeKey}.${PUBLIC_KEY_TAG}`, forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72))
-      .then( () => { 
-        SecureStore.setItemAsync(`${storeKey}.${PRIVATE_KEY_TAG}`, forge.pki.privateKeyToPem(keypair.privateKey, 72))
+    getPerUserStoreKey()
+      .then((storeKey) => {
+        SecureStore.setItemAsync(`${storeKey}.${PUBLIC_KEY_TAG}`, forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72))
           .then( () => { 
-              SecureStore.setItemAsync(`${storeKey}.${KEYS_MARKER_TAG}`, 'true');
-          })
-        })
-      .catch((e) => { console.log( `Could not store keys in store (${e})` ) });
-    });
+            SecureStore.setItemAsync(`${storeKey}.${PRIVATE_KEY_TAG}`, forge.pki.privateKeyToPem(keypair.privateKey, 72))
+              .then( () => { 
+                  SecureStore.setItemAsync(`${storeKey}.${KEYS_MARKER_TAG}`, 'true');
+              })
+            })
+          .catch((e) => { console.log( `Could not store keys in store (${e})` ) });
+        });
+      });
 }
 
 export const generateKeyPair = () => {
@@ -68,8 +69,20 @@ export const keysExist = () => {
   return p;
 }
 
-export const encryptPKI = async (data) => {
-  let p = new Promise(async function(resolve, reject) {
+export const encryptPKI = async (data, optionalPublicKey) => {
+  if (optionalPublicKey) {
+    return new Promise(function(resolve, reject) {
+      try {
+        const publicKey = forge.pki.publicKeyFromPem(optionalPublicKey);
+        const encrypted = publicKey.encrypt(data);
+        resolve(encrypted);
+      } catch (e) {
+        reject(`Error encrypting with optional public key (${e})`);
+      }
+    });
+  }
+
+  return new Promise(async function(resolve, reject) {
     let storeKey = await getPerUserStoreKey();
 
     SecureStore.getItemAsync(`${storeKey}.${PUBLIC_KEY_TAG}`)
@@ -79,12 +92,10 @@ export const encryptPKI = async (data) => {
         resolve(encrypted);
       }).catch((e) => reject(`Error getting public key from store (${e})`));
   });
-
-  return p;
 }
 
 export const decryptPKI = async (data) => {
-  let p = new Promise(async function(resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     let storeKey = await getPerUserStoreKey();
 
     SecureStore.getItemAsync(`${storeKey}.${PRIVATE_KEY_TAG}`)
@@ -94,8 +105,6 @@ export const decryptPKI = async (data) => {
         resolve(decrypted);
       }).catch((e) => reject(`Error getting private key from store (${e})`));
   });
-
-  return p;
 }
 
 export const publicKeyPEM = async () => {

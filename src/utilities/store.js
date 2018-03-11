@@ -14,6 +14,8 @@ const PUBLIC_KEY_SHARED_HASH = 'public_key_shared_hash';
 
 const QR_INFO_SEPARATOR = ':';
 
+const SHARED_RECORDS = 'sharedRecords';
+
 /**
  * Basic store info. It uses STORE_KEY directly.
  */
@@ -45,8 +47,6 @@ const getPerUserStoreKey = async () => {
   }
 
   let sanitizedName = emailAddress.replace(/\W/g, '_');
-
-  console.log({sanitizedName});
 
   return `${STORE_KEY}.${sanitizedName}`;
 }
@@ -243,6 +243,112 @@ const decodeSharedInfoData = (data) => {
   return info;
 }
 
+const qrCodeContactHelper = (data) => {
+  return new Promise(async function(resolve) {
+    let contacts = null;
+    let contact = null;
+    
+    if (isSharedInfoData(data)) {
+
+      try {
+        contact = decodeSharedInfoData(data);
+        console.log({contact});
+
+        contacts = await addContact(contact);
+      } catch (e) {
+        console.log('Error parsing shared contact data', e);
+      }
+    }
+
+    resolve({contacts, contact});
+  });
+}
+
+const thirdPartySharedRecordInfo = (sharedRecord) => {
+  try {
+    return forge.util.encode64(JSON.stringify(sharedRecord));
+  } catch (e) {
+    console.log('Error getting shared info', e);
+  }
+}
+
+const decodeThirdPartySharedRecordData = (data) => {
+  return JSON.parse(forge.util.decode64(data));
+}
+
+/*
+ * Shared records per contact
+ */
+
+const sharedRecords = () => {
+  let p = new Promise(async function(resolve, reject) {
+    try {
+      let response = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`); 
+      let result = await JSON.parse(response) || {};
+      resolve(result);
+    } catch (e) {
+      reject(`Error retrieving the shared records from async storage (${e})`);
+    }
+  });
+
+  return p;
+}
+
+const shareRecord = (contactEmail, recordInfo) => {
+  let p = new Promise(function(resolve, reject) {
+    try {
+      sharedRecords()
+        .then(async (shared) => {
+
+          let forContact = shared[contactEmail];
+
+          if (!forContact) {
+            forContact = {};
+          }
+
+          forContact[recordInfo.id] = recordInfo;
+          shared[contactEmail] = forContact;
+
+          console.log({shared});
+
+          await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`, JSON.stringify(shared));
+          resolve(shared);
+        })
+    } catch (e) {
+      reject(`Error adding shared records to async storage (${e})`);
+    }
+  });
+
+  return p;
+}
+
+const removeSharedRecord = (contactEmail, recordInfo) => {
+  let p = new Promise(function(resolve, reject) {
+    try {
+      sharedRecords()
+        .then (async (shared) => {
+          let forContact = shared[contactEmail];
+
+          if (forContact && forContact[recordInfo.id]) {
+            forContact[recordInfo.id] = null;
+
+            shared[contactEmail] = forContact;
+
+            console.log({shared});
+
+            await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`, JSON.stringify(shared));            
+          }
+
+          resolve(shared);
+        })
+    } catch (e) {
+      reject(`Error removing shared records from async storage (${e})`);
+    }
+  });
+
+  return p;
+}
+
 module.exports = {
   records,
   addRecord,
@@ -265,5 +371,11 @@ module.exports = {
   mySharedInfo,
   publicUserInfo,
   isSharedInfoData,
-  decodeSharedInfoData
+  decodeSharedInfoData,
+  sharedRecords,
+  shareRecord,
+  removeSharedRecord,
+  qrCodeContactHelper,
+  thirdPartySharedRecordInfo,
+  decodeThirdPartySharedRecordData
 }
