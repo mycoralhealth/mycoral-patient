@@ -40,7 +40,8 @@ export class DelegateAccessScreen extends Component {
 
   onContactSelected(contact) {
     this.setState({ producingRecord:true });
-    const record = this.props.navigation.state.params.record;
+    const navigation = this.props.navigation;
+    const record = navigation.state.params.record;
 
     new Promise(function(resolve, reject) {
 
@@ -86,18 +87,21 @@ export class DelegateAccessScreen extends Component {
               await nextFrame();
               await store.shareRecord(contact.name, sharedRecord);
 
-              resolve(sharedRecord);
+              resolve(sharedRecordHash);
             });
         });
-    }).then((sharedRecord) => { 
+    }).then((sharedRecordHash) => { 
       this.setState({ producingRecord:false });
 
-      this.props.navigation.navigate('QRCode', {
-        title:'Your Shared Record QR Code',
-        subTitle: 'Show this to a friend or doctor to let them add your medical record.',
-        shareMessage: 'I\'m sharing my medical record with you. Please import this record by using the Coral Health app.',
-        data: sharedRecord.sharedHash, 
-        type: 'record'});
+      store.sharedRecordInfo(sharedRecordHash)
+        .then((data) => {
+          navigation.navigate('QRCode', {
+            title:'Your Shared Record QR Code',
+            subTitle: 'Show this to a friend or doctor to let them add your medical record.',
+            shareMessage: 'I\'m sharing my medical record with you. Please import this record by using the Coral Health app.',
+            data, 
+            type: 'record'});
+        });
  
     }).catch((e) => { console.log('Error re-encrypting record for a contact', e) });
   }

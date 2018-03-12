@@ -26,11 +26,31 @@ export class SharedRecordsScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { loading: true , modalVisible: false };
+    this.state = { loading: true , modalVisible: false, contacts:[] };
   }
 
-  componentDidMount() {
-    this.setState({ loading: false });
+  async reloadRecords() {
+    let contacts = await store.contacts();
+
+    store.sharedRecords()
+      .then((sharedRecords) => {
+        let contactsArray = [];
+
+        for (const [email, records] of Object.entries(sharedRecords)) { 
+          var contact = contacts.find(function (c) { return c.name === email; });
+
+          if (contact) {
+            let recordArray = [];
+
+            for (const [id, record] of Object.entries(records)) {
+              recordArray.push({id, record});
+            }            
+
+            contactsArray.push({contact, records: recordArray});
+          }
+        }
+        this.setState({ contacts: contactsArray, loading: false });
+      });
   }
 
   onShareKeyUploadFailed() {
@@ -42,6 +62,7 @@ export class SharedRecordsScreen extends Component {
   }
 
   render() {
+    this.reloadRecords();
 
     if (this.state.loading) {
       return (
@@ -75,13 +96,13 @@ export class SharedRecordsScreen extends Component {
           />
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
-              friendList.map((l, i) => (
+              this.state.contacts.map((entry) => (
                 <ListItem
                   roundAvatar
-                  avatar={{uri:l.avatar_url}}
-                  key={i}
-                  title={l.name}
-                  badge={l.records}
+                  avatar={{uri:entry.contact.picture}}
+                  key={entry.contact.name}
+                  title={entry.contact.nickname}
+                  badge={{'value': `${entry.records.length} records`}}
                   chevronColor={colors.red}
                 />
               ))

@@ -41,6 +41,7 @@ const MyRecordsNavigator = StackNavigator({
   AddRecordManual: { screen: AddRecordManualScreen },
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
+  QRCode: { screen: QRCodeScreen },
   ViewImage: {
     screen: ViewImageScreen,
     navigationOptions: ({ navigation }) => ({
@@ -111,7 +112,7 @@ const MainTabs = TabNavigator({
       }
     }),
   },
-  Friends: {
+  MySharedRecords: {
     screen: SharedRecordsNavigator,
     navigationOptions: ({ navigation }) => ( {
       tabBarLabel: 'Shared Records',

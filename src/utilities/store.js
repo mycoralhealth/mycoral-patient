@@ -272,8 +272,22 @@ const thirdPartySharedRecordInfo = (sharedRecord) => {
   }
 }
 
-const decodeThirdPartySharedRecordData = (data) => {
-  return JSON.parse(forge.util.decode64(data));
+const decodeSharedRecordInfo = (data) => {
+  let parts = data.split(QR_INFO_SEPARATOR);
+  let info = JSON.parse(forge.util.decode64(parts[0]));
+  info.sharedHash = parts[1];
+
+  return info;
+}
+
+const sharedRecordInfo = async (hash) => {
+  try {
+    let info = await publicUserInfo();
+
+    return `${forge.util.encode64(JSON.stringify(info))}${QR_INFO_SEPARATOR}${hash}`;
+  } catch (e) {
+    console.log('Error shared info', e);
+  }
 }
 
 /*
@@ -377,5 +391,6 @@ module.exports = {
   removeSharedRecord,
   qrCodeContactHelper,
   thirdPartySharedRecordInfo,
-  decodeThirdPartySharedRecordData
+  decodeSharedRecordInfo,
+  sharedRecordInfo
 }
