@@ -6,10 +6,9 @@ import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 import nextFrame from 'next-frame';
 
-import { CoralHeader, CoralFooter, colors } from '../ui';
+import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui';
 import ipfs from '../utilities/expo-ipfs';
 import store from '../utilities/store';
-import MessageIndicator from './MessageIndicator';
 import cryptoHelpers from '../utilities/crypto_helpers';
 
 export class DelegateAccessScreen extends Component {

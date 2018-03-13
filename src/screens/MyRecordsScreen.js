@@ -4,9 +4,8 @@ import { View, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements';
 import nextFrame from 'next-frame';
 
-import { CoralHeader, colors } from '../ui';
+import { CoralHeader, colors, MessageIndicator } from '../ui';
 import store from '../utilities/store';
-import MessageIndicator from './MessageIndicator';
 import cryptoHelpers from '../utilities/crypto_helpers';
 
 const RecordListItem = (props) => {

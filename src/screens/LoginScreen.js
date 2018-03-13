@@ -4,8 +4,7 @@ import { Button, Text } from 'react-native-elements';
 import { AuthSession } from 'expo';
 
 import store from '../utilities/store';
-import MessageIndicator from './MessageIndicator';
-import { colors } from '../ui';
+import { colors, MessageIndicator } from '../ui';
 
 const auth0ClientId = 'u79wUql80IzN7AuLDqv3NIeC8XmtMEuq';
 const auth0Domain = 'https://mycoralhealth.auth0.com';

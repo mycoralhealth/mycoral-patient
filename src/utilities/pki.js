@@ -7,7 +7,10 @@ const PUBLIC_KEY_TAG = 'publicKey';
 const KEYS_MARKER_TAG = 'keyPairMarker';
 
 const makeKeys = () => {
-  forge.pki.rsa.generateKeyPair({bits: 2048, workers: -1}, function(err, keypair) {
+  //let start = new Date();
+  forge.pki.rsa.generateKeyPair({bits: 2048, workers: 1}, function(err, keypair) {
+    //console.log('Elapsed keygen time for 2048 bits', (new Date()) - start);
+
     //console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
     //console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
     getPerUserStoreKey()
@@ -118,4 +121,13 @@ export const publicKeyPEM = async () => {
   });
 
   return p;
+}
+
+export const probeCPUPower = () => {
+  return new Promise(function(resolve) {
+    let start = new Date();
+    forge.pki.rsa.generateKeyPair({bits: 512, workers: 1}, function(err, keypair) {
+      resolve((new Date()) - start);
+    });
+  });
 }

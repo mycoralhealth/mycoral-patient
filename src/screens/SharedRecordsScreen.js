@@ -4,29 +4,16 @@ import { Button } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import nextFrame from 'next-frame';
 
-import { CoralHeader, colors, MessageModal } from '../ui';
+import { CoralHeader, colors, MessageModal, MessageIndicator } from '../ui';
 import store from '../utilities/store';
 import { keysExist, publicKeyPEM } from '../utilities/pki';
 import ipfs from '../utilities/expo-ipfs';
-import MessageIndicator from './MessageIndicator';
 
-const friendList = [
-  {
-    name: 'Dr. Amy Farha',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-    records: {value: "2 records"}
-  },
-  {
-    name: 'Dr. Chris Jackson',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-    records: {value: "1 record"}
-  }
-];
 export class SharedRecordsScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { loading: true , modalVisible: false, contacts:[] };
+    this.state = { loading: true, mounted: false, modalVisible: false, contacts:[] };
   }
 
   async reloadRecords() {
@@ -57,12 +44,18 @@ export class SharedRecordsScreen extends Component {
     this.setState({ modalVisible: true, uploadError: true });
   }
 
+  componentDidMount() {
+    this.setState({ mounted: true });
+  }
+
   hideModal() {
     this.setState({ modalVisible: false });
   }
 
   render() {
-    this.reloadRecords();
+    if (this.state.mounted) {
+      this.reloadRecords();
+    }
 
     if (this.state.loading) {
       return (
@@ -104,6 +97,11 @@ export class SharedRecordsScreen extends Component {
                   title={entry.contact.nickname}
                   badge={{'value': `${entry.records.length} records`}}
                   chevronColor={colors.red}
+                  onPress={() => this.props.navigation.navigate('SharedRecordsWith', 
+                    {
+                      contact: entry.contact,
+                      records: entry.records                    
+                    })}
                 />
               ))
             }

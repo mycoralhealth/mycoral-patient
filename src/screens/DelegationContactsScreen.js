@@ -5,9 +5,8 @@ import { List, ListItem } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import nextFrame from 'next-frame';
 
-import { CoralHeader, colors, CoralFooter } from '../ui';
+import { CoralHeader, colors, CoralFooter, MessageIndicator } from '../ui';
 import store from '../utilities/store';
-import MessageIndicator from './MessageIndicator';
 
 export class DelegationContactsScreen extends Component {
   constructor(props) {

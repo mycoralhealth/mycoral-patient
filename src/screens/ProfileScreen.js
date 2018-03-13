@@ -4,11 +4,9 @@ import { Text, FormLabel, FormInput } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui.js';
 
 import store from '../utilities/store';
-
-import MessageIndicator from './MessageIndicator';
 
 function Loading(props) {
   return (

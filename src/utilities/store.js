@@ -323,8 +323,6 @@ const shareRecord = (contactEmail, recordInfo) => {
           forContact[recordInfo.id] = recordInfo;
           shared[contactEmail] = forContact;
 
-          console.log({shared});
-
           await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`, JSON.stringify(shared));
           resolve(shared);
         })
@@ -343,12 +341,14 @@ const removeSharedRecord = (contactEmail, recordInfo) => {
         .then (async (shared) => {
           let forContact = shared[contactEmail];
 
-          if (forContact && forContact[recordInfo.id]) {
-            forContact[recordInfo.id] = null;
+          if (forContact && (recordInfo.id in forContact)) {
+            delete forContact[recordInfo.id];
 
-            shared[contactEmail] = forContact;
-
-            console.log({shared});
+            if (Object.keys(forContact).length != 0) {
+              shared[contactEmail] = forContact;
+            } else {
+              delete shared[contactEmail];
+            }
 
             await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`, JSON.stringify(shared));            
           }

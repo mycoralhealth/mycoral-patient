@@ -5,9 +5,7 @@ import QRCode from 'react-native-qrcode';
 import { NavigationActions } from 'react-navigation';
 import { Constants } from 'expo';
 
-
-import { CoralHeader, CoralFooter, colors } from '../ui';
-import MessageIndicator from './MessageIndicator';
+import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui';
 
 const backAction = NavigationActions.back();
 

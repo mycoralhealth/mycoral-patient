@@ -29,6 +29,8 @@ import { AccountInfoScreen } from './src/screens/AccountInfoScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { ContactsScreen } from './src/screens/ContactsScreen';
 import { MyContactScreen } from './src/screens/MyContactScreen';
+import { SharedRecordsWithScreen } from './src/screens/SharedRecordsWithScreen';
+import { ViewSharedRecordScreen } from './src/screens/ViewSharedRecordScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
@@ -62,7 +64,9 @@ const MyRecordsNavigator = StackNavigator({
 
 const SharedRecordsNavigator = StackNavigator({
   SharedRecords: { screen: SharedRecordsScreen },
+  SharedRecordsWith: { screen: SharedRecordsWithScreen },
   QRCode: { screen: QRCodeScreen },
+  ViewSharedRecord: { screen: ViewSharedRecordScreen }
 },{
   headerMode: 'none'
 });
