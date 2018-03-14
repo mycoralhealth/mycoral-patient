@@ -4,37 +4,48 @@ import { Button } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import nextFrame from 'next-frame';
 
-import { CoralHeader, colors, MessageModal } from '../ui';
+import { CoralHeader, colors, MessageModal, MessageIndicator } from '../ui';
 import store from '../utilities/store';
 import { keysExist, publicKeyPEM } from '../utilities/pki';
 import ipfs from '../utilities/expo-ipfs';
-import MessageIndicator from './MessageIndicator';
 
-const friendList = [
-  {
-    name: 'Dr. Amy Farha',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-    records: {value: "2 records"}
-  },
-  {
-    name: 'Dr. Chris Jackson',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-    records: {value: "1 record"}
-  }
-];
 export class SharedRecordsScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { loading: true , modalVisible: false };
+    this.state = { loading: true, mounted: false, modalVisible: false, contacts:[] };
   }
 
-  componentDidMount() {
-    this.setState({ loading: false });
+  async reloadRecords() {
+    let contacts = await store.contacts();
+
+    store.sharedRecords()
+      .then((sharedRecords) => {
+        let contactsArray = [];
+
+        for (const [email, records] of Object.entries(sharedRecords)) { 
+          var contact = contacts.find(function (c) { return c.name === email; });
+
+          if (contact) {
+            let recordArray = [];
+
+            for (const [id, record] of Object.entries(records)) {
+              recordArray.push({id, record});
+            }            
+
+            contactsArray.push({contact, records: recordArray});
+          }
+        }
+        this.setState({ contacts: contactsArray, loading: false });
+      });
   }
 
   onShareKeyUploadFailed() {
     this.setState({ modalVisible: true, uploadError: true });
+  }
+
+  componentDidMount() {
+    this.setState({ mounted: true });
   }
 
   hideModal() {
@@ -42,6 +53,9 @@ export class SharedRecordsScreen extends Component {
   }
 
   render() {
+    if (this.state.mounted) {
+      this.reloadRecords();
+    }
 
     if (this.state.loading) {
       return (
@@ -75,14 +89,19 @@ export class SharedRecordsScreen extends Component {
           />
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
-              friendList.map((l, i) => (
+              this.state.contacts.map((entry) => (
                 <ListItem
                   roundAvatar
-                  avatar={{uri:l.avatar_url}}
-                  key={i}
-                  title={l.name}
-                  badge={l.records}
+                  avatar={{uri:entry.contact.picture}}
+                  key={entry.contact.name}
+                  title={entry.contact.nickname}
+                  badge={{'value': `${entry.records.length} records`}}
                   chevronColor={colors.red}
+                  onPress={() => this.props.navigation.navigate('SharedRecordsWith', 
+                    {
+                      contact: entry.contact,
+                      records: entry.records                    
+                    })}
                 />
               ))
             }
@@ -118,8 +137,6 @@ export class SharedRecordsScreen extends Component {
 
                     await nextFrame();
                     await store.setSharedPublicKey(keyHash);
-
-                    sharedKey = keyHash;
                   }
 
                   await nextFrame();
@@ -127,7 +144,12 @@ export class SharedRecordsScreen extends Component {
 
                   console.log({sharedInfo});
 
-                  this.props.navigation.navigate('QRCode', {data: sharedInfo});
+                  this.props.navigation.navigate('QRCode', {
+                    title:'Your Account QR Code',
+                    subTitle: 'Show this to a friend or doctor to let them share or send you a medical record.',
+                    shareMessage: 'This is my Coral Health medical record sharing public information. You can use this link to add me as a contact.',
+                    data: sharedInfo, 
+                    type: 'contact'});
                 } catch (e) {
                   console.log('Error uploading to ipfs: ', e);
                   this.onShareKeyUploadFailed();

@@ -4,9 +4,8 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 
-import { CoralHeader, CoralFooter, colors } from '../ui';
+import { CoralHeader, CoralFooter, colors, MessageIndicator} from '../ui';
 import store from '../utilities/store';
-import MessageIndicator from './MessageIndicator';
 
 const backAction = NavigationActions.back();
 

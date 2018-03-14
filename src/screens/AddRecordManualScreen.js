@@ -5,9 +5,8 @@ import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 import { ImagePicker, FileSystem } from 'expo';
 
-import { CoralHeader, CoralFooter, colors, MessageModal } from '../ui.js';
+import { CoralHeader, CoralFooter, colors, MessageModal, MessageIndicator } from '../ui.js';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
-import MessageIndicator from './MessageIndicator';
 import ipfs from '../utilities/expo-ipfs';
 import { TestRecordScreen } from './TestRecordScreen';
 import cryptoHelpers from '../utilities/crypto_helpers';

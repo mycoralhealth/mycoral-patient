@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { AuthSession } from 'expo';
 
 import store from '../utilities/store';
-import MessageIndicator from './MessageIndicator';
-import { colors } from '../ui';
+import { colors, MessageIndicator } from '../ui';
 
 const auth0ClientId = 'u79wUql80IzN7AuLDqv3NIeC8XmtMEuq';
 const auth0Domain = 'https://mycoralhealth.auth0.com';
@@ -116,10 +115,13 @@ export class LoginScreen extends Component {
 
     return (
       <View style={styles.container}>
+        <View style={{ backgroundColor: 'white', width: 150, height: 150, marginBottom: 10, justifyContent: 'center'}}>
+          <Image style={{ width: 150, height: 150 }} source={require('../../assets/corner-logo.png')} />
+        </View>
+        <Text style={{textAlign: 'center', marginBottom: 20, marginLeft: 20, marginRight: 20}}>
+          You are logged-out of My Coral Health
+        </Text>
         <View>
-          <Text style={{textAlign: 'center', marginBottom: 20, marginLeft: 20, marginRight: 20}}>
-            You are logged-out of My Coral Health
-          </Text>
           <Button 
             backgroundColor={colors.green}
             title="Login with Auth0" 

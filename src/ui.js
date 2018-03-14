@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { View, Image, Platform, Modal, TouchableOpacity } from 'react-native';
-import { Text, Button, Icon } from 'react-native-elements';
+import { View, Image, Platform, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, Button, Icon, List, ListItem } from 'react-native-elements';
+import { PHOTO_RECORD_TEST } from './utilities/recordTypes';
+
 export const colors = {
   'bg': '#eee',
   'gray': '#999',
@@ -95,6 +97,79 @@ export class MessageModal extends Component {
           </View>
         </View>
       </Modal>
+    );
+  }
+}
+
+export const MessageIndicator = (props) => {
+  return (
+    <View>
+      <Text style={{textAlign: 'center'}}>{props.message}</Text>
+      <ActivityIndicator size="large" color={colors.green} style={{marginTop: 10}}/>
+    </View>
+  );
+}
+
+export const RecordDetails = (props) => {
+  if (!props.recordInitialized) {
+    return (<View style={{ flex: 1, marginBottom: 40, marginTop: 20}} />);
+  }
+
+  if (props.record.error) {
+    return (
+      <View style={{ flex: 1, marginBottom: 20, marginTop: 20}} />
+    );
+  }
+
+  if (props.decrypting) {
+    return (
+      <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
+        <MessageIndicator message="Decrypting record..." />
+      </View>
+    ); 
+  }
+
+  if (props.record.downloadError) {
+    return (
+      <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
+        <Text style={{textAlign: 'center', color: colors.red}}>
+          Error downloading file from IPFS. Please check your internet connection.
+        </Text>
+      </View>
+    );
+  }
+
+  if (props.record.metadata.testType === PHOTO_RECORD_TEST) {
+    return (
+      <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
+        <Button
+          backgroundColor={colors.white}
+          color='#000'
+          icon={{name: 'ios-image', type: 'ionicon', color:'#000'}}
+          title='View Photo Record'
+          onPress={() => {
+            let url = `data:image/jpeg;base64,${props.record.results.imgData}`;
+
+            props.navigation.navigate('ViewImage', { images: [{ url }] })
+          }}
+        />
+      </View>
+    );
+  } else {
+    return (
+      <List containerStyle={{marginBottom: 20}}>
+        {
+          props.record.results.map((item) => (
+            <ListItem
+              key={item.key}
+              title={item.key}
+              hideChevron={true}
+              rightTitle={(item.value == '') ? ' ' : item.value}
+              rightTitleStyle={{ color: 'black', fontSize: 20, fontFamily: (Platform.OS === 'ios') ? 'Courier' : 'monospace', fontWeight: 'bold'}}
+            />
+          ))
+        }
+      </List>
     );
   }
 }

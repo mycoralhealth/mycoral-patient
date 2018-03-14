@@ -19,7 +19,7 @@ import { QRCodeReaderScreen } from './src/screens/QRCodeReaderScreen.js';
 import { AddBloodTestRecordScreen } from './src/screens/AddBloodTestRecordScreen';
 import { AddGeneticTestRecordScreen } from './src/screens/AddGeneticTestRecordScreen';
 import { DelegateAccessScreen } from './src/screens/DelegateAccessScreen';
-import { DelegateAccessEntryScreen } from './src/screens/DelegateAccessEntryScreen';
+import { DelegationContactsScreen } from './src/screens/DelegationContactsScreen';
 import { ViewImageScreen } from './src/screens/ViewImageScreen';
 
 import { SharedRecordsScreen } from './src/screens/SharedRecordsScreen';
@@ -29,6 +29,8 @@ import { AccountInfoScreen } from './src/screens/AccountInfoScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { ContactsScreen } from './src/screens/ContactsScreen';
 import { MyContactScreen } from './src/screens/MyContactScreen';
+import { SharedRecordsWithScreen } from './src/screens/SharedRecordsWithScreen';
+import { ViewSharedRecordScreen } from './src/screens/ViewSharedRecordScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
@@ -36,11 +38,12 @@ const MyRecordsNavigator = StackNavigator({
   RequestHealthTip: { screen: RequestHealthTipScreen },
   RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen },
   DelegateAccess: { screen: DelegateAccessScreen },
-  DelegateAccessEntry: { screen: DelegateAccessEntryScreen },
+  DelegationContacts: { screen: DelegationContactsScreen },
   AddRecord: { screen: AddRecordScreen },
   AddRecordManual: { screen: AddRecordManualScreen },
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
+  QRCode: { screen: QRCodeScreen },
   ViewImage: {
     screen: ViewImageScreen,
     navigationOptions: ({ navigation }) => ({
@@ -61,7 +64,9 @@ const MyRecordsNavigator = StackNavigator({
 
 const SharedRecordsNavigator = StackNavigator({
   SharedRecords: { screen: SharedRecordsScreen },
+  SharedRecordsWith: { screen: SharedRecordsWithScreen },
   QRCode: { screen: QRCodeScreen },
+  ViewSharedRecord: { screen: ViewSharedRecordScreen }
 },{
   headerMode: 'none'
 });
@@ -111,7 +116,7 @@ const MainTabs = TabNavigator({
       }
     }),
   },
-  Friends: {
+  MySharedRecords: {
     screen: SharedRecordsNavigator,
     navigationOptions: ({ navigation }) => ( {
       tabBarLabel: 'Shared Records',

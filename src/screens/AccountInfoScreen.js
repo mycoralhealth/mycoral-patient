@@ -1,15 +1,15 @@
+import moment from 'moment';
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Button, Text, FormLabel, FormInput } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import nextFrame from 'next-frame';
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
+import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui.js';
 
-import { keysExist, generateKeyPair, invalidateKeyPair } from '../utilities/pki';
+import { keysExist, generateKeyPair, invalidateKeyPair, probeCPUPower } from '../utilities/pki';
 import store from '../utilities/store';
-
-import MessageIndicator from './MessageIndicator';
 
 function Loading(props) {
   return (
@@ -19,12 +19,16 @@ function Loading(props) {
 
 function KeyInfo(props) {
   if (props.opInProgress) {
-    return <MessageIndicator message={props.opInProgress.message} />
+    return (
+      <View style={{ flex: 1, marginTop: 20, marginBottom: 20 }}>
+        <MessageIndicator message={props.opInProgress.message} />
+      </View>
+    );
   }
 
   if (props.keysPresent) {
     return (
-      <View style={{ flex: 1, marginBottom: 10, backgroundColor: 'white'}}>
+      <View style={{ flex: 1, marginBottom: 10, padding: 10, backgroundColor: 'white'}}>
         <Text style={{padding: 20, textAlign: 'center'}}>
           Coral Health keys generated and in use.
         </Text>
@@ -40,7 +44,7 @@ function KeyInfo(props) {
     );
   } else {
     return (
-      <View style={{ flex: 1, marginBottom: 10, backgroundColor: 'white'}}>
+      <View style={{ flex: 1, marginBottom: 10, padding: 10, backgroundColor: 'white'}}>
         <Text style={{padding: 20, textAlign: 'center'}}>
           Coral Health keys are not present. To use the app please generate your own personal keys.
         </Text>
@@ -80,10 +84,18 @@ export class AccountInfoScreen extends Component {
     });
   }
 
-  generateKeys() {
+  async generateKeys() {
     this.setState({opInProgress:{message:'Generating keys, please wait this may take a while...'}});
+
+    await nextFrame();
+    let baseTime = await probeCPUPower();
+
+    console.log({baseTime});
+
+    this.setState({opInProgress:{message:`Generating keys, please wait this may take a while. Estimated ${moment.duration((baseTime * 50) + 60000).humanize()} ...`}});
+
     generateKeyPair()
-      .then(() => this.setState({keysPresent:true, opInProgress: null}));
+      .then(() => this.setState({ keysPresent:true, opInProgress: null }));
   }
 
   revokeKeys() {
@@ -123,7 +135,7 @@ export class AccountInfoScreen extends Component {
         <CoralHeader title='Your Account' subtitle='Security, IPFS and blockchain settings'/>
 
         <KeyboardAwareScrollView style={{ flex: 1 }}>
-          <View style={{ alignItems: 'center', marginTop: 20 }}>
+          <View style={{ flex: 1 }}>
             <KeyInfo 
               keysPresent={this.state.keysPresent}
               generateKeys={this.generateKeys.bind(this)}

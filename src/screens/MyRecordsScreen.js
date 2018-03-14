@@ -1,12 +1,11 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements';
 import nextFrame from 'next-frame';
 
-import { CoralHeader, colors } from '../ui';
+import { CoralHeader, colors, MessageIndicator } from '../ui';
 import store from '../utilities/store';
-import MessageIndicator from './MessageIndicator';
 import cryptoHelpers from '../utilities/crypto_helpers';
 
 const RecordListItem = (props) => {
@@ -54,6 +53,13 @@ export class MyRecordsScreen extends Component {
   }
 
   componentDidMount() {
+    // TODO: Use this to automatically add contacts and shared records.
+    Linking.getInitialURL().then((url) => {
+        if (url) {
+          console.log('Initial url is: ' + url);
+        }
+      }).catch(err => console.error('An error occurred', err));
+
     this.loadAndDecryptRecords();
   }
 

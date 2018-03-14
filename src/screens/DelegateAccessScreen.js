@@ -3,38 +3,122 @@ import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
-import DropdownAlert from 'react-native-dropdownalert';
+import { FileSystem } from 'expo';
+import nextFrame from 'next-frame';
 
-import { CoralHeader, CoralFooter, colors } from '../ui.js';
-
-const backAction = NavigationActions.back();
+import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui';
+import ipfs from '../utilities/expo-ipfs';
+import store from '../utilities/store';
+import cryptoHelpers from '../utilities/crypto_helpers';
 
 export class DelegateAccessScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {accessDelegated: false};
+    this.state = {accessDelegated: false, producingRecord: false};
   }
 
   onQRCodeScanned(type, data) {
-    // Dummy for now
-    console.log(`Code scanned ${type} with data ${data}`);
-    this.showSharedAlert();
+    store.qrCodeContactHelper(data)
+      .then((scanned) => {
+        const { contact } = scanned;
+        if (contact) {
+          this.onContactSelected(contact);
+        } else {
+          Alert.alert(
+            'QR Code Scan Error',
+            "The QR Code you just scanned doesn't look like valid Coral Health shared record. Please make sure you are scanning the QR code shown on the Shared Records screen of your contact.",
+            [
+              {text: 'OK', onPress: () => {} },
+            ],
+            { cancelable: true }
+          );
+        }
+      });
   }
 
-  onManualEntry(data) {
-    this.showSharedAlert();
-  }
+  onContactSelected(contact) {
+    this.setState({ producingRecord:true });
+    const navigation = this.props.navigation;
+    const record = navigation.state.params.record;
 
-  onCancel() {
-    this.setState({accessDelegated:false})
+    new Promise(function(resolve, reject) {
+
+      ipfs.cat(contact.publicKeyHash)
+        .then(async (publicKeyUri) => {
+          let publicKeyPem = await FileSystem.readAsStringAsync(publicKeyUri);
+
+          await FileSystem.deleteAsync(publicKeyUri, { idempotent: true });
+
+          await nextFrame();
+          ipfs.cat(record.hash)
+            .then(async (dataUri) => {
+              await nextFrame();
+              let { decryptedUri } = await cryptoHelpers.decryptFile(dataUri, record.encryptionInfo.key, record.encryptionInfo.iv);
+
+              let data = await FileSystem.readAsStringAsync(decryptedUri);
+              await FileSystem.deleteAsync(decryptedUri, { idempotent: true });
+
+              await nextFrame();
+              let encryptedInfo = await cryptoHelpers.encryptFile(data, record.metadata, publicKeyPem);
+
+              await nextFrame();
+              let hash = await ipfs.add(encryptedInfo.uri);
+
+              await FileSystem.deleteAsync(encryptedInfo.uri, { idempotent: true });
+
+              let sharedRecord = { 
+                id: record.id, 
+                hash, 
+                metadata: encryptedInfo.encryptedMetadata, 
+                encryptionInfo: { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv }
+              };
+
+              console.log({ sharedRecord });
+
+              let sharedInfo = store.thirdPartySharedRecordInfo(sharedRecord);
+
+              await nextFrame();
+              let sharedRecordHash = await ipfs.add(sharedInfo);
+
+              sharedRecord.sharedHash = sharedRecordHash;
+
+              await nextFrame();
+              await store.shareRecord(contact.name, sharedRecord);
+
+              resolve(sharedRecordHash);
+            });
+        });
+    }).then((sharedRecordHash) => { 
+      this.setState({ producingRecord:false });
+
+      store.sharedRecordInfo(sharedRecordHash)
+        .then((data) => {
+          navigation.navigate('QRCode', {
+            title:'Your Shared Record QR Code',
+            subTitle: 'Show this to a friend or doctor to let them add your medical record.',
+            shareMessage: 'I\'m sharing my medical record with you. Please import this record by using the Coral Health app.',
+            data, 
+            type: 'record'});
+        });
+ 
+    }).catch((e) => { console.log('Error re-encrypting record for a contact', e) });
   }
 
   showSharedAlert() {
-    this.dropdown.alertWithType('info', 'Record Shared', 'You can share the record with more people or go back.');
+    
   }
 
   render() {
+
+    if (this.state.producingRecord) {
+      return (
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.bg }}>
+          <MessageIndicator message="Encrypting record for use by your third party. Please wait..." />
+        </View>
+      ); 
+    }
+
     const record = this.props.navigation.state.params.record;
 
     return (
@@ -58,24 +142,20 @@ export class DelegateAccessScreen extends Component {
                 backgroundColor={colors.green}
                 icon={{name: 'qrcode', type: 'font-awesome'}}
                 title="Scan Recipient's QR Code"
-                onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this), onCancel: this.onCancel.bind(this)})}
+                onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this)})}
               />
             </View>
             <View style={{ flex: 1, marginBottom: 10}}>
               <Button
                 backgroundColor={colors.gray}
-                icon={{name: 'terminal', type: 'font-awesome'}}
-                title="Enter Recipient's Address"
-                onPress={() => this.props.navigation.navigate('DelegateAccessEntry', {onManualEntry: this.onManualEntry.bind(this), onCancel: this.onCancel.bind(this)})}
+                icon={{name: 'users', type: 'font-awesome'}}
+                title="Select from your Contacts"
+                onPress={() => this.props.navigation.navigate('DelegationContacts', {onContactSelected: this.onContactSelected.bind(this)})}
               />
             </View>
           </View>
         </ScrollView>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
-        <DropdownAlert
-          ref={ref => this.dropdown = ref}
-          infoColor={colors.darkerGray}
-        />
+        <CoralFooter backAction={() => this.props.navigation.dispatch(NavigationActions.back())}/>
       </View>
     );
   }

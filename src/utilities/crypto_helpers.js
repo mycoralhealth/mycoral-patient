@@ -11,7 +11,7 @@ const getFileType = (uri) => {
   return fileType;
 }
 
-const encryptFile = async (data, metadata) => {
+const encryptFile = async (data, metadata, publicKey) => {
   let symKeyInfo = await symmetricEncryption.generateKey();
 
   let encryptedOutput = await symmetricEncryption.encrypt(data, symKeyInfo.key, symKeyInfo.iv);
@@ -22,8 +22,8 @@ const encryptFile = async (data, metadata) => {
 
   let encryptedMetaOutput = await symmetricEncryption.encrypt(JSON.stringify(metadata), symKeyInfo.key, symKeyInfo.iv);
 
-  let encryptedKey = await encryptPKI(symKeyInfo.key);
-  let encryptedIv = await encryptPKI(symKeyInfo.iv);
+  let encryptedKey = await encryptPKI(symKeyInfo.key, publicKey);
+  let encryptedIv = await encryptPKI(symKeyInfo.iv, publicKey);
 
   return { 
     uri: encryptedUri, 

@@ -5,14 +5,15 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 
-import { CoralHeader, CoralFooter, colors, RecordDetails, MessageIndicator } from '../ui';
+import { CoralHeader, CoralFooter, colors, MessageIndicator, RecordDetails } from '../ui';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
+import store from '../utilities/store';
 
 const backAction = NavigationActions.back();
 
-export class ViewRecordScreen extends Component {  
+export class ViewSharedRecordScreen extends Component {  
   constructor(props) {
     super(props);
     this.state = { recordInitialized: false };
@@ -75,24 +76,26 @@ export class ViewRecordScreen extends Component {
             decrypting={this.state.decrypting}
             navigation={this.props.navigation} />
 
+          <View style={(record.error) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
+            <Button
+              backgroundColor={colors.gray}
+              icon={{name: 'verified-user', type: 'material'}}
+              title='Sharing Information'
+              onPress={() => {
+                store.sharedRecordInfo(record.sharedHash)
+                  .then((data) => {
+                    this.props.navigation.navigate('QRCode', {
+                      title:'Your Shared Record QR Code',
+                      subTitle: 'Show this to a friend or doctor to let them add your medical record.',
+                      shareMessage: 'I\'m sharing my medical record with you. Please import this record by using the Coral Health app.',
+                      data, 
+                      type: 'record'});
+                  });
+              }}
+            />
+          </View>
           <View style={{ flex: 1}}>
-            <View style={(record.error) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
-              <Button
-                backgroundColor={colors.green}
-                icon={{name: 'stethoscope', type: 'font-awesome'}}
-                title='Request Health Tip'
-                onPress={() => this.props.navigation.navigate('RequestHealthTip')}
-              />
-            </View>
-            <View style={(record.error) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
-              <Button
-                backgroundColor={colors.gray}
-                icon={{name: 'verified-user', type: 'material'}}
-                title='Access Sharing'
-                onPress={() => this.props.navigation.navigate('DelegateAccess', {record})}
-              />
-            </View>
-            <View style={{ flex: 1, marginBottom: 10, marginTop: 10}}>
+            <View style={{ flex: 1, marginBottom: 10, marginTop: 20}}>
               <Button
                 backgroundColor={colors.darkerGray}
                 icon={{name: 'trash-o', type: 'font-awesome'}}
