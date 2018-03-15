@@ -10,6 +10,7 @@ import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui';
 import ipfs from '../utilities/expo-ipfs';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
+import { setNeedsSharedRefresh } from './SharedRecordsScreen';
 
 export class DelegateAccessScreen extends Component {
   constructor(props) {
@@ -44,7 +45,7 @@ export class DelegateAccessScreen extends Component {
 
     new Promise(function(resolve, reject) {
 
-      ipfs.cat(contact.ipfsHash)
+      ipfs.cat(contact.publicKeyHash)
         .then(async (publicKeyUri) => {
           let publicKeyPem = await FileSystem.readAsStringAsync(publicKeyUri);
 
@@ -91,6 +92,8 @@ export class DelegateAccessScreen extends Component {
         });
     }).then((sharedRecordHash) => { 
       this.setState({ producingRecord:false });
+
+      setNeedsSharedRefresh();
 
       store.sharedRecordInfo(sharedRecordHash)
         .then((data) => {

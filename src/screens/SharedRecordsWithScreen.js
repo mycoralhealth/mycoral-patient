@@ -60,6 +60,8 @@ export class SharedRecordsWithScreen extends Component {
     store.removeSharedRecord(this.state.contact.name, record)
       .catch((e) => console.log(`Error removing shared record from store (${e})`));
 
+    this.props.navigation.state.params.onRecordsChanged();
+
     if (newRecords.length === 0) {
       this.props.navigation.dispatch(NavigationActions.back());  
     }
@@ -71,18 +73,25 @@ export class SharedRecordsWithScreen extends Component {
 
     let realRecords = [];
 
-    for (let record of recordsList) {
-      let realRecord = myRecords.find((r) => (r.id === record.id));
+    for (let entry of recordsList) {
+      let realRecord = null;
+
+      if (!this.state.contact.external) {
+        realRecord = myRecords.find((r) => (r.id === entry.id));
+      } else {
+        realRecord = entry.record;
+      }
+
 
       if (realRecord) {
-        realRecord.sharedHash = record.record.sharedHash;
+        realRecord.sharedHash = entry.record.sharedHash;
         realRecord.contact = this.state.contact;
 
         realRecords.push(realRecord);
       } else {
-        record.decrypted = true;
-        record.error = true;
-        realRecords.push(record);
+        entry.decrypted = true;
+        entry.error = true;
+        realRecords.push(entry);
       }
     }
     
@@ -98,6 +107,10 @@ export class SharedRecordsWithScreen extends Component {
   }
 
   async decryptRecord(record) {
+
+    console.log('Decrypting record');
+    console.log({record});
+
     try {
       let decryptedResult = await cryptoHelpers.decryptMetadata(record.metadata, record.encryptionInfo.key, record.encryptionInfo.iv);
       record.metadata = decryptedResult.metadata;

@@ -76,7 +76,7 @@ export class MyContactScreen extends Component {
 
           <FormLabel>Public key IPFS hash</FormLabel>
           <FormInput 
-            value={this.state.contact.ipfsHash}
+            value={this.state.contact.publicKeyHash}
             placeholder='someone'
             autoCapitalize='none'
             autoCorrect={false}

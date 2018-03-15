@@ -239,7 +239,7 @@ const isSharedInfoData = (data) => {
 const decodeSharedInfoData = (data) => {
   let parts = data.split(QR_INFO_SEPARATOR);
   let info = JSON.parse(forge.util.decode64(parts[0]));
-  info.ipfsHash = parts[1];
+  info.publicKeyHash = parts[1];
 
   return info;
 }

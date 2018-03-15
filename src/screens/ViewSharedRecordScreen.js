@@ -76,7 +76,7 @@ export class ViewSharedRecordScreen extends Component {
             decrypting={this.state.decrypting}
             navigation={this.props.navigation} />
 
-          <View style={(record.error) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
+          <View style={(record.error || record.externalContact) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
             <Button
               backgroundColor={colors.gray}
               icon={{name: 'verified-user', type: 'material'}}

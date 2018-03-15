@@ -3,11 +3,18 @@ import { View, ScrollView, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import nextFrame from 'next-frame';
+import { FileSystem } from 'expo';
 
 import { CoralHeader, colors, MessageModal, MessageIndicator } from '../ui';
 import store from '../utilities/store';
 import { keysExist, publicKeyPEM } from '../utilities/pki';
 import ipfs from '../utilities/expo-ipfs';
+
+let needsRefresh = false;
+
+export function setNeedsSharedRefresh() {
+  needsRefresh = true;
+}
 
 export class SharedRecordsScreen extends Component {
   constructor(props) {
@@ -67,7 +74,7 @@ export class SharedRecordsScreen extends Component {
   }
 
   componentDidMount() {
-    this.setState({ mounted: true });
+    this.reloadRecords();
   }
 
   hideModal() {
@@ -77,9 +84,9 @@ export class SharedRecordsScreen extends Component {
   onQRCodeScanned(type, data) {
     if (store.isSharedInfoData(data)) {
       try {
-        contact = decodeSharedInfoData(data);
+        contact = store.decodeSharedInfoData(data);
 
-        ipfs.cat(contact.ipfsHash)
+        ipfs.cat(contact.publicKeyHash)
           .then(async (recordMetadataUri) => {
             let recordData = await FileSystem.readAsStringAsync(recordMetadataUri);
             let record = store.decodeThirdPartySharedRecordInfo(recordData);
@@ -102,20 +109,20 @@ export class SharedRecordsScreen extends Component {
         console.log('Error', e);
       }
     }
-
   }
 
   render() {
-    if (this.state.mounted) {
-      this.reloadRecords();
-    }
-
     if (this.state.loading) {
       return (
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.bg }}>
           <MessageIndicator message="Loading shared records..." />
         </View>
       );
+    }
+
+    if (needsRefresh) {
+      needsRefresh = false;
+      this.reloadRecords();
     }
 
     if (this.state.creatingSharedKey) {
@@ -154,7 +161,8 @@ export class SharedRecordsScreen extends Component {
                   onPress={() => this.props.navigation.navigate('SharedRecordsWith', 
                     {
                       contact: entry.contact,
-                      records: entry.records                    
+                      records: entry.records,
+                      onRecordsChanged: this.reloadRecords.bind(this)
                     })}
                 />
               ))
@@ -204,6 +212,7 @@ export class SharedRecordsScreen extends Component {
                   await nextFrame();
                   let sharedInfo = await store.mySharedInfo();
 
+                  console.log({publicKey: await publicKeyPEM()});
                   console.log({sharedInfo});
 
                   this.props.navigation.navigate('QRCode', {
