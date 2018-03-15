@@ -66,7 +66,14 @@ const SharedRecordsNavigator = StackNavigator({
   SharedRecords: { screen: SharedRecordsScreen },
   SharedRecordsWith: { screen: SharedRecordsWithScreen },
   QRCode: { screen: QRCodeScreen },
-  ViewSharedRecord: { screen: ViewSharedRecordScreen }
+  ViewSharedRecord: { screen: ViewSharedRecordScreen },
+  QRCodeReader: {
+    screen: QRCodeReaderScreen,
+    navigationOptions: ({ navigation }) => ({
+      title: 'QR Code',
+      tabBarVisible: false
+    })
+  }  
 },{
   headerMode: 'none'
 });

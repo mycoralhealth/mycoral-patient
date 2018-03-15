@@ -44,7 +44,7 @@ export class DelegateAccessScreen extends Component {
 
     new Promise(function(resolve, reject) {
 
-      ipfs.cat(contact.publicKeyHash)
+      ipfs.cat(contact.ipfsHash)
         .then(async (publicKeyUri) => {
           let publicKeyPem = await FileSystem.readAsStringAsync(publicKeyUri);
 

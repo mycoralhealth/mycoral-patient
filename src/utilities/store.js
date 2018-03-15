@@ -15,6 +15,7 @@ const PUBLIC_KEY_SHARED_HASH = 'public_key_shared_hash';
 const QR_INFO_SEPARATOR = ':';
 
 const SHARED_RECORDS = 'sharedRecords';
+const EXTERNAL_RECORDS = 'externalRecords';
 
 /**
  * Basic store info. It uses STORE_KEY directly.
@@ -238,7 +239,7 @@ const isSharedInfoData = (data) => {
 const decodeSharedInfoData = (data) => {
   let parts = data.split(QR_INFO_SEPARATOR);
   let info = JSON.parse(forge.util.decode64(parts[0]));
-  info.publicKeyHash = parts[1];
+  info.ipfsHash = parts[1];
 
   return info;
 }
@@ -272,12 +273,12 @@ const thirdPartySharedRecordInfo = (sharedRecord) => {
   }
 }
 
-const decodeSharedRecordInfo = (data) => {
-  let parts = data.split(QR_INFO_SEPARATOR);
-  let info = JSON.parse(forge.util.decode64(parts[0]));
-  info.sharedHash = parts[1];
-
-  return info;
+const decodeThirdPartySharedRecordInfo = (base64Data) => {
+  try {
+    return JSON.parse(forge.util.decode64(base64Data));
+  } catch (e) {
+    console.log('Error getting shared info', e);
+  }
 }
 
 const sharedRecordInfo = async (hash) => {
@@ -294,10 +295,10 @@ const sharedRecordInfo = async (hash) => {
  * Shared records per contact
  */
 
-const sharedRecords = () => {
-  let p = new Promise(async function(resolve, reject) {
+const otherRecords = (storageKey) => {
+  return new Promise(async function(resolve, reject) {
     try {
-      let response = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`); 
+      let response = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${storageKey}`); 
       let result = await JSON.parse(response) || {};
       resolve(result);
     } catch (e) {
@@ -308,10 +309,27 @@ const sharedRecords = () => {
   return p;
 }
 
+const sharedRecords = () => {
+  return otherRecords(SHARED_RECORDS);
+}
+
+const externalRecords = () => {
+  return otherRecords(EXTERNAL_RECORDS);
+}
+
 const shareRecord = (contactEmail, recordInfo) => {
-  let p = new Promise(function(resolve, reject) {
+  return shareOtherRecord(SHARED_RECORDS, contactEmail, recordInfo);
+}
+
+const addExternalRecord = (contact, recordInfo) => {
+  recordInfo.externalContact = contact;
+  return shareOtherRecord(EXTERNAL_RECORDS, contact.name, recordInfo);
+}
+
+const shareOtherRecord = (storageKey, contactEmail, recordInfo) => {
+  return new Promise(function(resolve, reject) {
     try {
-      sharedRecords()
+      otherRecords(storageKey)
         .then(async (shared) => {
 
           let forContact = shared[contactEmail];
@@ -323,21 +341,27 @@ const shareRecord = (contactEmail, recordInfo) => {
           forContact[recordInfo.id] = recordInfo;
           shared[contactEmail] = forContact;
 
-          await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`, JSON.stringify(shared));
+          await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${storageKey}`, JSON.stringify(shared));
           resolve(shared);
         })
     } catch (e) {
       reject(`Error adding shared records to async storage (${e})`);
     }
   });
-
-  return p;
 }
 
 const removeSharedRecord = (contactEmail, recordInfo) => {
-  let p = new Promise(function(resolve, reject) {
+  return removeOtherRecord(SHARED_RECORDS, contactEmail, recordInfo);
+}
+
+const removeExternalRecord = (contactEmail, recordInfo) => {
+  return removeOtherRecord(EXTERNAL_RECORDS, contactEmail, recordInfo);
+}
+
+const removeOtherRecord = (contactEmail, recordInfo) => {
+  return new Promise(function(resolve, reject) {
     try {
-      sharedRecords()
+      otherRecords(storageKey)
         .then (async (shared) => {
           let forContact = shared[contactEmail];
 
@@ -350,7 +374,7 @@ const removeSharedRecord = (contactEmail, recordInfo) => {
               delete shared[contactEmail];
             }
 
-            await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${SHARED_RECORDS}`, JSON.stringify(shared));            
+            await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${storageKey}`, JSON.stringify(shared));            
           }
 
           resolve(shared);
@@ -359,8 +383,6 @@ const removeSharedRecord = (contactEmail, recordInfo) => {
       reject(`Error removing shared records from async storage (${e})`);
     }
   });
-
-  return p;
 }
 
 module.exports = {
@@ -391,6 +413,9 @@ module.exports = {
   removeSharedRecord,
   qrCodeContactHelper,
   thirdPartySharedRecordInfo,
-  decodeSharedRecordInfo,
-  sharedRecordInfo
+  sharedRecordInfo, 
+  externalRecords,
+  addExternalRecord,
+  removeExternalRecord,
+  decodeThirdPartySharedRecordInfo
 }

@@ -6,11 +6,15 @@ const PRIVATE_KEY_TAG = 'privateKey';
 const PUBLIC_KEY_TAG = 'publicKey';
 const KEYS_MARKER_TAG = 'keyPairMarker';
 
+const NUM_PKI_WORKERS = 2;
+const PKI_SIZE = 2048;
+const PKI_PROBE_SIZE = 512;
+
 export const generateKeyPair = () => {
   return new Promise(function(resolve, reject) {
     let start = new Date();
-    forge.pki.rsa.generateKeyPair({bits: 2048, workers: 1}, function(err, keypair) {
-      console.log('Elapsed keygen time for 2048 bits', (new Date()) - start);
+    forge.pki.rsa.generateKeyPair({bits: PKI_SIZE, workers: NUM_PKI_WORKERS}, function(err, keypair) {
+      console.log(`Elapsed keygen time for ${PKI_SIZE} bits`, (new Date()) - start);
 
       //console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
       //console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
@@ -116,7 +120,7 @@ export const publicKeyPEM = async () => {
 export const probeCPUPower = () => {
   return new Promise(function(resolve) {
     let start = new Date();
-    forge.pki.rsa.generateKeyPair({bits: 512, workers: 1}, function(err, keypair) {
+    forge.pki.rsa.generateKeyPair({bits: PKI_PROBE_SIZE, workers: NUM_PKI_WORKERS}, function(err, keypair) {
       resolve((new Date()) - start);
     });
   });

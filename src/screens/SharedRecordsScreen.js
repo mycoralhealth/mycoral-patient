@@ -19,25 +19,47 @@ export class SharedRecordsScreen extends Component {
   async reloadRecords() {
     let contacts = await store.contacts();
 
-    store.sharedRecords()
-      .then((sharedRecords) => {
-        let contactsArray = [];
+    let sharedRecords = await store.sharedRecords();
+    let externalRecords = await store.externalRecords();
 
-        for (const [email, records] of Object.entries(sharedRecords)) { 
-          var contact = contacts.find(function (c) { return c.name === email; });
+    let contactsArray = [];
 
-          if (contact) {
-            let recordArray = [];
+    for (const [email, records] of Object.entries(sharedRecords)) { 
+      let contact = contacts.find(function (c) { return c.name === email; });
 
-            for (const [id, record] of Object.entries(records)) {
-              recordArray.push({id, record});
-            }            
+      if (contact) {
+        let recordArray = [];
 
-            contactsArray.push({contact, records: recordArray});
-          }
+        contact.key = contact.name;
+
+        for (const [id, record] of Object.entries(records)) {
+          recordArray.push({id, record});
+        }            
+
+        contactsArray.push({contact, records: recordArray});
+      }
+    }
+
+    for (const [email, records] of Object.entries(externalRecords)) { 
+      let contact = null;
+      let recordArray = [];
+
+      for (const [id, record] of Object.entries(records)) {
+        if (!contact) {
+          contact = record.externalContact;
+          contact.key = `_${contact.name}`;
+          contact.external = true;
         }
-        this.setState({ contacts: contactsArray, loading: false });
-      });
+
+        recordArray.push({id, record});
+      }
+
+      if (recordArray.length > 0) {
+        contactsArray.push({contact, records: recordArray});
+      }
+    }
+
+    this.setState({ contacts: contactsArray, loading: false });
   }
 
   onShareKeyUploadFailed() {
@@ -50,6 +72,37 @@ export class SharedRecordsScreen extends Component {
 
   hideModal() {
     this.setState({ modalVisible: false });
+  }
+
+  onQRCodeScanned(type, data) {
+    if (store.isSharedInfoData(data)) {
+      try {
+        contact = decodeSharedInfoData(data);
+
+        ipfs.cat(contact.ipfsHash)
+          .then(async (recordMetadataUri) => {
+            let recordData = await FileSystem.readAsStringAsync(recordMetadataUri);
+            let record = store.decodeThirdPartySharedRecordInfo(recordData);
+
+            console.log({record});
+
+            store.addExternalRecord(contact, record);
+            this.reloadRecords();            
+          });
+      } catch(e) {
+        Alert.alert(
+          'QR Code Scan Error',
+          "The QR Code you just scanned doesn't look like valid Coral Health shared record. Please make sure you are scanning the QR code shown on the Shared Records screen of your contact.",
+          [
+            {text: 'OK', onPress: () => {} },
+          ],
+          { cancelable: true }
+        );
+
+        console.log('Error', e);
+      }
+    }
+
   }
 
   render() {
@@ -91,9 +144,10 @@ export class SharedRecordsScreen extends Component {
             {
               this.state.contacts.map((entry) => (
                 <ListItem
-                  roundAvatar
+                  style={{backgroundColor:(entry.contact.external ? '#eee' : 'white')}}
+                  roundAvatar                  
                   avatar={{uri:entry.contact.picture}}
-                  key={entry.contact.name}
+                  key={entry.contact.key}
                   title={entry.contact.nickname}
                   badge={{'value': `${entry.records.length} records`}}
                   chevronColor={colors.red}
@@ -107,11 +161,19 @@ export class SharedRecordsScreen extends Component {
             }
           </List>
         </ScrollView>
+        <View style={{ paddingTop: 15}}>
+          <Button
+            backgroundColor={colors.gray}
+            icon={{name: 'qrcode', type: 'font-awesome'}}
+            title='Add Records From Others'
+            onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this)})}
+          />
+        </View>
         <View style={{ paddingBottom: 15, paddingTop: 15}}>
           <Button
             backgroundColor={colors.red}
-            icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Receive Records From Others'
+            icon={{name: 'verified-user', type: 'material'}}
+            title='My Record Sharing Information'
             onPress={async () => {
               let keysCreated = await keysExist();
               if ( !keysCreated ) {
