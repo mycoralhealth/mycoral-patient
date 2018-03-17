@@ -5,10 +5,10 @@ import { AuthSession } from 'expo';
 
 import store from '../utilities/store';
 import { colors, MessageIndicator } from '../ui';
+import { CORALD_API } from '../const';
 
 const auth0ClientId = 'u79wUql80IzN7AuLDqv3NIeC8XmtMEuq';
 const auth0Domain = 'https://mycoralhealth.auth0.com';
-const coraldServer = 'https://api.mycoralhealth.com/v0';
 
 function toQueryString(params) {
   return '?' + Object.entries(params)
@@ -83,12 +83,12 @@ export class LoginScreen extends Component {
   // Get user metadata via corald
   getUserInfo = (responseObj) => {
 
-    fetch(`${coraldServer}/session`, {"headers": {"X-MyCoral-AccessToken": responseObj.access_token}})
+    fetch(`${CORALD_API}/session`, {"headers": {"X-MyCoral-AccessToken": responseObj.access_token}})
       .then(response => {
         if (response.status === 200) {
           response.json().then(async (userInfo) => {
             console.log(userInfo);
-            
+
             userInfo.accessToken = responseObj.access_token;
 
             await store.setUserInfo(userInfo);
