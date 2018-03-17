@@ -4,10 +4,14 @@ import { View, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { Button, List, ListItem, Text, Avatar } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import nextFrame from 'next-frame';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { CoralHeader, colors, CoralFooter, MessageIndicator } from '../ui';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
+
+import { removedSharedRecord } from '../actions/index.js';
 
 const RecordListItem = (props) => {
   let record = props.record;
@@ -42,7 +46,7 @@ const RecordListItem = (props) => {
   }
 }
 
-export class SharedRecordsWithScreen extends Component {
+class SharedRecordsWithScreenUnwrapped extends Component {
   constructor(props) {
     super(props);
 
@@ -65,7 +69,7 @@ export class SharedRecordsWithScreen extends Component {
         .catch((e) => console.log(`Error removing external record from store (${e})`));
     }
 
-    this.props.navigation.state.params.onRecordsChanged();
+    this.props.removedSharedRecord(record);
 
     if (newRecords.length === 0) {
       this.props.navigation.dispatch(NavigationActions.back());  
@@ -159,3 +163,9 @@ export class SharedRecordsWithScreen extends Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ removedSharedRecord }, dispatch);
+}
+
+export const SharedRecordsWithScreen = connect(null, mapDispatchToProps)(SharedRecordsWithScreenUnwrapped);

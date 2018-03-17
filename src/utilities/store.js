@@ -1,4 +1,5 @@
 import { AsyncStorage } from 'react-native';
+import { Constants } from 'expo';
 import forge from 'node-forge';
 
 const STORE_KEY = 'com.mycoralhealth.mycoral-patient';
@@ -147,6 +148,17 @@ const getUserName = async () => {
 
 const contacts = () => {
   let p = new Promise(async function(resolve, reject) {
+    if (!Constants.isDevice) {
+      return resolve([
+        {
+          "name": "nick@mycoralhealth.com",
+          "nickname": "nick",
+          "picture": "https://s.gravatar.com/avatar/0a262b3343fcaeb2032757c4a26b3bd4?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fni.png",
+          "publicKeyHash": "QmUUK9pF8msdckJDBqZutFeWyYuh5KjtW4GcPehsTj5wHd",
+        }
+      ]);
+    }
+
     try {
       let response = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${CONTACTS}`); 
       let result = await JSON.parse(response) || [];

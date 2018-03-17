@@ -5,15 +5,18 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 import nextFrame from 'next-frame';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui';
 import ipfs from '../utilities/expo-ipfs';
 import store from '../utilities/store';
 import importHelpers from '../utilities/import_helpers';
 import cryptoHelpers from '../utilities/crypto_helpers';
-import { setNeedsSharedRefresh } from './SharedRecordsScreen';
 
-export class DelegateAccessScreen extends Component {
+import { newSharedRecord } from '../actions/index.js';
+
+class DelegateAccessScreenUnwrapped extends Component {
   constructor(props) {
     super(props);
 
@@ -88,13 +91,15 @@ export class DelegateAccessScreen extends Component {
               await nextFrame();
               await store.shareRecord(contact.name, sharedRecord);
 
-              resolve(sharedRecordHash);
+              resolve({sharedRecordHash, sharedRecord});
             });
         });
-    }).then((sharedRecordHash) => { 
+    }).then((entity) => { 
+      const { sharedRecord, sharedRecordHash } = entity;
+
       this.setState({ producingRecord:false });
 
-      setNeedsSharedRefresh();
+      this.props.newSharedRecord(sharedRecord);
 
       store.sharedRecordInfo(sharedRecordHash)
         .then((data) => {
@@ -164,3 +169,9 @@ export class DelegateAccessScreen extends Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ newSharedRecord }, dispatch);
+}
+
+export const DelegateAccessScreen = connect(null, mapDispatchToProps)(DelegateAccessScreenUnwrapped);

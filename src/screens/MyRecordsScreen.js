@@ -3,12 +3,16 @@ import React, { Component } from 'react';
 import { View, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements';
 import nextFrame from 'next-frame';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { CoralHeader, colors, MessageIndicator, MessageModal } from '../ui';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import importHelpers from '../utilities/import_helpers';
 import { setNeedsSharedRefresh } from './SharedRecordsScreen';
+
+import { newSharedRecord } from '../actions/index.js';
 
 const RecordListItem = (props) => {
   let record = props.record;
@@ -47,7 +51,7 @@ export function cleanUpRecordsCache() {
   cachedRecords = [];
 }
 
-export class MyRecordsScreen extends Component {
+class MyRecordsScreenUnwrapped extends Component {
   constructor(props) {
     super(props);
 
@@ -96,7 +100,6 @@ export class MyRecordsScreen extends Component {
             const { contact } = scanned;
             if (contact) {
               this.setState({ modalVisible: true, addedType: 'contact' });
-              setNeedsSharedRefresh();
             }
           });
 
@@ -109,7 +112,7 @@ export class MyRecordsScreen extends Component {
             const { record } = scanned;
             if (record) {
               this.setState({ modalVisible: true, addedType: 'record' });
-              setNeedsSharedRefresh();
+              this.props.newSharedRecord(record);
             } 
           });
 
@@ -216,3 +219,9 @@ export class MyRecordsScreen extends Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ newSharedRecord }, dispatch);
+}
+
+export const MyRecordsScreen = connect(null, mapDispatchToProps)(MyRecordsScreenUnwrapped);

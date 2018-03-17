@@ -4,6 +4,7 @@ import { Button } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import nextFrame from 'next-frame';
 import { FileSystem } from 'expo';
+import { connect } from 'react-redux';
 
 import { CoralHeader, colors, MessageModal, MessageIndicator } from '../ui';
 import store from '../utilities/store';
@@ -11,13 +12,7 @@ import { keysExist, publicKeyPEM } from '../utilities/pki';
 import ipfs from '../utilities/expo-ipfs';
 import importHelpers from '../utilities/import_helpers';
 
-let needsRefresh = false;
-
-export function setNeedsSharedRefresh() {
-  needsRefresh = true;
-}
-
-export class SharedRecordsScreen extends Component {
+class SharedRecordsScreenUnwrapped extends Component {
   constructor(props) {
     super(props);
 
@@ -83,7 +78,6 @@ export class SharedRecordsScreen extends Component {
   }
 
   onQRCodeScanned(type, data) {
-
     importHelpers.qrCodeRecordHelper(data)
       .then((scanned) => {
         const { record } = scanned;
@@ -111,8 +105,8 @@ export class SharedRecordsScreen extends Component {
       );
     }
 
-    if (needsRefresh) {
-      needsRefresh = false;
+    if (this.props.addedOrRemovedRecords.length > 0) {
+      console.log('Reloaded');
       this.reloadRecords();
     }
 
@@ -225,3 +219,9 @@ export class SharedRecordsScreen extends Component {
     );
   }
 }
+
+function mapStateToProps({ records, removedRecords }) {
+  return { addedOrRemovedRecords: [...records, ...removedRecords] };
+}
+
+export const SharedRecordsScreen = connect(mapStateToProps)(SharedRecordsScreenUnwrapped);
