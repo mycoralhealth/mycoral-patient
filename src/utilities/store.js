@@ -318,13 +318,7 @@ const removeOtherRecord = (storageKey, contactEmail, recordInfo) => {
     try {
       otherRecords(storageKey)
         .then (async (shared) => {
-
-          console.log({shared});
-          console.log({anId: recordInfo.id});
-
           let forContact = shared[contactEmail];
-
-          console.log({forContact});
 
           if (forContact && (recordInfo.id in forContact)) {
             delete forContact[recordInfo.id];
@@ -334,9 +328,6 @@ const removeOtherRecord = (storageKey, contactEmail, recordInfo) => {
             } else {
               delete shared[contactEmail];
             }
-
-            console.log('Before save');
-            console.log({shared});
 
             await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${storageKey}`, JSON.stringify(shared));            
           }

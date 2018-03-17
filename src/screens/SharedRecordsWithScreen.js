@@ -87,7 +87,6 @@ export class SharedRecordsWithScreen extends Component {
         realRecord = entry.record;
       }
 
-
       if (realRecord) {
         realRecord.sharedHash = entry.record.sharedHash;
         realRecord.contact = this.state.contact;
@@ -101,8 +100,6 @@ export class SharedRecordsWithScreen extends Component {
     }
     
     this.setState({ recordsList: realRecords });
-
-    console.log({realRecords});
 
     for (let record of realRecords) {
       if (!record.error) {

@@ -67,8 +67,6 @@ export class SharedRecordsScreen extends Component {
       }
     }
 
-    console.log({contactsArray});
-
     this.setState({ contacts: contactsArray, loading: false });
   }
 

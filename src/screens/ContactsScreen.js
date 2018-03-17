@@ -32,7 +32,6 @@ export class ContactsScreen extends Component {
   }
 
   onQRCodeContactScanned(type, data) {
-    console.log({data});
     importHelpers.qrCodeContactHelper(data)
       .then((scanned) => {
         const {contacts} = scanned;

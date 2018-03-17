@@ -36,8 +36,7 @@ const qrCodeContactHelper = (data) => {
 
       try {
         contact = decodeSharedInfoData(data);
-        //console.log({contact});
-
+        
         contacts = await store.addContact(contact);
       } catch (e) {
         console.log('Error parsing shared contact data', e);
@@ -61,8 +60,6 @@ const qrCodeRecordHelper = (data) => {
           .then(async (recordMetadataUri) => {
             let recordData = await FileSystem.readAsStringAsync(recordMetadataUri);
             let record = decodeThirdPartySharedRecordInfo(recordData);
-
-            //console.log({record});
 
             records = await store.addExternalRecord(contact, record);
 
