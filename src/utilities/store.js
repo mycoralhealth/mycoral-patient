@@ -228,54 +228,9 @@ const mySharedInfo = async () => {
   }
 }
 
-const isSharedInfoData = (data) => {
-  if (!data) {
-    return false;
-  }
-
-  return data.indexOf(QR_INFO_SEPARATOR) > 0;
-}
-
-const decodeSharedInfoData = (data) => {
-  let parts = data.split(QR_INFO_SEPARATOR);
-  let info = JSON.parse(forge.util.decode64(parts[0]));
-  info.publicKeyHash = parts[1];
-
-  return info;
-}
-
-const qrCodeContactHelper = (data) => {
-  return new Promise(async function(resolve) {
-    let contacts = null;
-    let contact = null;
-    
-    if (isSharedInfoData(data)) {
-
-      try {
-        contact = decodeSharedInfoData(data);
-        console.log({contact});
-
-        contacts = await addContact(contact);
-      } catch (e) {
-        console.log('Error parsing shared contact data', e);
-      }
-    }
-
-    resolve({contacts, contact});
-  });
-}
-
 const thirdPartySharedRecordInfo = (sharedRecord) => {
   try {
     return forge.util.encode64(JSON.stringify(sharedRecord));
-  } catch (e) {
-    console.log('Error getting shared info', e);
-  }
-}
-
-const decodeThirdPartySharedRecordInfo = (base64Data) => {
-  try {
-    return JSON.parse(forge.util.decode64(base64Data));
   } catch (e) {
     console.log('Error getting shared info', e);
   }
@@ -358,12 +313,18 @@ const removeExternalRecord = (contactEmail, recordInfo) => {
   return removeOtherRecord(EXTERNAL_RECORDS, contactEmail, recordInfo);
 }
 
-const removeOtherRecord = (contactEmail, recordInfo) => {
+const removeOtherRecord = (storageKey, contactEmail, recordInfo) => {
   return new Promise(function(resolve, reject) {
     try {
       otherRecords(storageKey)
         .then (async (shared) => {
+
+          console.log({shared});
+          console.log({anId: recordInfo.id});
+
           let forContact = shared[contactEmail];
+
+          console.log({forContact});
 
           if (forContact && (recordInfo.id in forContact)) {
             delete forContact[recordInfo.id];
@@ -373,6 +334,9 @@ const removeOtherRecord = (contactEmail, recordInfo) => {
             } else {
               delete shared[contactEmail];
             }
+
+            console.log('Before save');
+            console.log({shared});
 
             await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${storageKey}`, JSON.stringify(shared));            
           }
@@ -406,16 +370,14 @@ module.exports = {
   setSharedPublicKey,
   mySharedInfo,
   publicUserInfo,
-  isSharedInfoData,
-  decodeSharedInfoData,
   sharedRecords,
   shareRecord,
   removeSharedRecord,
-  qrCodeContactHelper,
   thirdPartySharedRecordInfo,
   sharedRecordInfo, 
   externalRecords,
   addExternalRecord,
   removeExternalRecord,
-  decodeThirdPartySharedRecordInfo
-}
+  QR_INFO_SEPARATOR
+ }
+

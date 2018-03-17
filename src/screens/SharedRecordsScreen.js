@@ -9,6 +9,7 @@ import { CoralHeader, colors, MessageModal, MessageIndicator } from '../ui';
 import store from '../utilities/store';
 import { keysExist, publicKeyPEM } from '../utilities/pki';
 import ipfs from '../utilities/expo-ipfs';
+import importHelpers from '../utilities/import_helpers';
 
 let needsRefresh = false;
 
@@ -66,6 +67,8 @@ export class SharedRecordsScreen extends Component {
       }
     }
 
+    console.log({contactsArray});
+
     this.setState({ contacts: contactsArray, loading: false });
   }
 
@@ -82,33 +85,23 @@ export class SharedRecordsScreen extends Component {
   }
 
   onQRCodeScanned(type, data) {
-    if (store.isSharedInfoData(data)) {
-      try {
-        contact = store.decodeSharedInfoData(data);
 
-        ipfs.cat(contact.publicKeyHash)
-          .then(async (recordMetadataUri) => {
-            let recordData = await FileSystem.readAsStringAsync(recordMetadataUri);
-            let record = store.decodeThirdPartySharedRecordInfo(recordData);
-
-            console.log({record});
-
-            store.addExternalRecord(contact, record);
-            this.reloadRecords();            
-          });
-      } catch(e) {
-        Alert.alert(
-          'QR Code Scan Error',
-          "The QR Code you just scanned doesn't look like valid Coral Health shared record. Please make sure you are scanning the QR code shown on the Shared Records screen of your contact.",
-          [
-            {text: 'OK', onPress: () => {} },
-          ],
-          { cancelable: true }
-        );
-
-        console.log('Error', e);
-      }
-    }
+    importHelpers.qrCodeRecordHelper(data)
+      .then((scanned) => {
+        const { record } = scanned;
+        if (record) {
+          this.reloadRecords();            
+        } else {
+          Alert.alert(
+            'QR Code Scan Error',
+            "The QR Code you just scanned doesn't look like valid Coral Health shared record. Please make sure you are scanning the QR code shown on the Shared Records screen of your contact.",
+            [
+              {text: 'OK', onPress: () => {} },
+            ],
+            { cancelable: true }
+          );
+        }
+      });
   }
 
   render() {
@@ -151,11 +144,12 @@ export class SharedRecordsScreen extends Component {
             {
               this.state.contacts.map((entry) => (
                 <ListItem
-                  style={{backgroundColor:(entry.contact.external ? '#eee' : 'white')}}
+                  containerStyle={{backgroundColor:(entry.contact.external) ? '#ddd' : 'white'}}
                   roundAvatar                  
                   avatar={{uri:entry.contact.picture}}
                   key={entry.contact.key}
                   title={entry.contact.nickname}
+                  subtitle={(entry.contact.external) ? 'Imported Records' : null}
                   badge={{'value': `${entry.records.length} records`}}
                   chevronColor={colors.red}
                   onPress={() => this.props.navigation.navigate('SharedRecordsWith', 

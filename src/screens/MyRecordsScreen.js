@@ -53,14 +53,45 @@ export class MyRecordsScreen extends Component {
   }
 
   componentDidMount() {
-    // TODO: Use this to automatically add contacts and shared records.
+    Linking.addEventListener('url', this.handleOpenURL);
     Linking.getInitialURL().then((url) => {
         if (url) {
-          console.log('Initial url is: ' + url);
+          this.processLinkHandler(url);
         }
       }).catch(err => console.error('An error occurred', err));
 
     this.loadAndDecryptRecords();
+  }
+
+  componentWillUnmount() { 
+    Linking.removeEventListener('url', this.handleOpenURL);
+  }  
+
+  handleOpenURL = (event) => { 
+    this.processLinkHandler(event.url);
+  }
+
+  getQueryParam = ( url, name ) => {
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( url );
+    return results == null ? null : results[1];
+  }
+
+  processLinkHandler = (url) => {
+    console.log('URL passed to app: ', url);
+    let type = this.getQueryParam(url, 'type');
+
+    console.log({type});
+
+    switch (type) {
+      case 'contact':
+        console.log({data: this.getQueryParam(url, 'data')});
+        break;
+      case 'record':
+        break;
+    }
   }
 
   async loadAndDecryptRecords() {

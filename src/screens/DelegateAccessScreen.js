@@ -9,6 +9,7 @@ import nextFrame from 'next-frame';
 import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui';
 import ipfs from '../utilities/expo-ipfs';
 import store from '../utilities/store';
+import importHelpers from '../utilities/import_helpers';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import { setNeedsSharedRefresh } from './SharedRecordsScreen';
 
@@ -20,7 +21,7 @@ export class DelegateAccessScreen extends Component {
   }
 
   onQRCodeScanned(type, data) {
-    store.qrCodeContactHelper(data)
+    importHelpers.qrCodeContactHelper(data)
       .then((scanned) => {
         const { contact } = scanned;
         if (contact) {

@@ -91,7 +91,9 @@ export class MyContactScreen extends Component {
               title='Delete'
               onPress={() => this.onContactDeleted(this.state.contact)}
             />
-          </View>          
+          </View>    
+          <View style={{ height: 300 }}/>
+                
         </ScrollView>
         <CoralFooter backAction={() => this.props.navigation.dispatch(NavigationActions.back())}/>
       </View>
