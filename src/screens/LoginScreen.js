@@ -16,46 +16,54 @@ function toQueryString(params) {
     .join('&');
 }
 
+function UnauthorizedException() {}
+
 export class LoginScreen extends Component {
   state = {
-    name: undefined
-  }
-
-  constructor(props) {
-    super(props);
-
-    if (this.props.navigation.state &&
-      this.props.navigation.state.params &&
-      this.props.navigation.state.params.logout) {
-      this.state = {needsLogin: true};
-    }
+    loggedIn: false,
+    loading: false,
   }
 
   async componentDidMount() {
-    if (!this.state.needsLogin) {
-      let userInfo = await store.getUserInfo();
-
-      this.setState({userInfo});
-
-      if (!this.state.userInfo) {
-        console.log("No name, doing login");
-        this._loginWithAuth0();
-      } else {
-        console.log("already logged in");
-        this.continueToApp();
-      }
+    // Load the existing accessToken (if any)
+    // and call setState to trigger componentDidUpdate
+    // and kick off our state machine
+    let userInfo = await store.getUserInfo();
+    if (userInfo) {
+      this.setState({accessToken: userInfo.accessToken});
+    } else {
+      this.setState({accessToken: undefined});
     }
   }
 
-  continueToApp() {
-    this.props.navigation.navigate('MainTabs');
+  // componentDidUpdate performs state transitions for our state machine
+  async componentDidUpdate() {
+
+    if (this.state.loggedIn) {
+      // Logged in: navigate to the app
+      this.props.navigation.navigate('MainTabs');
+      return;
+    }
+
+    if (this.state.loading || this.state.error) {
+      // Do nothing (the render function takes care of these states)
+      return;
+    }
+
+    if (this.state.accessToken && !this.state.loading) {
+      // We have an accessToken, but it needs to be validated
+      this._getSession(this.state.accessToken);
+      this.setState({loading: true});
+      return;
+    }
+
+    // We don't have an accessToken, so we need to show the login dialog
+    this._loginWithAuth0();
   }
 
+  // Perform login with Auth0 to get an accessToken
   _loginWithAuth0 = async () => {
-    this.setState({needsLogin: false});
-    
     const redirectUrl = AuthSession.getRedirectUrl();
-    console.log(`Redirect URL: ${redirectUrl}`);
     const result = await AuthSession.startAsync({
       authUrl: `${auth0Domain}/authorize` + toQueryString({
         client_id: auth0ClientId,
@@ -65,69 +73,67 @@ export class LoginScreen extends Component {
       }),
     });
 
-    console.log(result);
-
     if (result.type === 'success') {
       if (result.params.error) {
-        Alert.alert('Error', result.params.error_description
-          || 'something went wrong while logging in');
+        // If an error was returned from Auth0
+        this.setState({error: JSON.stringify(result.params)});
         return;
       }
-
-      this.getUserInfo(result.params);
+      this.setState({accessToken: result.params.access_token});
+    } else if (result.type === 'cancel') {
+      this.setState({error: "User canceled"});
+    } else if (result.type === 'error' && result.errorCode === 'login-declined') {
+      this.setState({error: "User declined"});
     } else {
-      this.setState({needsLogin: true});
+      this.setState({error: JSON.stringify(result)});
     }
   }
 
-  // Get user metadata via corald
-  getUserInfo = (responseObj) => {
-
-    fetch(`${CORALD_API}/session`, {"headers": {"X-MyCoral-AccessToken": responseObj.access_token}})
-      .then(response => {
-        if (response.status === 200) {
-          response.json().then(async (userInfo) => {
-            console.log(userInfo);
-
-            userInfo.accessToken = responseObj.access_token;
-
-            await store.setUserInfo(userInfo);
-
-            this.setState({ userInfo });
-
-            this.continueToApp();
-          })
-        }
-        else {
-          Alert.alert('Corald Error' + response.status, response.body || 'Connection failed');
-        }
-      })
-  }
+  // Validate accessToken and get user metadata via corald
+  _getSession = async (accessToken) => {
+    let response = await fetch(`${CORALD_API}/session`, {"headers": {"X-MyCoral-AccessToken": accessToken}})
+    if (response.status === 200) {
+      let userInfo = await response.json();
+      userInfo.accessToken = accessToken;
+      await store.setUserInfo(userInfo);
+      this.setState({loggedIn: true});
+    } else if (response.status === 401) {
+      // Access token is invalid
+      this.setState({loading: false, accessToken: undefined});
+    } else {
+      // Some other error
+      this.setState({loading: false, error: response.statusText || "Connection failed"});
+    }
+  };
 
   render() {
-    if (!this.state.needsLogin) {
-      return (
-        <View style={styles.container}>
-          <MessageIndicator message='Logging in...' />
+    if (this.state.loading) {
+      return(
+        <View style={styles.container} centerContent={true}>
+          <MessageIndicator message='Fetching user data...' />
         </View>
       );
     }
 
+    if (this.state.error) {
+      return (
+        <View style={styles.container}>
+          <Text>An error occurred while logging in:</Text>
+          <Text style={styles.error}>{this.state.error}</Text>
+          <Button
+          backgroundColor={colors.green}
+          color='white'
+          icon={{name: 'ios-log-in', type: 'ionicon'}}
+          title='Login'
+          onPress={() => {this.setState({error: undefined});}}
+        />
+        </View>
+      );
+    }
+
+    // Show an empty screen (this is shown behind the WebBrowser, for example)
     return (
-      <View style={styles.container}>
-        <View style={{ backgroundColor: 'white', width: 150, height: 150, marginBottom: 10, justifyContent: 'center'}}>
-          <Image style={{ width: 150, height: 150 }} source={require('../../assets/corner-logo.png')} />
-        </View>
-        <Text style={{textAlign: 'center', marginBottom: 20, marginLeft: 20, marginRight: 20}}>
-          You are logged-out of My Coral Health
-        </Text>
-        <View>
-          <Button 
-            backgroundColor={colors.green}
-            title="Login with Auth0" 
-            onPress={this._loginWithAuth0} />
-        </View>
-      </View>
+      <View style={styles.container}></View>
     );
   }
 }
@@ -135,8 +141,12 @@ export class LoginScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.bg,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  error: {
+    color: colors.gray,
+    marginBottom: 20
   }
 });
