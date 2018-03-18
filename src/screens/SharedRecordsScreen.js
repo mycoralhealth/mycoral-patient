@@ -13,8 +13,11 @@ import ipfs from '../utilities/expo-ipfs';
 import importHelpers from '../utilities/import_helpers';
 
 class SharedRecordsScreenUnwrapped extends Component {
+
   constructor(props) {
     super(props);
+
+    this.notifiedWithRecords = [];
 
     this.state = { loading: true, mounted: false, modalVisible: false, contacts:[] };
   }
@@ -96,6 +99,45 @@ class SharedRecordsScreenUnwrapped extends Component {
       });
   }
 
+  mergeContacts(local, updates) {
+    let result = local;
+
+    for (update of updates.removed) {
+      let key = (update.contact.external) ? `_${update.contact.name}` : update.contact.name;
+
+      let entry = result.find(function (entry) { return entry.contact.key === key; });
+
+      if (entry) {
+        let entryRecords = entry.records.filter((r) => (r.id != update.record.id));
+        if (entryRecords.length === 0) {
+          result = result.filter((entry) => (entry.contact.key !== key));
+        } else {
+          entry.records = entryRecords;
+        }
+      }
+    }
+
+    for (update of updates.added) {
+      let key = (update.contact.external) ? `_${update.contact.name}` : update.contact.name;
+
+      let entry = result.find(function (entry) { return entry.contact.key === key; });
+
+      if (entry) {
+        let record = entry.records.find(function (r) { return r.id === update.record.id; });
+
+        if (!record) {
+          entry.records.push({id: update.record.id, record: update.record});
+        }
+      } else {
+        update.contact.key = key;
+        result.push({contact: update.contact, records: [{id:update.record.id, record:update.record}]});
+      }      
+    }
+
+    this.state.contacts = result;
+    return result;
+  }
+
   render() {
     if (this.state.loading) {
       return (
@@ -103,11 +145,6 @@ class SharedRecordsScreenUnwrapped extends Component {
           <MessageIndicator message="Loading shared records..." />
         </View>
       );
-    }
-
-    if (this.props.addedOrRemovedRecords.length > 0) {
-      console.log('Reloaded');
-      this.reloadRecords();
     }
 
     if (this.state.creatingSharedKey) {
@@ -134,7 +171,7 @@ class SharedRecordsScreenUnwrapped extends Component {
           />
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
-              this.state.contacts.map((entry) => (
+              this.mergeContacts(this.state.contacts, this.props.updates).map((entry) => (
                 <ListItem
                   containerStyle={{backgroundColor:(entry.contact.external) ? '#ddd' : 'white'}}
                   roundAvatar                  
@@ -198,9 +235,6 @@ class SharedRecordsScreenUnwrapped extends Component {
                   await nextFrame();
                   let sharedInfo = await store.mySharedInfo();
 
-                  console.log({publicKey: await publicKeyPEM()});
-                  console.log({sharedInfo});
-
                   this.props.navigation.navigate('QRCode', {
                     title:'Your Account QR Code',
                     subTitle: 'Show this to a friend or doctor to let them share or send you a medical record.',
@@ -221,7 +255,7 @@ class SharedRecordsScreenUnwrapped extends Component {
 }
 
 function mapStateToProps({ records, removedRecords }) {
-  return { addedOrRemovedRecords: [...records, ...removedRecords] };
+  return { updates: {added:records, removed:removedRecords} };
 }
 
 export const SharedRecordsScreen = connect(mapStateToProps)(SharedRecordsScreenUnwrapped);

@@ -63,7 +63,7 @@ const qrCodeRecordHelper = (data) => {
 
             records = await store.addExternalRecord(contact, record);
 
-            resolve({records, record});
+            resolve({records, record, contact});
           });
       } catch (e) {
         console.log('Error parsing shared record data', e);

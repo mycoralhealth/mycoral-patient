@@ -109,10 +109,11 @@ class MyRecordsScreenUnwrapped extends Component {
 
         importHelpers.qrCodeRecordHelper(data)
           .then((scanned) => {
-            const { record } = scanned;
+            const { record, contact } = scanned;
             if (record) {
               this.setState({ modalVisible: true, addedType: 'record' });
-              this.props.newSharedRecord(record);
+              contact.external = true;
+              this.props.newSharedRecord({ contact, record });
             } 
           });
 

@@ -99,7 +99,7 @@ class DelegateAccessScreenUnwrapped extends Component {
 
       this.setState({ producingRecord:false });
 
-      this.props.newSharedRecord(sharedRecord);
+      this.props.newSharedRecord({ contact, record: sharedRecord });
 
       store.sharedRecordInfo(sharedRecordHash)
         .then((data) => {

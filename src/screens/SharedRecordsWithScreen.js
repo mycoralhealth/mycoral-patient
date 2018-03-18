@@ -69,7 +69,7 @@ class SharedRecordsWithScreenUnwrapped extends Component {
         .catch((e) => console.log(`Error removing external record from store (${e})`));
     }
 
-    this.props.removedSharedRecord(record);
+    this.props.removedSharedRecord({contact: this.state.contact, record});
 
     if (newRecords.length === 0) {
       this.props.navigation.dispatch(NavigationActions.back());  
