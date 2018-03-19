@@ -3,15 +3,21 @@ import { View, ScrollView, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import nextFrame from 'next-frame';
+import { FileSystem } from 'expo';
+import { connect } from 'react-redux';
 
 import { CoralHeader, colors, MessageModal, MessageIndicator } from '../ui';
 import store from '../utilities/store';
 import { keysExist, publicKeyPEM } from '../utilities/pki';
 import ipfs from '../utilities/expo-ipfs';
+import importHelpers from '../utilities/import_helpers';
 
-export class SharedRecordsScreen extends Component {
+class SharedRecordsScreenUnwrapped extends Component {
+
   constructor(props) {
     super(props);
+
+    this.notifiedWithRecords = [];
 
     this.state = { loading: true, mounted: false, modalVisible: false, contacts:[] };
   }
@@ -19,25 +25,12 @@ export class SharedRecordsScreen extends Component {
   async reloadRecords() {
     let contacts = await store.contacts();
 
-    store.sharedRecords()
-      .then((sharedRecords) => {
-        let contactsArray = [];
+    let sharedRecords = await store.sharedRecords();
+    let externalRecords = await store.externalRecords();
 
-        for (const [email, records] of Object.entries(sharedRecords)) { 
-          var contact = contacts.find(function (c) { return c.name === email; });
+    let contactsArray = importHelpers.groupByContact(contacts, sharedRecords, externalRecords);
 
-          if (contact) {
-            let recordArray = [];
-
-            for (const [id, record] of Object.entries(records)) {
-              recordArray.push({id, record});
-            }            
-
-            contactsArray.push({contact, records: recordArray});
-          }
-        }
-        this.setState({ contacts: contactsArray, loading: false });
-      });
+    this.setState({ contacts: contactsArray, loading: false });
   }
 
   onShareKeyUploadFailed() {
@@ -45,18 +38,50 @@ export class SharedRecordsScreen extends Component {
   }
 
   componentDidMount() {
-    this.setState({ mounted: true });
+    this.reloadRecords();
   }
 
   hideModal() {
     this.setState({ modalVisible: false });
   }
 
-  render() {
-    if (this.state.mounted) {
-      this.reloadRecords();
-    }
+  onQRCodeScanned(type, data) {
+    importHelpers.qrCodeRecordHelper(data)
+      .then((scanned) => {
+        const { record } = scanned;
+        if (record) {
+          this.reloadRecords();            
+        } else {
+          Alert.alert(
+            'QR Code Scan Error',
+            "The QR Code you just scanned doesn't look like valid Coral Health shared record. Please make sure you are scanning the QR code shown on the Shared Records screen of your contact.",
+            [
+              {text: 'OK', onPress: () => {} },
+            ],
+            { cancelable: true }
+          );
+        }
+      });
+  }
 
+  /**
+   * This function merges externally supplied state by reducers to what we hold as loaded from the store.
+   * It's more complicated than it should be, but perhaps we can fix that when we refactor some of the store
+   * code to go through corald. 
+   *
+   * The general idea is that we get events for removed and added records and we match them against what 
+   * we have in state to clean-up or add new entries.
+   */
+  mergeContacts(local, updates) {
+    let result = importHelpers.applySharedRecordUpdates(local, updates);
+
+    // We don't se setState on purpose. This is just to update the state variable with the updates. The result will already
+    // supply the correct array to the render method.
+    this.state.contacts = result;
+    return result;
+  }
+
+  render() {
     if (this.state.loading) {
       return (
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', backgroundColor: colors.bg }}>
@@ -89,29 +114,40 @@ export class SharedRecordsScreen extends Component {
           />
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
-              this.state.contacts.map((entry) => (
+              this.mergeContacts(this.state.contacts, this.props.updates).map((entry) => (
                 <ListItem
-                  roundAvatar
+                  containerStyle={{backgroundColor:(entry.contact.external) ? '#ddd' : 'white'}}
+                  roundAvatar                  
                   avatar={{uri:entry.contact.picture}}
-                  key={entry.contact.name}
+                  key={entry.contact.key}
                   title={entry.contact.nickname}
+                  subtitle={(entry.contact.external) ? 'Imported Records' : null}
                   badge={{'value': `${entry.records.length} records`}}
                   chevronColor={colors.red}
                   onPress={() => this.props.navigation.navigate('SharedRecordsWith', 
                     {
                       contact: entry.contact,
-                      records: entry.records                    
+                      records: entry.records,
+                      onRecordsChanged: this.reloadRecords.bind(this)
                     })}
                 />
               ))
             }
           </List>
         </ScrollView>
+        <View style={{ paddingTop: 15}}>
+          <Button
+            backgroundColor={colors.gray}
+            icon={{name: 'qrcode', type: 'font-awesome'}}
+            title='Add Records From Others'
+            onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this)})}
+          />
+        </View>
         <View style={{ paddingBottom: 15, paddingTop: 15}}>
           <Button
             backgroundColor={colors.red}
-            icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Receive Records From Others'
+            icon={{name: 'verified-user', type: 'material'}}
+            title='My Record Sharing Information'
             onPress={async () => {
               let keysCreated = await keysExist();
               if ( !keysCreated ) {
@@ -142,8 +178,6 @@ export class SharedRecordsScreen extends Component {
                   await nextFrame();
                   let sharedInfo = await store.mySharedInfo();
 
-                  console.log({sharedInfo});
-
                   this.props.navigation.navigate('QRCode', {
                     title:'Your Account QR Code',
                     subTitle: 'Show this to a friend or doctor to let them share or send you a medical record.',
@@ -162,3 +196,9 @@ export class SharedRecordsScreen extends Component {
     );
   }
 }
+
+function mapStateToProps({ records, removedRecords }) {
+  return { updates: {added:records, removed:removedRecords} };
+}
+
+export const SharedRecordsScreen = connect(mapStateToProps)(SharedRecordsScreenUnwrapped);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Share } from 'react-native';
+import { View, Text, ScrollView, Share, Platform } from 'react-native';
 import { Button } from 'react-native-elements';
 import QRCode from 'react-native-qrcode';
 import { NavigationActions } from 'react-navigation';
@@ -62,9 +62,17 @@ export class QRCodeScreen extends React.Component {
   }
 
   shareData() {
+    let url = `${Constants.linkingUri}?type=${encodeURIComponent(this.state.type)}&data=${encodeURIComponent(this.state.data)}`;
     Share.share({
-        message: this.props.navigation.state.params.shareMessage,
-        url: `${Constants.linkingUri}?type=${encodeURIComponent(this.state.type)}&data=${encodeURIComponent(this.state.data)}`,
+        ...Platform.select({
+          ios: {
+            message: this.props.navigation.state.params.shareMessage,
+            url,
+          },
+          android: {
+            message: `${this.props.navigation.state.params.shareMessage}\n${url}`
+          }
+        }),
         title: 'Medical Record Sharing'
       }, {
         // Android only:

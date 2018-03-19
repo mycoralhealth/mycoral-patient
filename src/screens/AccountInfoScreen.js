@@ -20,7 +20,7 @@ function Loading(props) {
 function KeyInfo(props) {
   if (props.opInProgress) {
     return (
-      <View style={{ flex: 1, marginTop: 20, marginBottom: 20 }}>
+      <View style={{ flex: 1, marginTop: 20, marginBottom: 20, marginLeft: 10, marginRight: 10 }}>
         <MessageIndicator message={props.opInProgress.message} />
       </View>
     );
@@ -94,8 +94,10 @@ export class AccountInfoScreen extends Component {
 
     this.setState({opInProgress:{message:`Generating keys, please wait this may take a while. Estimated ${moment.duration((baseTime * 50) + 60000).humanize()} ...`}});
 
-    generateKeyPair()
-      .then(() => this.setState({ keysPresent:true, opInProgress: null }));
+    await nextFrame();
+    await generateKeyPair();
+
+    this.setState({ keysPresent:true, opInProgress: null });
   }
 
   revokeKeys() {

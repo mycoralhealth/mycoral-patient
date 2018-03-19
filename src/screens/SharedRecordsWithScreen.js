@@ -4,10 +4,14 @@ import { View, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { Button, List, ListItem, Text, Avatar } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import nextFrame from 'next-frame';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { CoralHeader, colors, CoralFooter, MessageIndicator } from '../ui';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
+
+import { removedSharedRecord } from '../actions/index.js';
 
 const RecordListItem = (props) => {
   let record = props.record;
@@ -42,7 +46,7 @@ const RecordListItem = (props) => {
   }
 }
 
-export class SharedRecordsWithScreen extends Component {
+class SharedRecordsWithScreenUnwrapped extends Component {
   constructor(props) {
     super(props);
 
@@ -57,8 +61,15 @@ export class SharedRecordsWithScreen extends Component {
     let newRecords = this.state.recordsList.filter((r) => (record.id !== r.id))
     this.setState({ recordsList: newRecords });
 
-    store.removeSharedRecord(this.state.contact.name, record)
-      .catch((e) => console.log(`Error removing shared record from store (${e})`));
+    if (!this.state.contact.external) {
+      store.removeSharedRecord(this.state.contact.name, record)
+        .catch((e) => console.log(`Error removing shared record from store (${e})`));
+    } else {
+      store.removeExternalRecord(this.state.contact.name, record)
+        .catch((e) => console.log(`Error removing external record from store (${e})`));
+    }
+
+    this.props.removedSharedRecord({contact: this.state.contact, record});
 
     if (newRecords.length === 0) {
       this.props.navigation.dispatch(NavigationActions.back());  
@@ -71,18 +82,24 @@ export class SharedRecordsWithScreen extends Component {
 
     let realRecords = [];
 
-    for (let record of recordsList) {
-      let realRecord = myRecords.find((r) => (r.id === record.id));
+    for (let entry of recordsList) {
+      let realRecord = null;
+
+      if (!this.state.contact.external) {
+        realRecord = myRecords.find((r) => (r.id === entry.id));
+      } else {
+        realRecord = entry.record;
+      }
 
       if (realRecord) {
-        realRecord.sharedHash = record.record.sharedHash;
+        realRecord.sharedHash = entry.record.sharedHash;
         realRecord.contact = this.state.contact;
 
         realRecords.push(realRecord);
       } else {
-        record.decrypted = true;
-        record.error = true;
-        realRecords.push(record);
+        entry.decrypted = true;
+        entry.error = true;
+        realRecords.push(entry);
       }
     }
     
@@ -146,3 +163,9 @@ export class SharedRecordsWithScreen extends Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ removedSharedRecord }, dispatch);
+}
+
+export const SharedRecordsWithScreen = connect(null, mapDispatchToProps)(SharedRecordsWithScreenUnwrapped);

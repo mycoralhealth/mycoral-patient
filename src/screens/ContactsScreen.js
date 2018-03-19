@@ -7,6 +7,7 @@ import nextFrame from 'next-frame';
 
 import { CoralHeader, colors, CoralFooter, MessageIndicator } from '../ui';
 import store from '../utilities/store';
+import importHelpers from '../utilities/import_helpers';
 
 export class ContactsScreen extends Component {
   constructor(props) {
@@ -31,7 +32,7 @@ export class ContactsScreen extends Component {
   }
 
   onQRCodeContactScanned(type, data) {
-    store.qrCodeContactHelper(data)
+    importHelpers.qrCodeContactHelper(data)
       .then((scanned) => {
         const {contacts} = scanned;
         if (contacts) {
@@ -39,7 +40,7 @@ export class ContactsScreen extends Component {
         } else {
           Alert.alert(
             'QR Code Scan Error',
-            "The QR Code you just scanned doesn't look like valid Coral Health shared record. Please make sure you are scanning the QR code shown on the Shared Records screen of your contact.",
+            "The QR Code you just scanned doesn't look like valid Coral Health shared contact record. Please make sure you are scanning the QR code shown on the Shared Records screen of your contact.",
             [
               {text: 'OK', onPress: () => {} },
             ],
