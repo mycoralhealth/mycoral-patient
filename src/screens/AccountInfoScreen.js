@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Button, Text, FormLabel, FormInput } from 'react-native-elements';
+import { Button, Text, FormLabel, FormInput, CheckBox } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import nextFrame from 'next-frame';
@@ -138,7 +138,7 @@ export class AccountInfoScreen extends Component {
 
         <KeyboardAwareScrollView style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
-            <KeyInfo 
+            <KeyInfo
               keysPresent={this.state.keysPresent}
               generateKeys={this.generateKeys.bind(this)}
               revokeKeys={this.revokeKeys.bind(this)}
@@ -149,7 +149,7 @@ export class AccountInfoScreen extends Component {
             Blockchain info
           </Text>
           <FormLabel>Blockchain ETH address</FormLabel>
-          <FormInput 
+          <FormInput
             value={this.state.ethAddress}
             placeholder='0x8A09990601E7FF5Cdcc...'
             returnKeyType='done'
@@ -169,57 +169,67 @@ export class AccountInfoScreen extends Component {
           <Text h4 style={{textAlign: 'left', marginTop: 20, marginLeft: 20}}>
             IPFS settings
           </Text>
-          <FormLabel>IPFS protocol</FormLabel>
-          <FormInput 
-            value={this.state.ipfsInfo.protocol}
-            placeholder='http'
-            returnKeyType='done'
-            autoCapitalize='none'
-            inputStyle={{color:'black'}}
-            autoCorrect={false}
-            onChangeText={(text) => this.updateIpfsInfo('protocol', text)}/>
+          <CheckBox
+            center
+            containerStyle={{backgroundColor: colors.bg}}
+            title='Use custom server'
+            checked={this.state.ipfsInfo.useCustom}
+            onPress={() => this.updateIpfsInfo('useCustom', !this.state.ipfsInfo.useCustom)}
+          />
+          <View pointerEvents={this.state.ipfsInfo.useCustom ? 'auto' : 'none'}
+              style={{opacity: this.state.ipfsInfo.useCustom ? 1.0 : 0.2}}>
+            <FormLabel>IPFS protocol</FormLabel>
+            <FormInput
+              value={this.state.ipfsInfo.protocol}
+              placeholder='http'
+              returnKeyType='done'
+              autoCapitalize='none'
+              inputStyle={{color:'black'}}
+              autoCorrect={false}
+              onChangeText={(text) => this.updateIpfsInfo('protocol', text)}/>
 
-          <FormLabel>IPFS address</FormLabel>
-          <FormInput 
-            value={this.state.ipfsInfo.address}
-            placeholder='localhost'
-            autoCapitalize='none'
-            returnKeyType='done'
-            inputStyle={{color:'black'}}
-            autoCorrect={false}
-            onChangeText={(text) => this.updateIpfsInfo('address', text)}/>
+            <FormLabel>IPFS address</FormLabel>
+            <FormInput
+              value={this.state.ipfsInfo.address}
+              placeholder='localhost'
+              autoCapitalize='none'
+              returnKeyType='done'
+              inputStyle={{color:'black'}}
+              autoCorrect={false}
+              onChangeText={(text) => this.updateIpfsInfo('address', text)}/>
 
-          <FormLabel>IPFS port</FormLabel>
-          <FormInput 
-            value={this.state.ipfsInfo.port}
-            placeholder='50001'
-            autoCapitalize='none'
-            returnKeyType='done'
-            keyboardType='numeric'
-            inputStyle={{color:'black'}}
-            autoCorrect={false}
-            onChangeText={(text) => this.updateIpfsInfo('port', text)}/>
+            <FormLabel>IPFS port</FormLabel>
+            <FormInput
+              value={this.state.ipfsInfo.port}
+              placeholder='50001'
+              autoCapitalize='none'
+              returnKeyType='done'
+              keyboardType='numeric'
+              inputStyle={{color:'black'}}
+              autoCorrect={false}
+              onChangeText={(text) => this.updateIpfsInfo('port', text)}/>
 
-          <FormLabel>IPFS user name</FormLabel>
-          <FormInput 
-            value={this.state.ipfsInfo.userName}
-            placeholder='(optional)'
-            autoCapitalize='none'
-            returnKeyType='done'
-            inputStyle={{color:'black'}}
-            autoCorrect={false}
-            onChangeText={(text) => this.updateIpfsInfo('userName', text)}/>
+            <FormLabel>IPFS user name</FormLabel>
+            <FormInput
+              value={this.state.ipfsInfo.userName}
+              placeholder='(optional)'
+              autoCapitalize='none'
+              returnKeyType='done'
+              inputStyle={{color:'black'}}
+              autoCorrect={false}
+              onChangeText={(text) => this.updateIpfsInfo('userName', text)}/>
 
-          <FormLabel>IPFS password</FormLabel>
-          <FormInput 
-            value={this.state.ipfsInfo.password}
-            placeholder='(optional)'
-            autoCapitalize='none'
-            returnKeyType='done'
-            secureTextEntry={true}
-            inputStyle={{color:'black'}}
-            autoCorrect={false}
-            onChangeText={(text) => this.updateIpfsInfo('password', text)}/>
+            <FormLabel>IPFS password</FormLabel>
+            <FormInput
+              value={this.state.ipfsInfo.password}
+              placeholder='(optional)'
+              autoCapitalize='none'
+              returnKeyType='done'
+              secureTextEntry={true}
+              inputStyle={{color:'black'}}
+              autoCorrect={false}
+              onChangeText={(text) => this.updateIpfsInfo('password', text)}/>
+          </View>
 
           <View style={{ height: 300 }}/>
 

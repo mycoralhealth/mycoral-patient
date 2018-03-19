@@ -54,12 +54,14 @@ const getPerUserStoreKey = async () => {
 }
 
 const getIPFSProvider = async () => {
-  let info = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${IPFS_INFO}`); 
-  if (!info) {
-    return { protocol:'http', address:'localhost', port:'5001', userName: null, password: null };
+  const info = { useCustom:false, protocol:null, address:null, port:null, userName: null, password: null };
+
+  let loadedInfo = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${IPFS_INFO}`);
+  if (loadedInfo) {
+    Object.assign(info, JSON.parse(loadedInfo) || {});
   }
 
-  return JSON.parse(info);
+  return info;
 }
 
 const setIPFSProvider = async (info) => {
@@ -67,7 +69,7 @@ const setIPFSProvider = async (info) => {
 }
 
 const getEthAddress = async () => {
-  return await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${ETH_ADDRESS}`); 
+  return await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${ETH_ADDRESS}`);
 }
 
 const setEthAddress = async (address) => {
@@ -77,7 +79,7 @@ const setEthAddress = async (address) => {
 const records = () => {
   let p = new Promise(async function(resolve, reject) {
     try {
-      let response = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${RECORDS}`); 
+      let response = await AsyncStorage.getItem(`${await getPerUserStoreKey()}.${RECORDS}`);
       let result = await JSON.parse(response) || [];
       resolve(result);
     } catch (e) {

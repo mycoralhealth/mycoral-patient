@@ -1,14 +1,21 @@
 import forge from 'node-forge';
 import { FileSystem } from 'expo';
-import { getIPFSProvider } from './store';
+import { getIPFSProvider, getUserInfo } from './store';
+import { CORALD_API } from '../const';
 
+const CORALD_IPFS_PROXY=CORALD_API+'/ipfs/';
 const ROOT_API_URL='/api/v0/';
 const ADD_API='add';
 const CAT_API='cat';
 
 const ipfsRootURL = async () => {
   let ipfsConfig = await getIPFSProvider();
-  return `${ipfsConfig.protocol}://${ipfsConfig.address}:${ipfsConfig.port}${ROOT_API_URL}`;
+
+  if (ipfsConfig.useCustom) {
+    return `${ipfsConfig.protocol}://${ipfsConfig.address}:${ipfsConfig.port}${ROOT_API_URL}`;
+  }
+
+  return CORALD_IPFS_PROXY;
 }
 
 const isURI = (data) => {
@@ -16,7 +23,7 @@ const isURI = (data) => {
 }
 
 const tempRandomName = () => {
-  let md = forge.md.sha256.create();      
+  let md = forge.md.sha256.create();
   md.update(new Date());
 
   return md.digest().toHex();
@@ -32,7 +39,7 @@ const add = async (data) => {
         .then((response) => response.json())
           .then((responseJson) => {
             resolve(responseJson.Hash);
-        }).catch((e) => reject(`Error saving URI to IPFS (${e})`)); 
+        }).catch((e) => reject(`Error saving URI to IPFS (${e})`));
     } else {
       let uri = `${FileSystem.documentDirectory}${tempRandomName()}.txt`;
 
@@ -43,7 +50,7 @@ const add = async (data) => {
               .then((responseJson) => {
                 Expo.FileSystem.deleteAsync(uri, { idempotent: true });
                 resolve(responseJson.Hash);
-            }).catch((e) => reject(`Error saving data to IPFS (${e})`)); 
+            }).catch((e) => reject(`Error saving data to IPFS (${e})`));
         }).catch((e) => reject(`Error saving temporary file (${e})`));
     }
   });
@@ -54,6 +61,7 @@ const add = async (data) => {
 async function uploadFileAsync(uri) {
   let apiUrl = `${await ipfsRootURL()}${ADD_API}`;
   let ipfsConfig = await getIPFSProvider();
+  let userInfo = await getUserInfo();
 
   let uriParts = uri.split('/');
   let name = uriParts[uriParts.length - 1];
@@ -65,7 +73,9 @@ async function uploadFileAsync(uri) {
     'Accept': 'application/json'
   };
 
-  if (ipfsConfig.userName && ipfsConfig.password) {
+  if (!ipfsConfig.useCustom) {
+    headers['X-MyCoral-AccessToken'] = userInfo.accessToken;
+  } else if (ipfsConfig.userName && ipfsConfig.password) {
     headers['Authorization'] = `Basic ${forge.util.encode64(ipfsConfig.userName + ':' + ipfsConfig.password)}`;
   }
 
@@ -79,14 +89,22 @@ async function uploadFileAsync(uri) {
 }
 
 const cat = async (hash) => {
-  if (typeof hash !== 'string')
+  if (typeof hash !== 'string') {
+    console.log("No hash given: " + hash);
     return null;
+  }
 
   let ipfsConfig = await getIPFSProvider();
+  let userInfo = await getUserInfo();
 
   let options = {};
-
-  if (ipfsConfig.userName && ipfsConfig.password) {
+  if (!ipfsConfig.useCustom) {
+    options = {
+      'headers' : {
+        'X-MyCoral-AccessToken' : userInfo.accessToken
+      }
+    }
+  } else if (ipfsConfig.userName && ipfsConfig.password) {
     options = {
       'headers' : {
         'Authorization' : `Basic ${forge.util.encode64(ipfsConfig.userName + ':' + ipfsConfig.password)}`
@@ -94,9 +112,10 @@ const cat = async (hash) => {
     }
   }
 
+  let apiUrl = `${await ipfsRootURL()}${CAT_API}/${hash}`;
   let p = new Promise(async function(resolve, reject) {
     const downloadResumable = FileSystem.createDownloadResumable(
-      `${await ipfsRootURL()}${CAT_API}/${hash}`,
+      apiUrl,
       `${FileSystem.documentDirectory}${tempRandomName()}`,
       options
     );
