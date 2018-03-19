@@ -72,9 +72,90 @@ const qrCodeRecordHelper = (data) => {
   });
 }
 
+const groupByContact = (contacts, sharedRecords, externalRecords) => {
+  let contactsArray = [];
+
+  for (const [email, records] of Object.entries(sharedRecords)) { 
+    let contact = contacts.find(function (c) { return c.name === email; });
+
+    if (contact) {
+      let recordArray = [];
+
+      contact.key = contact.name;
+
+      for (const [id, record] of Object.entries(records)) {
+        recordArray.push({id, record});
+      }            
+
+      contactsArray.push({contact, records: recordArray});
+    }
+  }
+
+  for (const [email, records] of Object.entries(externalRecords)) { 
+    let contact = null;
+    let recordArray = [];
+
+    for (const [id, record] of Object.entries(records)) {
+      if (!contact) {
+        contact = record.externalContact;
+        contact.key = `_${contact.name}`;
+        contact.external = true;
+      }
+
+      recordArray.push({id, record});
+    }
+
+    if (recordArray.length > 0) {
+      contactsArray.push({contact, records: recordArray});
+    }
+  }
+
+  return contactsArray;
+}
+
+const applySharedRecordUpdates = (local, updates) => {
+  let result = local;
+
+  for (update of updates.removed) {
+    let key = (update.contact.external) ? `_${update.contact.name}` : update.contact.name;
+
+    let entry = result.find(function (entry) { return entry.contact.key === key; });
+
+    if (entry) {
+      let entryRecords = entry.records.filter((r) => (r.id != update.record.id));
+      if (entryRecords.length === 0) {
+        result = result.filter((entry) => (entry.contact.key !== key));
+      } else {
+        entry.records = entryRecords;
+      }
+    }
+  }
+
+  for (update of updates.added) {
+    let key = (update.contact.external) ? `_${update.contact.name}` : update.contact.name;
+
+    let entry = result.find(function (entry) { return entry.contact.key === key; });
+
+    if (entry) {
+      let record = entry.records.find(function (r) { return r.id === update.record.id; });
+
+      if (!record) {
+        entry.records.push({id: update.record.id, record: update.record});
+      }
+    } else {
+      update.contact.key = key;
+      result.push({contact: update.contact, records: [{id:update.record.id, record:update.record}]});
+    }      
+  }
+
+  return result;
+}
+
 module.exports = {
   isSharedInfoData,
   decodeSharedInfoData,
   qrCodeContactHelper,
-  qrCodeRecordHelper
+  qrCodeRecordHelper,
+  groupByContact,
+  applySharedRecordUpdates
 }
