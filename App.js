@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Image, Platform } from 'react-native';
 import { TabNavigator, StackNavigator, NavigationActions } from 'react-navigation';
 import { Button, Icon, Text } from 'react-native-elements';
@@ -6,7 +6,13 @@ import { List, ListItem } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Constants } from 'expo';
 
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import ReduxPromise from 'redux-promise';
+
 import { CoralHeader, colors } from './src/ui.js';
+
+import reducers from './src/reducers';
 
 import { LoginScreen } from './src/screens/LoginScreen.js';
 import { MyRecordsScreen } from './src/screens/MyRecordsScreen.js';
@@ -66,7 +72,14 @@ const SharedRecordsNavigator = StackNavigator({
   SharedRecords: { screen: SharedRecordsScreen },
   SharedRecordsWith: { screen: SharedRecordsWithScreen },
   QRCode: { screen: QRCodeScreen },
-  ViewSharedRecord: { screen: ViewSharedRecordScreen }
+  ViewSharedRecord: { screen: ViewSharedRecordScreen },
+  QRCodeReader: {
+    screen: QRCodeReaderScreen,
+    navigationOptions: ({ navigation }) => ({
+      title: 'QR Code',
+      tabBarVisible: false
+    })
+  }  
 },{
   headerMode: 'none'
 });
@@ -165,6 +178,17 @@ const App = StackNavigator({
   headerMode: 'none'
 });
 
-export default App;
+const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore);
+
+export default class ReduxWrapper extends Component {
+  render() {
+    return (
+      <Provider store={createStoreWithMiddleware(reducers)}>
+        <App />
+      </Provider>
+    );
+  }  
+}
+//export default App;
 
 

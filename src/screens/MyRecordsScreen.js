@@ -3,10 +3,16 @@ import React, { Component } from 'react';
 import { View, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements';
 import nextFrame from 'next-frame';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { CoralHeader, colors, MessageIndicator } from '../ui';
+import { CoralHeader, colors, MessageIndicator, MessageModal } from '../ui';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
+import importHelpers from '../utilities/import_helpers';
+import { setNeedsSharedRefresh } from './SharedRecordsScreen';
+
+import { newSharedRecord } from '../actions/index.js';
 
 const RecordListItem = (props) => {
   let record = props.record;
@@ -45,22 +51,74 @@ export function cleanUpRecordsCache() {
   cachedRecords = [];
 }
 
-export class MyRecordsScreen extends Component {
+class MyRecordsScreenUnwrapped extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { recordsList: cachedRecords, loading: true };
+    this.state = { recordsList: cachedRecords, loading: true, modalVisible: false };
   }
 
   componentDidMount() {
-    // TODO: Use this to automatically add contacts and shared records.
+    Linking.addEventListener('url', this.handleOpenURL);
     Linking.getInitialURL().then((url) => {
         if (url) {
-          console.log('Initial url is: ' + url);
+          this.processLinkHandler(url);
         }
       }).catch(err => console.error('An error occurred', err));
 
     this.loadAndDecryptRecords();
+  }
+
+  componentWillUnmount() { 
+    Linking.removeEventListener('url', this.handleOpenURL);
+  }  
+
+  handleOpenURL = (event) => { 
+    this.processLinkHandler(event.url);
+  }
+
+  getQueryParam = ( url, name ) => {
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( url );
+    return results == null ? null : results[1];
+  }
+
+  processLinkHandler = (url) => {
+    console.log('URL passed to app: ', url);
+    let type = this.getQueryParam(url, 'type');
+
+    let data = null;
+
+    switch (type) {
+      case 'contact':
+        data = decodeURIComponent(this.getQueryParam(url, 'data'));
+
+        importHelpers.qrCodeContactHelper(data)
+          .then((scanned) => {
+            const { contact } = scanned;
+            if (contact) {
+              this.setState({ modalVisible: true, addedType: 'contact' });
+            }
+          });
+
+        break;
+      case 'record':
+        data = decodeURIComponent(this.getQueryParam(url, 'data'));
+
+        importHelpers.qrCodeRecordHelper(data)
+          .then((scanned) => {
+            const { record, contact } = scanned;
+            if (record) {
+              this.setState({ modalVisible: true, addedType: 'record' });
+              contact.external = true;
+              this.props.newSharedRecord({ contact, record });
+            } 
+          });
+
+        break;
+    }
   }
 
   async loadAndDecryptRecords() {
@@ -112,6 +170,10 @@ export class MyRecordsScreen extends Component {
       .catch((e) => console.log(`Error removing record from store (${e})`));
   }
 
+  hideModal() {
+    this.setState({ modalVisible: false });
+  }
+
   render() {
     if (this.state.loading) {
       return(
@@ -126,6 +188,13 @@ export class MyRecordsScreen extends Component {
         <CoralHeader style={{ flex: 1}} title='My Medical Records' subtitle='View your records on the blockchain.'/>
 
         <ScrollView style={{ flex: 1}}>
+          <MessageModal
+            visible={this.state.modalVisible}
+            onClose={this.hideModal.bind(this)}
+            title={(this.state.addedType === 'contact') ? 'New Contact Imported' : 'New Record Imported'}
+            message={(this.state.addedType === 'contact') ? 'You can verify your contact information in Settings > Contacts.' : 'You can verify the imported record information in Shared Records.'}
+            ionIcon='ios-body'
+          />
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
               this.state.recordsList.map((record) => (
@@ -151,3 +220,9 @@ export class MyRecordsScreen extends Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ newSharedRecord }, dispatch);
+}
+
+export const MyRecordsScreen = connect(null, mapDispatchToProps)(MyRecordsScreenUnwrapped);

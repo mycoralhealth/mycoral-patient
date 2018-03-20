@@ -6,38 +6,32 @@ const PRIVATE_KEY_TAG = 'privateKey';
 const PUBLIC_KEY_TAG = 'publicKey';
 const KEYS_MARKER_TAG = 'keyPairMarker';
 
-const makeKeys = () => {
-  //let start = new Date();
-  forge.pki.rsa.generateKeyPair({bits: 2048, workers: 1}, function(err, keypair) {
-    //console.log('Elapsed keygen time for 2048 bits', (new Date()) - start);
-
-    //console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
-    //console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
-    getPerUserStoreKey()
-      .then((storeKey) => {
-        SecureStore.setItemAsync(`${storeKey}.${PUBLIC_KEY_TAG}`, forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72))
-          .then( () => { 
-            SecureStore.setItemAsync(`${storeKey}.${PRIVATE_KEY_TAG}`, forge.pki.privateKeyToPem(keypair.privateKey, 72))
-              .then( () => { 
-                  SecureStore.setItemAsync(`${storeKey}.${KEYS_MARKER_TAG}`, 'true');
-              })
-            })
-          .catch((e) => { console.log( `Could not store keys in store (${e})` ) });
-        });
-      });
-}
+const NUM_PKI_WORKERS = 2;
+const PKI_SIZE = 2048;
+const PKI_PROBE_SIZE = 512;
 
 export const generateKeyPair = () => {
-  let p = new Promise(function(resolve, reject) {
-    keysExist().then((result) => {
-        if (!result) {
-          makeKeys();
-        }
-        resolve();
-      }).catch((e) => reject(`Error getting marker from store (${e})`));
-  });
+  return new Promise(function(resolve, reject) {
+    let start = new Date();
+    forge.pki.rsa.generateKeyPair({bits: PKI_SIZE, workers: NUM_PKI_WORKERS}, function(err, keypair) {
+      console.log(`Elapsed keygen time for ${PKI_SIZE} bits`, (new Date()) - start);
 
-  return p;
+      //console.log(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72));
+      //console.log(forge.pki.privateKeyToPem(keypair.privateKey, 72));
+      getPerUserStoreKey()
+        .then((storeKey) => {
+          SecureStore.setItemAsync(`${storeKey}.${PUBLIC_KEY_TAG}`, forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72))
+            .then( () => { 
+              SecureStore.setItemAsync(`${storeKey}.${PRIVATE_KEY_TAG}`, forge.pki.privateKeyToPem(keypair.privateKey, 72))
+                .then( () => { 
+                    SecureStore.setItemAsync(`${storeKey}.${KEYS_MARKER_TAG}`, 'true');
+                })
+              })
+            .catch((e) => { console.log( `Could not store keys in store (${e})` ) });
+          });
+      resolve(forge.pki.publicKeyToRSAPublicKeyPem(keypair.publicKey, 72), forge.pki.privateKeyToPem(keypair.privateKey, 72));
+    });
+  });
 }
 
 export const invalidateKeyPair = () => {
@@ -126,7 +120,7 @@ export const publicKeyPEM = async () => {
 export const probeCPUPower = () => {
   return new Promise(function(resolve) {
     let start = new Date();
-    forge.pki.rsa.generateKeyPair({bits: 512, workers: 1}, function(err, keypair) {
+    forge.pki.rsa.generateKeyPair({bits: PKI_PROBE_SIZE, workers: NUM_PKI_WORKERS}, function(err, keypair) {
       resolve((new Date()) - start);
     });
   });
