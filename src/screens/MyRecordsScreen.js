@@ -6,6 +6,7 @@ import nextFrame from 'next-frame';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, colors, MessageIndicator, MessageModal } from '../ui';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
@@ -51,7 +52,7 @@ export function cleanUpRecordsCache() {
   cachedRecords = [];
 }
 
-class MyRecordsScreenUnwrapped extends Component {
+class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   constructor(props) {
     super(props);
 
@@ -172,12 +173,6 @@ class MyRecordsScreenUnwrapped extends Component {
 
   hideModal() {
     this.setState({ modalVisible: false });
-  }
-
-  setStateAsync(state) {
-    if (this.refs.main) {
-      this.setState(state);
-    }
   }
 
   render() {

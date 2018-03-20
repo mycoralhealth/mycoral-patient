@@ -5,6 +5,7 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 
+import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, CoralFooter, colors, MessageIndicator, RecordDetails } from '../ui';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import cryptoHelpers from '../utilities/crypto_helpers';
@@ -13,7 +14,7 @@ import store from '../utilities/store';
 
 const backAction = NavigationActions.back();
 
-export class ViewSharedRecordScreen extends Component {  
+export class ViewSharedRecordScreen extends AsyncRenderComponent {  
   constructor(props) {
     super(props);
     this.state = { recordInitialized: false };
@@ -52,12 +53,6 @@ export class ViewSharedRecordScreen extends Component {
           record.downloadError = true;
           this.setStateAsync({ decrypting: false });
         });          
-    }
-  }
-
-  setStateAsync(state) {
-    if (this.refs.main) {
-      this.setState(state);
     }
   }
 

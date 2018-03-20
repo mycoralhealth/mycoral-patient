@@ -5,6 +5,7 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 
+import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, CoralFooter, colors, RecordDetails, MessageIndicator } from '../ui';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import cryptoHelpers from '../utilities/crypto_helpers';
@@ -12,7 +13,7 @@ import ipfs from '../utilities/expo-ipfs';
 
 const backAction = NavigationActions.back();
 
-export class ViewRecordScreen extends Component {  
+export class ViewRecordScreen extends AsyncRenderComponent {  
   constructor(props) {
     super(props);
     this.state = { recordInitialized: false };
@@ -51,12 +52,6 @@ export class ViewRecordScreen extends Component {
           record.downloadError = true;
           this.setStateAsync({ decrypting: false });
         });          
-    }
-  }
-
-  setStateAsync(state) {
-    if (this.refs.main) {
-      this.setState(state);
     }
   }
 

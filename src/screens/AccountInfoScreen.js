@@ -1,11 +1,12 @@
 import moment from 'moment';
-import React, { Component } from 'react';
+import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { Button, Text, FormLabel, FormInput, CheckBox } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import nextFrame from 'next-frame';
 
+import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui.js';
 
 import { keysExist, generateKeyPair, invalidateKeyPair, probeCPUPower } from '../utilities/pki';
@@ -61,7 +62,7 @@ function KeyInfo(props) {
   }
 }
 
-export class AccountInfoScreen extends Component {
+export class AccountInfoScreen extends AsyncRenderComponent {
   constructor(props) {
     super(props);
 
@@ -119,12 +120,6 @@ export class AccountInfoScreen extends Component {
 
   onQRCodeETHScanned(type, data) {
     this.updateEthAddress(data);
-  }
-
-  setStateAsync(state) {
-    if (this.refs.main) {
-      this.setState(state);
-    }
   }
 
   render() {
