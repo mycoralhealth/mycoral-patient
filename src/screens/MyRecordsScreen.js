@@ -136,7 +136,7 @@ class MyRecordsScreenUnwrapped extends Component {
       if (record.encrypted) {
         await nextFrame();
         await this.decryptRecord(record);
-        this.setState({ recordsList });
+        this.setStateAsync({ recordsList });
       }      
     }
   }
@@ -157,7 +157,7 @@ class MyRecordsScreenUnwrapped extends Component {
       .then(async () => {
         cachedRecords = [...cachedRecords, record];
         await nextFrame();
-        this.setState({ recordsList: cachedRecords });
+        this.setStateAsync({ recordsList: cachedRecords });
       })
       .catch((e) => console.log(`Error adding record to store (${e})`));
   }
@@ -174,6 +174,12 @@ class MyRecordsScreenUnwrapped extends Component {
     this.setState({ modalVisible: false });
   }
 
+  setStateAsync(state) {
+    if (this.refs.main) {
+      this.setState(state);
+    }
+  }
+
   render() {
     if (this.state.loading) {
       return(
@@ -184,7 +190,7 @@ class MyRecordsScreenUnwrapped extends Component {
     }
 
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+      <View style={{ flex: 1, backgroundColor: colors.bg }} ref='main'>
         <CoralHeader style={{ flex: 1}} title='My Medical Records' subtitle='View your records on the blockchain.'/>
 
         <ScrollView style={{ flex: 1}}>

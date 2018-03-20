@@ -43,15 +43,21 @@ export class ViewSharedRecordScreen extends Component {
                   } else {
                     record.results = JSON.parse(decryptedData);
                   }
-                  this.setState({ decrypting: false });
+                  this.setStateAsync({ decrypting: false });
                   FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
                 });
             });
           })
         .catch((e) => {
           record.downloadError = true;
-          this.setState({ decrypting: false });
+          this.setStateAsync({ decrypting: false });
         });          
+    }
+  }
+
+  setStateAsync(state) {
+    if (this.refs.main) {
+      this.setState(state);
     }
   }
 
@@ -59,7 +65,7 @@ export class ViewSharedRecordScreen extends Component {
     const record = this.props.navigation.state.params.record;
 
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+      <View style={{ flex: 1, backgroundColor: colors.bg }} ref='main'>
         <CoralHeader title='View Medical Record' subtitle='Your record has been decrypted below.'/>
 
         <ScrollView style={{ flex: 1}}>

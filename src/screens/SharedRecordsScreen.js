@@ -64,14 +64,6 @@ class SharedRecordsScreenUnwrapped extends Component {
       });
   }
 
-  /**
-   * This function merges externally supplied state by reducers to what we hold as loaded from the store.
-   * It's more complicated than it should be, but perhaps we can fix that when we refactor some of the store
-   * code to go through corald. 
-   *
-   * The general idea is that we get events for removed and added records and we match them against what 
-   * we have in state to clean-up or add new entries.
-   */
   mergeContacts(local, updates) {
     let result = importHelpers.applySharedRecordUpdates(local, updates);
 

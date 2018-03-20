@@ -90,20 +90,18 @@ export class AccountInfoScreen extends Component {
     await nextFrame();
     let baseTime = await probeCPUPower();
 
-    console.log({baseTime});
-
     this.setState({opInProgress:{message:`Generating keys, please wait this may take a while. Estimated ${moment.duration((baseTime * 50) + 60000).humanize()} ...`}});
 
     await nextFrame();
     await generateKeyPair();
 
-    this.setState({ keysPresent:true, opInProgress: null });
+    this.setStateAsync({ keysPresent:true, opInProgress: null });
   }
 
   revokeKeys() {
     this.setState({opInProgress:{message:'Revoking keys...'}});
     invalidateKeyPair()
-      .then(() => this.setState({keysPresent:false, opInProgress: null}));
+      .then(() => this.setStateAsync({keysPresent:false, opInProgress: null}));
   }
 
   updateEthAddress(ethAddress) {
@@ -123,6 +121,12 @@ export class AccountInfoScreen extends Component {
     this.updateEthAddress(data);
   }
 
+  setStateAsync(state) {
+    if (this.refs.main) {
+      this.setState(state);
+    }
+  }
+
   render() {
     if (this.state.loading) {
       return (
@@ -133,7 +137,7 @@ export class AccountInfoScreen extends Component {
     }
 
     return (
-      <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg }}>
+      <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg }} ref='main'>
         <CoralHeader title='Your Account' subtitle='Security, IPFS and blockchain settings'/>
 
         <KeyboardAwareScrollView style={{ flex: 1 }}>
