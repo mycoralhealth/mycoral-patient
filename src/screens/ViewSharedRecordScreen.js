@@ -5,6 +5,7 @@ import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 
+import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, CoralFooter, colors, MessageIndicator, RecordDetails } from '../ui';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import cryptoHelpers from '../utilities/crypto_helpers';
@@ -13,7 +14,7 @@ import store from '../utilities/store';
 
 const backAction = NavigationActions.back();
 
-export class ViewSharedRecordScreen extends Component {  
+export class ViewSharedRecordScreen extends AsyncRenderComponent {  
   constructor(props) {
     super(props);
     this.state = { recordInitialized: false };
@@ -43,14 +44,14 @@ export class ViewSharedRecordScreen extends Component {
                   } else {
                     record.results = JSON.parse(decryptedData);
                   }
-                  this.setState({ decrypting: false });
+                  this.setStateAsync({ decrypting: false });
                   FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
                 });
             });
           })
         .catch((e) => {
           record.downloadError = true;
-          this.setState({ decrypting: false });
+          this.setStateAsync({ decrypting: false });
         });          
     }
   }
@@ -59,7 +60,7 @@ export class ViewSharedRecordScreen extends Component {
     const record = this.props.navigation.state.params.record;
 
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+      <View style={{ flex: 1, backgroundColor: colors.bg }} ref='main'>
         <CoralHeader title='View Medical Record' subtitle='Your record has been decrypted below.'/>
 
         <ScrollView style={{ flex: 1}}>

@@ -6,6 +6,7 @@ import nextFrame from 'next-frame';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, colors, MessageIndicator, MessageModal } from '../ui';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
@@ -51,7 +52,7 @@ export function cleanUpRecordsCache() {
   cachedRecords = [];
 }
 
-class MyRecordsScreenUnwrapped extends Component {
+class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   constructor(props) {
     super(props);
 
@@ -136,7 +137,7 @@ class MyRecordsScreenUnwrapped extends Component {
       if (record.encrypted) {
         await nextFrame();
         await this.decryptRecord(record);
-        this.setState({ recordsList });
+        this.setStateAsync({ recordsList });
       }      
     }
   }
@@ -157,7 +158,7 @@ class MyRecordsScreenUnwrapped extends Component {
       .then(async () => {
         cachedRecords = [...cachedRecords, record];
         await nextFrame();
-        this.setState({ recordsList: cachedRecords });
+        this.setStateAsync({ recordsList: cachedRecords });
       })
       .catch((e) => console.log(`Error adding record to store (${e})`));
   }
@@ -184,7 +185,7 @@ class MyRecordsScreenUnwrapped extends Component {
     }
 
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+      <View style={{ flex: 1, backgroundColor: colors.bg }} ref='main'>
         <CoralHeader style={{ flex: 1}} title='My Medical Records' subtitle='View your records on the blockchain.'/>
 
         <ScrollView style={{ flex: 1}}>

@@ -1,11 +1,12 @@
 import moment from 'moment';
-import React, { Component } from 'react';
+import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { Button, Text, FormLabel, FormInput, CheckBox } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import nextFrame from 'next-frame';
 
+import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui.js';
 
 import { keysExist, generateKeyPair, invalidateKeyPair, probeCPUPower } from '../utilities/pki';
@@ -61,7 +62,7 @@ function KeyInfo(props) {
   }
 }
 
-export class AccountInfoScreen extends Component {
+export class AccountInfoScreen extends AsyncRenderComponent {
   constructor(props) {
     super(props);
 
@@ -90,20 +91,18 @@ export class AccountInfoScreen extends Component {
     await nextFrame();
     let baseTime = await probeCPUPower();
 
-    console.log({baseTime});
-
     this.setState({opInProgress:{message:`Generating keys, please wait this may take a while. Estimated ${moment.duration((baseTime * 50) + 60000).humanize()} ...`}});
 
     await nextFrame();
     await generateKeyPair();
 
-    this.setState({ keysPresent:true, opInProgress: null });
+    this.setStateAsync({ keysPresent:true, opInProgress: null });
   }
 
   revokeKeys() {
     this.setState({opInProgress:{message:'Revoking keys...'}});
     invalidateKeyPair()
-      .then(() => this.setState({keysPresent:false, opInProgress: null}));
+      .then(() => this.setStateAsync({keysPresent:false, opInProgress: null}));
   }
 
   updateEthAddress(ethAddress) {
@@ -133,7 +132,7 @@ export class AccountInfoScreen extends Component {
     }
 
     return (
-      <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg }}>
+      <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg }} ref='main'>
         <CoralHeader title='Your Account' subtitle='Security, IPFS and blockchain settings'/>
 
         <KeyboardAwareScrollView style={{ flex: 1 }}>
