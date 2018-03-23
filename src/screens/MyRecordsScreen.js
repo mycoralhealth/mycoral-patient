@@ -87,7 +87,6 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   }
 
   processLinkHandler = (url) => {
-    console.log('URL passed to app: ', url);
     alert(`Linked to app with data: ${url}`);
     let type = this.getQueryParam(url, 'type');
 
