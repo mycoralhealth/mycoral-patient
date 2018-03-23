@@ -71,7 +71,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   }
 
   componentWillUnmount() { 
-    Linking.removeEventListener('url', this.handleOpenURL);
+    Linking.removeEventListener('url', this.handleOpenURL);    
   }  
 
   handleOpenURL = (event) => { 
@@ -88,6 +88,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
 
   processLinkHandler = (url) => {
     console.log('URL passed to app: ', url);
+    alert(`Linked to app with data: ${url}`);
     let type = this.getQueryParam(url, 'type');
 
     let data = null;
