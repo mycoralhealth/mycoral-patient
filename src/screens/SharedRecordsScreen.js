@@ -190,10 +190,7 @@ class SharedRecordsScreenUnwrapped extends Component {
 }
 
 function mapStateToProps({ records, removedRecords }) {
-  if (removedRecords.length > 0) {
-    return { updates: {added:[], removed:removedRecords} };
-  }
-  return { updates: {added:records, removed:[]} };
+  return { updates: {added:records, removed:removedRecords} };
 }
 
 export const SharedRecordsScreen = connect(mapStateToProps)(SharedRecordsScreenUnwrapped);
