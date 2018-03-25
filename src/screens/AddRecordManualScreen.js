@@ -7,7 +7,6 @@ import { ImagePicker, FileSystem } from 'expo';
 
 import { CoralHeader, CoralFooter, colors, MessageModal, MessageIndicator } from '../ui.js';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
-import ipfs from '../utilities/expo-ipfs';
 import { TestRecordScreen } from './TestRecordScreen';
 import cryptoHelpers from '../utilities/crypto_helpers';
 

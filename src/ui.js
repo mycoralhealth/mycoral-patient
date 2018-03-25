@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { View, Image, Platform, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text, Button, Icon, List, ListItem } from 'react-native-elements';
 import { PHOTO_RECORD_TEST } from './utilities/recordTypes';
+import { NavigationActions } from 'react-navigation';
+
+import store from './utilities/store';
+import { cleanUpRecordsCache } from './screens/MyRecordsScreen';
 
 export const colors = {
   'bg': '#eee',
@@ -11,6 +15,22 @@ export const colors = {
   'green': '#1db495',
   'red': '#f10d34',
   'white': '#fff'
+}
+
+export const logoutAction = async (navigation) => {
+  await store.setUserInfo(null);
+  cleanUpRecordsCache();
+
+  const { navigate } = navigation;
+  const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({ routeName: 'Login', params: { logout: true }})
+      ],
+      key: null 
+    });
+
+  return resetAction;
 }
 
 export class CoralHeader extends React.Component {

@@ -3,9 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { List, ListItem } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
-import { CoralHeader, LogoutFooter, colors } from '../ui';
-import store from '../utilities/store';
-import { cleanUpRecordsCache } from './MyRecordsScreen';
+import { CoralHeader, LogoutFooter, colors, logoutAction } from '../ui';
 
 export class SettingsScreen extends Component {
   
@@ -42,20 +40,8 @@ export class SettingsScreen extends Component {
         </ScrollView>
 
         <LogoutFooter backAction={async () => {
-
-          await store.setUserInfo(null);
-          cleanUpRecordsCache();
-
-          const { navigate } = this.props.navigation;
-          const resetAction = NavigationActions.reset({
-              index: 0,
-              actions: [
-                NavigationActions.navigate({ routeName: 'Login', params: { logout: true }})
-              ],
-              key: null 
-            });
+          const resetAction = await logoutAction(this.props.navigation);
           this.props.navigation.dispatch(resetAction);
-
           }}/>
       </View>
     )

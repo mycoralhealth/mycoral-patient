@@ -8,7 +8,8 @@ import nextFrame from 'next-frame';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { CoralHeader, CoralFooter, colors, MessageIndicator } from '../ui';
+import { CoralHeader, CoralFooter, colors, MessageIndicator, logoutAction } from '../ui';
+
 import ipfs from '../utilities/expo-ipfs';
 import store from '../utilities/store';
 import importHelpers from '../utilities/import_helpers';
@@ -50,16 +51,25 @@ class DelegateAccessScreenUnwrapped extends Component {
     new Promise(function(resolve, reject) {
 
       ipfs.cat(contact.publicKeyHash)
-        .then(async (publicKeyUri) => {
+        .then(async (r) => {
+          if (r.unauthorized) {
+            this.props.navigation.dispatch(await logoutAction(this.props.navigation));
+            return;
+          }
+
+          let publicKeyUri = r.uri;
+
           let publicKeyPem = await FileSystem.readAsStringAsync(publicKeyUri);
 
           await FileSystem.deleteAsync(publicKeyUri, { idempotent: true });
 
           await nextFrame();
           ipfs.cat(record.hash)
-            .then(async (dataUri) => {
+            .then(async (response) => {
+              const { uri } = response;
+
               await nextFrame();
-              let { decryptedUri } = await cryptoHelpers.decryptFile(dataUri, record.encryptionInfo.key, record.encryptionInfo.iv);
+              let { decryptedUri } = await cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv);
 
               let data = await FileSystem.readAsStringAsync(decryptedUri);
               await FileSystem.deleteAsync(decryptedUri, { idempotent: true });
@@ -112,10 +122,6 @@ class DelegateAccessScreenUnwrapped extends Component {
         });
  
     }).catch((e) => { console.log('Error re-encrypting record for a contact', e) });
-  }
-
-  showSharedAlert() {
-    
   }
 
   render() {

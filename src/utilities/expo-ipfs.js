@@ -36,9 +36,14 @@ const add = async (data) => {
   let p = new Promise(function(resolve, reject) {
     if (isURI(data)) {
       uploadFileAsync(data)
-        .then((response) => response.json())
+        .then((response) => {
+            if (response.status === 401) {
+              return { unauthorized: true };
+            }
+            return response.json();
+          })
           .then((responseJson) => {
-            resolve(responseJson.Hash);
+            resolve(responseJson);
         }).catch((e) => reject(`Error saving URI to IPFS (${e})`));
     } else {
       let uri = `${FileSystem.documentDirectory}${tempRandomName()}.txt`;
@@ -46,10 +51,15 @@ const add = async (data) => {
       Expo.FileSystem.writeAsStringAsync(uri, data)
         .then(() => {
           uploadFileAsync(uri)
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.status === 401) {
+                  return { unauthorized: true };
+                }
+                return response.json();
+              })
               .then((responseJson) => {
                 Expo.FileSystem.deleteAsync(uri, { idempotent: true });
-                resolve(responseJson.Hash);
+                resolve(responseJson);
             }).catch((e) => reject(`Error saving data to IPFS (${e})`));
         }).catch((e) => reject(`Error saving temporary file (${e})`));
     }
@@ -121,8 +131,11 @@ const cat = async (hash) => {
     );
 
     downloadResumable.downloadAsync()
-      .then(({ uri }) => {
-        resolve(uri)
+      .then((response) => {
+        if (response.status === 401) {
+          resolve ({ unauthorized: true })
+        }
+        resolve({ uri: response.uri });
       })
       .catch((e) => reject(`Error downloading file from IPFS (${e})`));
   });

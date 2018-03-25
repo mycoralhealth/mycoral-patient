@@ -6,7 +6,7 @@ import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 
 import { AsyncRenderComponent } from './AsyncRenderComponent';
-import { CoralHeader, CoralFooter, colors, RecordDetails, MessageIndicator } from '../ui';
+import { CoralHeader, CoralFooter, colors, RecordDetails, MessageIndicator, logoutAction } from '../ui';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
@@ -33,7 +33,14 @@ export class ViewRecordScreen extends AsyncRenderComponent {
       this.setState({ recordInitialized: true, decrypting: true });
       record.downloadError = false;
       ipfs.cat(record.hash)
-        .then((uri) => {
+        .then(async (response) => {
+          const {uri, unauthorized} = response;
+
+          if (unauthorized) {
+            this.props.navigation.dispatch(await logoutAction(this.props.navigation));
+            return;
+          }
+
           cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv)
             .then((decryptionResult) => {
               FileSystem.readAsStringAsync(decryptionResult.decryptedUri)

@@ -6,7 +6,7 @@ import nextFrame from 'next-frame';
 import { FileSystem } from 'expo';
 import { connect } from 'react-redux';
 
-import { CoralHeader, colors, MessageModal, MessageIndicator } from '../ui';
+import { CoralHeader, colors, MessageModal, MessageIndicator, logoutAction } from '../ui';
 import store from '../utilities/store';
 import { keysExist, publicKeyPEM } from '../utilities/pki';
 import ipfs from '../utilities/expo-ipfs';
@@ -161,10 +161,15 @@ class SharedRecordsScreenUnwrapped extends Component {
                     let publicKey = await publicKeyPEM();
 
                     await nextFrame();
-                    let keyHash = await ipfs.add(publicKey);
+                    let { Hash, unauthorized } = await ipfs.add(publicKey);
+
+                    if (unauthorized) {
+                      this.props.navigation.dispatch(await logoutAction(this.props.navigation));
+                      return;
+                    }
 
                     await nextFrame();
-                    await store.setSharedPublicKey(keyHash);
+                    await store.setSharedPublicKey(Hash);
                   }
 
                   await nextFrame();
