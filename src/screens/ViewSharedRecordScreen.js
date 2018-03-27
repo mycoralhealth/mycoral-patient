@@ -57,6 +57,8 @@ export class ViewSharedRecordScreen extends AsyncRenderComponent {
             });
           })
         .catch((e) => {
+          console.log({e});
+
           record.downloadError = true;
           this.setStateAsync({ decrypting: false });
         });          
