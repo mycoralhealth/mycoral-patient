@@ -48,7 +48,7 @@ const qrCodeContactHelper = (data) => {
 }
 
 const qrCodeRecordHelper = (data) => {
-  return new Promise(async function(resolve) {
+  return new Promise(async function(resolve, reject) {
     let record = null;
     let records = null;
 
@@ -57,13 +57,22 @@ const qrCodeRecordHelper = (data) => {
         contact = decodeSharedInfoData(data);
 
         ipfs.cat(contact.publicKeyHash)
-          .then(async (recordMetadataUri) => {
-            let recordData = await FileSystem.readAsStringAsync(recordMetadataUri);
+          .then(async (response) => {
+            if (response.unauthorized) {
+              resolve({ unauthorized: true });
+              return;
+            }
+
+            let recordData = await FileSystem.readAsStringAsync(response.uri);
             let record = decodeThirdPartySharedRecordInfo(recordData);
 
             records = await store.addExternalRecord(contact, record);
 
             resolve({records, record, contact});
+          })
+          .catch((e) => {
+            console.log('Error performing IPFS cat', e);
+            reject(e);
           });
       } catch (e) {
         console.log('Error parsing shared record data', e);

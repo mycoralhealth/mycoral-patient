@@ -7,6 +7,7 @@ import { recordTypes } from '../utilities/recordTypes';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
+import { logoutAction } from '../ui';
 
 const IdGenerator = new FlakeIdGen();
 
@@ -38,11 +39,16 @@ export class TestRecordScreen extends Component {
 
     let encryptedInfo = await cryptoHelpers.encryptFile(data, metadata);
 
-    let hash = await ipfs.add(encryptedInfo.uri);
+    let { Hash, unauthorized } = await ipfs.add(encryptedInfo.uri);
+
+    if (unauthorized) {
+      this.props.navigation.dispatch(await logoutAction(this.props.navigation));
+      return;
+    }
 
     FileSystem.deleteAsync(encryptedInfo.uri, { idempotent: true });
 
-    return { hash, encryptedInfo };
+    return { hash: Hash, encryptedInfo };
   }
 
   async createRecord(data, recordType) {
