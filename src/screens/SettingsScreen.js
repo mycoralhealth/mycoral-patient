@@ -40,8 +40,7 @@ export class SettingsScreen extends Component {
         </ScrollView>
 
         <LogoutFooter backAction={async () => {
-          const resetAction = await logoutAction(this.props.navigation);
-          this.props.navigation.dispatch(resetAction);
+          this.props.navigation.dispatch(await logoutAction(this.props.navigation));
           }}/>
       </View>
     )

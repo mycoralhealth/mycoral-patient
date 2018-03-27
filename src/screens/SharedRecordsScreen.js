@@ -47,7 +47,13 @@ class SharedRecordsScreenUnwrapped extends Component {
 
   onQRCodeScanned(type, data) {
     importHelpers.qrCodeRecordHelper(data)
-      .then((scanned) => {
+      .then(async (scanned) => {
+        if (scanned.unauthorized) {
+          this.props.navigation.dispatch(await logoutAction(this.props.navigation));
+          
+          return;
+        }
+
         const { record } = scanned;
         if (record) {
           this.reloadRecords();            

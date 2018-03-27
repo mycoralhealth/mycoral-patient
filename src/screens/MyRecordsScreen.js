@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { AsyncRenderComponent } from './AsyncRenderComponent';
-import { CoralHeader, colors, MessageIndicator, MessageModal } from '../ui';
+import { CoralHeader, colors, MessageIndicator, MessageModal, logoutAction } from '../ui';
 import store from '../utilities/store';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import importHelpers from '../utilities/import_helpers';
@@ -109,7 +109,13 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
         data = decodeURIComponent(this.getQueryParam(url, 'data'));
 
         importHelpers.qrCodeRecordHelper(data)
-          .then((scanned) => {
+          .then(async (scanned) => {
+            if (scanned.unauthorized) {
+              this.props.navigation.dispatch(await logoutAction(this.props.navigation));
+
+              return;
+            }
+
             const { record, contact } = scanned;
             if (record) {
               this.setState({ modalVisible: true, addedType: 'record' });

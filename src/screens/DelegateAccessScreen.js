@@ -78,13 +78,13 @@ class DelegateAccessScreenUnwrapped extends Component {
               let encryptedInfo = await cryptoHelpers.encryptFile(data, record.metadata, publicKeyPem);
 
               await nextFrame();
-              let hash = await ipfs.add(encryptedInfo.uri);
+              let { Hash } = await ipfs.add(encryptedInfo.uri);
 
               await FileSystem.deleteAsync(encryptedInfo.uri, { idempotent: true });
 
               let sharedRecord = { 
                 id: record.id, 
-                hash, 
+                Hash, 
                 metadata: encryptedInfo.encryptedMetadata, 
                 encryptionInfo: { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv }
               };
@@ -94,14 +94,14 @@ class DelegateAccessScreenUnwrapped extends Component {
               let sharedInfo = store.thirdPartySharedRecordInfo(sharedRecord);
 
               await nextFrame();
-              let sharedRecordHash = await ipfs.add(sharedInfo);
+              let sharedRecordResponse = await ipfs.add(sharedInfo);
 
-              sharedRecord.sharedHash = sharedRecordHash;
+              sharedRecord.sharedHash = sharedRecordResponse.Hash;
 
               await nextFrame();
               await store.shareRecord(contact.name, sharedRecord);
 
-              resolve({sharedRecordHash, sharedRecord});
+              resolve({sharedRecordHash: sharedRecordResponse.Hash, sharedRecord});
             });
         });
     }).then((entity) => { 
