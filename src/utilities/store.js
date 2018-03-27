@@ -156,7 +156,7 @@ const contacts = () => {
           "name": "nick@mycoralhealth.com",
           "nickname": "nick",
           "picture": "https://s.gravatar.com/avatar/0a262b3343fcaeb2032757c4a26b3bd4?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fni.png",
-          "publicKeyHash": "QmUUK9pF8msdckJDBqZutFeWyYuh5KjtW4GcPehsTj5wHd",
+          "publicKeyHash": "QmRx22oqsvCrHoTroNATX7CmKsHZshtt7iZQPFZ3HsPbLH",
         }
       ]);
     }

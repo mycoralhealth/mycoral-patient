@@ -84,12 +84,10 @@ class DelegateAccessScreenUnwrapped extends Component {
 
               let sharedRecord = { 
                 id: record.id, 
-                Hash, 
+                hash: Hash, 
                 metadata: encryptedInfo.encryptedMetadata, 
                 encryptionInfo: { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv }
               };
-
-              console.log({ sharedRecord });
 
               let sharedInfo = store.thirdPartySharedRecordInfo(sharedRecord);
 
