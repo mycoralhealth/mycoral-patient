@@ -138,7 +138,7 @@ class SharedRecordsScreenUnwrapped extends Component {
             backgroundColor={colors.gray}
             icon={{name: 'qrcode', type: 'font-awesome'}}
             title='Add Records From Others'
-            onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this)})}
+            onPress={() => this.props.navigation.navigate({key: 'QRCodeReader', routeName:'QRCodeReader', params: {onQRCodeScanned: this.onQRCodeScanned.bind(this)}})}
           />
         </View>
         <View style={{ paddingBottom: 15, paddingTop: 15}}>
@@ -181,12 +181,12 @@ class SharedRecordsScreenUnwrapped extends Component {
                   await nextFrame();
                   let sharedInfo = await store.mySharedInfo();
 
-                  this.props.navigation.navigate('QRCode', {
+                  this.props.navigation.navigate({key: 'QRCodeKey', routeName: 'QRCode', params: {
                     title:'Your Account QR Code',
                     subTitle: 'Show this to a friend or doctor to let them share or send you a medical record.',
                     shareMessage: 'This is my Coral Health medical record sharing public information. You can use this link to add me as a contact.',
                     data: sharedInfo, 
-                    type: 'contact'});
+                    type: 'contact'}});
                 } catch (e) {
                   console.log('Error uploading to ipfs: ', e);
                   this.onShareKeyUploadFailed();
@@ -201,6 +201,9 @@ class SharedRecordsScreenUnwrapped extends Component {
 }
 
 function mapStateToProps({ records, removedRecords }) {
+
+  console.log({added:records, removed:removedRecords});
+
   return { updates: {added:records, removed:removedRecords} };
 }
 

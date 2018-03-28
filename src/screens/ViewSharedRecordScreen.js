@@ -94,12 +94,12 @@ export class ViewSharedRecordScreen extends AsyncRenderComponent {
               onPress={() => {
                 store.sharedRecordInfo(record.sharedHash)
                   .then((data) => {
-                    this.props.navigation.navigate('QRCode', {
+                    this.props.navigation.navigate({key: 'QRCodeKey', routeName: 'QRCode', params: {
                       title:'Your Shared Record QR Code',
                       subTitle: 'Show this to a friend or doctor to let them add your medical record.',
                       shareMessage: 'I\'m sharing my medical record with you. Please import this record by using the Coral Health app.',
                       data, 
-                      type: 'record'});
+                      type: 'record'}});
                   });
               }}
             />

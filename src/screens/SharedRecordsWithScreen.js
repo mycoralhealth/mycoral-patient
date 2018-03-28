@@ -28,10 +28,10 @@ const RecordListItem = (props) => {
           type: 'ionicon', 
           color: (record.error) ? colors.red : '#ddd' }
         }
-        onPress={() => props.navigation.navigate('ViewSharedRecord', { 
+        onPress={() => props.navigation.navigate({key: 'ViewSharedRecordKey', routeName: 'ViewSharedRecord', params: { 
           record,
           onRecordDeleted: props.onRecordDeleted
-          }) 
+          }}) 
         }
       />
     );

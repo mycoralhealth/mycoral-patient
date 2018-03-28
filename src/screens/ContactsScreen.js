@@ -72,7 +72,7 @@ export class ContactsScreen extends Component {
                   key={contact.name}
                   title={`${contact.nickname} [${contact.name}]`}
                   chevronColor={colors.red}
-                  onPress={() => this.props.navigation.navigate('MyContact', {contact, onRemoveContact: this.removeContact.bind(this)})}
+                  onPress={() => this.props.navigation.navigate({key: 'MyContactKey', routeName: 'MyContact', params: {contact, onRemoveContact: this.removeContact.bind(this)}})}
                 />
               ))
             }
@@ -84,7 +84,7 @@ export class ContactsScreen extends Component {
             backgroundColor={colors.green}
             icon={{name: 'qrcode', type: 'font-awesome'}}
             title='Add Contact from QR Code' 
-            onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeContactScanned.bind(this)})}
+            onPress={() => this.props.navigation.navigate({key: 'QRCodeReaderKey', routeName: 'QRCodeReader', params: {onQRCodeScanned: this.onQRCodeContactScanned.bind(this)}})}
           />
         </View>
 

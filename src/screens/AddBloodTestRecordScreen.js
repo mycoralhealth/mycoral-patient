@@ -19,7 +19,8 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
     this.state = {
       "Cholesterol" : "",
       "HbA1c" : "",
-      "hsCRP" : ""
+      "hsCRP" : "",
+      "opInProgress": false
     };
   }
 
@@ -30,6 +31,8 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
   }
 
   async addRecord() {
+    this.setState({opInProgress: true});
+    
     let results = [
       {"key": "Cholesterol", "value": this.state['Cholesterol'], "type":"marker", "valueType":"magnitude"},
       {"key": "HbA1c", "value": this.state['HbA1c'], "type":"marker", "valueType":"magnitude"},
@@ -85,6 +88,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
           <View style={{ flex: 1}}>
             <View style={{ flex: 1, marginBottom: 10}}>
               <Button
+                disabled={this.state.opInProgress}
                 backgroundColor={colors.green}
                 icon={{name: 'ios-add-circle', type: 'ionicon'}}
                 title='Save'

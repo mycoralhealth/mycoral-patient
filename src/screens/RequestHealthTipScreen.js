@@ -23,7 +23,7 @@ export class RequestHealthTipScreen extends Component {
                   title={doctor.name}
                   subtitle={doctor.institution}
                   chevronColor={colors.red}
-                  onPress={() => this.props.navigation.navigate('RequestHealthTipConfirm', {doctor})}
+                  onPress={() => this.props.navigation.navigate({key: 'RequestHealthTipConfirmKey', routeName: 'RequestHealthTipConfirm', params: {doctor}})}
                 />
               ))
             }

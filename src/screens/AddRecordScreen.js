@@ -82,9 +82,9 @@ export class AddRecordScreen extends Component {
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record Manually'
-              onPress={() => this.props.navigation.navigate('AddRecordManual', {
+              onPress={() => this.props.navigation.navigate({key:'AddRecordManualKey', routeName:'AddRecordManual', params: {
                 onRecordAdded: this.onRecordAdded.bind(this)
-              })}
+              }})}
             />
           </View>
         </ScrollView>
