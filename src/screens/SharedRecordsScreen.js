@@ -201,9 +201,6 @@ class SharedRecordsScreenUnwrapped extends Component {
 }
 
 function mapStateToProps({ records, removedRecords }) {
-
-  console.log({added:records, removed:removedRecords});
-
   return { updates: {added:records, removed:removedRecords} };
 }
 

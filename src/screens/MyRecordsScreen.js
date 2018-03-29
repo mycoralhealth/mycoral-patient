@@ -52,6 +52,8 @@ export function cleanUpRecordsCache() {
   cachedRecords = [];
 }
 
+let openedWithUrl = null;
+
 class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   constructor(props) {
     super(props);
@@ -62,7 +64,8 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   componentDidMount() {
     Linking.addEventListener('url', this.handleOpenURL);
     Linking.getInitialURL().then((url) => {
-        if (url) {
+        if (url && (url !== openedWithUrl)) {
+          openedWithUrl = url;
           this.processLinkHandler(url);
         }
       }).catch(err => console.error('An error occurred', err));
