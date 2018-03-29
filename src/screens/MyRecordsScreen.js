@@ -52,6 +52,8 @@ export function cleanUpRecordsCache() {
   cachedRecords = [];
 }
 
+let openedWithUrl = null;
+
 class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   constructor(props) {
     super(props);
@@ -62,7 +64,8 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   componentDidMount() {
     Linking.addEventListener('url', this.handleOpenURL);
     Linking.getInitialURL().then((url) => {
-        if (url) {
+        if (url && (url !== openedWithUrl)) {
+          openedWithUrl = url;
           this.processLinkHandler(url);
         }
       }).catch(err => console.error('An error occurred', err));
@@ -87,7 +90,8 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
   }
 
   processLinkHandler = (url) => {
-    //alert(`Linked to app with data: ${url}`);
+    console.log({url});
+
     let type = this.getQueryParam(url, 'type');
 
     let data = null;
@@ -219,7 +223,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
               backgroundColor={colors.red}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record' 
-              onPress={() => this.props.navigation.navigate('AddRecord', {onRecordAdded: this.newRecord.bind(this)})}
+              onPress={() => this.props.navigation.navigate({key:'AddRecordKey', routeName:'AddRecord', params: {onRecordAdded: this.newRecord.bind(this)}})}
             />
           </View>
         </ScrollView>

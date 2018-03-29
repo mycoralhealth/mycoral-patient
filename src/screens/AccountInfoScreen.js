@@ -161,7 +161,7 @@ export class AccountInfoScreen extends AsyncRenderComponent {
               backgroundColor={colors.darkerGray}
               icon={{name: 'qrcode', type: 'font-awesome'}}
               title="Scan from QR Code"
-              onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeETHScanned.bind(this)})}
+              onPress={() => this.props.navigation.navigate({key:'QRCodeReaderKey', routeName: 'QRCodeReader', params: {onQRCodeScanned: this.onQRCodeETHScanned.bind(this)}})}
             />
           </View>
 

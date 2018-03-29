@@ -155,7 +155,7 @@ class DelegateAccessScreenUnwrapped extends Component {
                 backgroundColor={colors.green}
                 icon={{name: 'qrcode', type: 'font-awesome'}}
                 title="Scan Recipient's QR Code"
-                onPress={() => this.props.navigation.navigate('QRCodeReader', {onQRCodeScanned: this.onQRCodeScanned.bind(this)})}
+                onPress={() => this.props.navigation.navigate({key: 'QRCodeReaderKey', routeName: 'QRCodeReader', params: {onQRCodeScanned: this.onQRCodeScanned.bind(this)}})}
               />
             </View>
             <View style={{ flex: 1, marginBottom: 10}}>
@@ -163,7 +163,7 @@ class DelegateAccessScreenUnwrapped extends Component {
                 backgroundColor={colors.gray}
                 icon={{name: 'users', type: 'font-awesome'}}
                 title="Select from your Contacts"
-                onPress={() => this.props.navigation.navigate('DelegationContacts', {onContactSelected: this.onContactSelected.bind(this)})}
+                onPress={() => this.props.navigation.navigate({key: 'DelegationContactsKey', routeName: 'DelegationContacts', params: {onContactSelected: this.onContactSelected.bind(this)}})}
               />
             </View>
           </View>

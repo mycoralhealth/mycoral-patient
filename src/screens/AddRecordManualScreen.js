@@ -131,10 +131,10 @@ export class AddRecordManualScreen extends TestRecordScreen {
               backgroundColor={colors.gray}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Blood Test'
-              onPress={() => this.props.navigation.navigate('AddBloodTestRecord', {
+              onPress={() => this.props.navigation.navigate({key:'AddBloodTestRecordKey', routeName: 'AddBloodTestRecord', params: {
                 onRecordAdded: this.onRecordAdded.bind(this),
                 onRecordAddFailed: this.onRecordAddFailed.bind(this)
-              })}
+              }})}
             />
           </View>
           <View style={{ flex: 1, marginBottom: 20}}>
@@ -142,10 +142,10 @@ export class AddRecordManualScreen extends TestRecordScreen {
               backgroundColor={colors.gray}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Genetic Test'
-              onPress={() => this.props.navigation.navigate('AddGeneticTestRecord', {
+              onPress={() => this.props.navigation.navigate({key:'AddGeneticTestRecordKey', routeName: 'AddGeneticTestRecord', params: {
                 onRecordAdded: this.onRecordAdded.bind(this),
                 onRecordAddFailed: this.onRecordAddFailed.bind(this)
-              })}
+              }})}
             />
           </View>
         </ScrollView>

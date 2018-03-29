@@ -16,7 +16,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
   constructor(props) {
     super(props);
 
-    this.state = {checked:[false, false]};
+    this.state = {checked:[false, false], opInProgress: false};
   }
 
   onChangeValue(index) {
@@ -26,6 +26,8 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
   }
 
   async addRecord() {
+    this.setState({opInProgress: true});
+
     let results = [
       {"key":"BRCA1", "value": (this.state.checked[0]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"},
       {"key":"BRCA2", "value": (this.state.checked[1]) ? "positive" : "negative", "type":"gene", "valueType":"mutation"}
@@ -78,6 +80,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1, marginBottom: 10}}>
             <Button
+              disabled={this.state.opInProgress}
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Save'

@@ -89,7 +89,7 @@ export class ViewRecordScreen extends AsyncRenderComponent {
                 backgroundColor={colors.green}
                 icon={{name: 'stethoscope', type: 'font-awesome'}}
                 title='Request Health Tip'
-                onPress={() => this.props.navigation.navigate('RequestHealthTip')}
+                onPress={() => this.props.navigation.navigate({key: 'RequestHealthTipKey', routeName: 'RequestHealthTip'})}
               />
             </View>
             <View style={(record.error) ? {height: 0, opacity: 0} : { flex: 1, marginBottom: 10}}>
@@ -97,7 +97,7 @@ export class ViewRecordScreen extends AsyncRenderComponent {
                 backgroundColor={colors.gray}
                 icon={{name: 'verified-user', type: 'material'}}
                 title='Access Sharing'
-                onPress={() => this.props.navigation.navigate('DelegateAccess', {record})}
+                onPress={() => this.props.navigation.navigate({key: 'DelegateAccessKey', routeName: 'DelegateAccess', params: {record}})}
               />
             </View>
             <View style={{ flex: 1, marginBottom: 10, marginTop: 10}}>
