@@ -7,7 +7,7 @@ This is the main app to be used by patients to interact with their medical recor
 #### User Interface Demo - ✓ Completed Feb 2018 
 This milestone will be a functional user interface with all data mocked from within the app.
 
-#### Functional Demo
+#### Functional Demo - ✓ Completed Mar 2018 
 This milestone will include a server-side component for storing metadata, rather than the blockchain. 
 
 ##### Requirements
