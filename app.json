@@ -4,6 +4,18 @@
     "slug": "mycoral-patient",
     "sdkVersion": "23.0.0",
     "privacy": "unlisted",
-    "scheme": "coralhealth"
+    "scheme": "coralhealth",
+    "splash": {
+      "image": "./assets/splash-logo.png",
+      "resizeMode": "contain"
+    },
+    "icon": "./assets/icon.png",
+    "ios": {
+      "bundleIdentifier": "com.mycoralhealth.Patient"
+    },
+    "android": {
+      "package": "com.mycoralhealth.Patient"
+    }
+
   }
 }
