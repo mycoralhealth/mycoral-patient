@@ -11,10 +11,14 @@
     },
     "icon": "./assets/icon.png",
     "ios": {
-      "bundleIdentifier": "com.mycoralhealth.Patient"
+      "bundleIdentifier": "com.mycoralhealth.Patient",
+      "buildNumber": "0.0.1d"
     },
     "android": {
-      "package": "com.mycoralhealth.Patient"
+      "package": "com.mycoralhealth.Patient",
+      "versionCode": "0.0.1d",
+      "versionName": "1",
+      "permissions": ["CAMERA"]
     }
 
   }
