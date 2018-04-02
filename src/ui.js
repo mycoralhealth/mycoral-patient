@@ -13,8 +13,8 @@ export const colors = {
   'gray': '#999',
   'darkerGray': '#666',
   'lighterGray': '#aaa',
-  'green': '#1db495',
-  'red': '#f10d34',
+  'green': '#00a096',
+  'red': '#eb1e23',
   'white': '#fff'
 }
 
@@ -28,7 +28,7 @@ export const logoutAction = async (navigation) => {
       actions: [
         NavigationActions.navigate({ routeName: 'Login', params: { logout: true }})
       ],
-      key: null 
+      key: null
     });
 
   return resetAction;
@@ -98,11 +98,11 @@ export class MessageModal extends Component {
             <View style={{ flex: 1, marginTop: 10, marginBottom: 70, alignSelf: 'center'}}>
               <TouchableOpacity
                 style={{alignItems: 'center', width: 100, height: 100 }}>
-                <Icon 
-                  name={(this.props.error) ? 'wrench' : this.props.ionIcon} 
-                  type={(this.props.error) ? 'font-awesome' : 'ionicon'} 
-                  size={100} 
-                  color={(this.props.error) ? colors.red : colors.green} 
+                <Icon
+                  name={(this.props.error) ? 'wrench' : this.props.ionIcon}
+                  type={(this.props.error) ? 'font-awesome' : 'ionicon'}
+                  size={100}
+                  color={(this.props.error) ? colors.red : colors.green}
                   style={{textAlign: 'center'}} />
                </TouchableOpacity>
             </View>
@@ -149,7 +149,7 @@ export const RecordDetails = (props) => {
       <View style={{ flex: 1, marginBottom: 40, marginTop: 20}}>
         <MessageIndicator message="Decrypting record..." />
       </View>
-    ); 
+    );
   }
 
   if (props.record.downloadError) {
