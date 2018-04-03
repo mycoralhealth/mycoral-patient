@@ -2,6 +2,7 @@
   "expo": {
     "name": "Coral Health",
     "slug": "mycoral-patient",
+    "version": "0.2.0",
     "sdkVersion": "23.0.0",
     "privacy": "unlisted",
     "scheme": "coralhealth",
@@ -12,12 +13,11 @@
     "icon": "./assets/icon.png",
     "ios": {
       "bundleIdentifier": "com.mycoralhealth.Patient",
-      "buildNumber": "0.0.1d"
+      "buildNumber": "0.2.0"
     },
     "android": {
       "package": "com.mycoralhealth.Patient",
-      "versionCode": "0.0.1d",
-      "versionName": "1",
+      "versionCode": 1,
       "permissions": ["CAMERA"]
     }
 

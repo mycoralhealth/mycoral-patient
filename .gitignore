@@ -21,3 +21,7 @@ genetic.json
 basicblood.json
 src/patient.sublime-project
 src/patient.sublime-workspace
+
+# build artifacts
+mycoral-patient.app/
+*.ipa
