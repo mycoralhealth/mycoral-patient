@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Image, Platform, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Image, Platform, Modal, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { Text, Button, Icon, List, ListItem } from 'react-native-elements';
 import { PHOTO_RECORD_TEST } from './utilities/recordTypes';
 import { NavigationActions, SafeAreaView } from 'react-navigation';
+import { Constants } from 'expo';
 
 
 import store from './utilities/store';
@@ -38,7 +39,8 @@ export class CoralHeader extends React.Component {
   render() {
     return (
       <SafeAreaView forceInset={{top:'always'}}>
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.green, borderTopWidth: 1, borderTopColor: colors.green, marginTop: (Platform.OS === 'ios') ? 20 : 0}}>
+        <StatusBar barStyle={(Platform.OS === 'ios') ? "dark-content" : "light-content"}/>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.green, borderTopWidth: 1, borderTopColor: colors.green, marginTop: (Platform.OS === 'ios') ? 0 : -Constants.statusBarHeight}}>
           <View style={{ backgroundColor: 'white', width: 80, height: 80, justifyContent: 'center'}}>
             <Image style={{ width: 80, height: 80 }} source={require('../assets/corner-logo.png')} />
           </View>

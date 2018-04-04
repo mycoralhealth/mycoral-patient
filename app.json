@@ -2,7 +2,7 @@
   "expo": {
     "name": "Coral Health",
     "slug": "mycoral-patient",
-    "version": "0.2.0",
+    "version": "0.2.2",
     "sdkVersion": "23.0.0",
     "privacy": "unlisted",
     "scheme": "coralhealth",
@@ -13,7 +13,7 @@
     "icon": "./assets/icon.png",
     "ios": {
       "bundleIdentifier": "com.mycoralhealth.Patient",
-      "buildNumber": "0.2.0"
+      "buildNumber": "0.2.2"
     },
     "android": {
       "package": "com.mycoralhealth.Patient",
