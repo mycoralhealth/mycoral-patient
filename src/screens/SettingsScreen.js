@@ -4,7 +4,7 @@ import { List, ListItem } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
 import { CoralHeader, LogoutFooter, colors, logoutAction } from '../ui';
-import version from '../../version.json';
+import app from '../../app.json';
 
 export class SettingsScreen extends Component {
   
@@ -17,7 +17,7 @@ export class SettingsScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Account Settings' subtitle={version.version}/>
+        <CoralHeader title='Account Settings' subtitle={app.expo.version}/>
 
         <ScrollView style={{ flex: 1 }}>
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
