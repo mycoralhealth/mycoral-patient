@@ -1,10 +1,12 @@
 import moment from 'moment'
 import FlakeIdGen from 'flakeid';
 import React, { Component } from 'react';
-import { FileSystem } from 'expo';
+import { FileSystem, SecureStore } from 'expo';
 
 import { recordTypes } from '../utilities/recordTypes';
 import store from '../utilities/store';
+import { getKeyWithName } from '../utilities/pki';
+
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
 import { logoutAction } from '../ui';
@@ -34,6 +36,13 @@ export class TestRecordScreen extends Component {
     }
   }
 
+  createBasicRecord(hash, encryptionInfo) {
+    return {
+      encryptionInfo,
+      hash
+    }
+  }
+
   async encryptAndUploadRecord(data, selectedRecordType) {
     let metadata = await this.createRecordMetadata(selectedRecordType);
 
@@ -58,6 +67,29 @@ export class TestRecordScreen extends Component {
 
     let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, hash, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
 
+    return record;
+  }
+
+  async createRecordAndSaveMetadata(data, recordType) {
+    let uploadResponse = await this.encryptAndUploadRecord(data, recordType);
+    let encryptedInfo = uploadResponse.encryptedInfo;
+    let hash = uploadResponse.hash;
+    console.log("Trying to encrypt");
+    let encryptionInfo =  { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv };
+    let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, hash, encryptionInfo);
+    console.log("Succeeded.");
+    var recordStore = await store.getKeyWithName(recordType)
+
+    console.log("-----------------");
+    console.log(recordStore);
+    console.log("-----------------");
+    if (recordStore == null) {
+      recordStore = {};
+    } 
+  
+    recordStore[record.id] = this.createBasicRecord(hash, record.encryptionInfo);
+    console.log(recordStore);
+    await store.setKeyValue(recordType, recordStore);
     return record;
   }
 }

@@ -36,6 +36,20 @@ const setUserInfo = async (userInfo) => {
   await AsyncStorage.setItem(`${STORE_KEY}.${USER_INFO}`, JSON.stringify(userInfo)); 
 }
 
+const setKeyValue = async (name, data) => {
+  await AsyncStorage.setItem(`${STORE_KEY}.${name}`, JSON.stringify(data)); 
+}
+
+const getKeyWithName = async (name) => {
+  console.log("Trying to get key...");
+  let info = await AsyncStorage.getItem(`${STORE_KEY}.${name}`); 
+
+  if (!info) {
+    return null;
+  }
+  console.log(info);
+  return JSON.parse(info);
+}
 
 /**
  * Per user store information. It uses the STORE_KEY + the user auth0 name which should equal the email
@@ -360,12 +374,14 @@ module.exports = {
   removeRecord,
   getIPFSProvider,
   setIPFSProvider,
+  setKeyValue,
   getEthAddress,
   setEthAddress,
   setUserInfo,
   getUserInfo,
   getEmail,
   getUserName,
+  getKeyWithName,
   getPerUserStoreKey,
   contacts,
   addContact,

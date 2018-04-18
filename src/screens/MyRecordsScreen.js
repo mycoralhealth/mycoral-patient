@@ -138,6 +138,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
     }
     this.setState({recordsList: cachedRecords, loading: false});
     this.decryptRecords(cachedRecords);
+    console.log(this.state)
   }
 
   async decryptRecords(recordsList) {
@@ -208,6 +209,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
           />
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
+
               this.state.recordsList.map((record) => (
                 <RecordListItem
                   key={record.id}
@@ -218,12 +220,20 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
               ))
             }
           </List>
-          <View style={{ flex: 1, marginBottom: 20}}>
+          <View style={{ flex: 1, marginBottom: 10}}>
             <Button
               backgroundColor={colors.red}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Record' 
               onPress={() => this.props.navigation.navigate({key:'AddRecordKey', routeName:'AddRecord', params: {onRecordAdded: this.newRecord.bind(this)}})}
+            />
+          </View>
+          <View style={{flex:1,marginBottom:20}}>
+          <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Check Vitals' 
+              onPress={() => this.props.navigation.navigate('ViewVitals', {})}
             />
           </View>
         </ScrollView>
