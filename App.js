@@ -39,11 +39,13 @@ import { ContactsScreen } from './src/screens/ContactsScreen';
 import { MyContactScreen } from './src/screens/MyContactScreen';
 import { SharedRecordsWithScreen } from './src/screens/SharedRecordsWithScreen';
 import { ViewSharedRecordScreen } from './src/screens/ViewSharedRecordScreen';
+import { DatePickerScreen } from './src/screens/DatePickerScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
   ViewRecord: { screen: ViewRecordScreen },
   ViewVitals: { screen: ViewVitalsScreen },
+  DatePicker: { screen: DatePickerScreen },
   RequestHealthTip: { screen: RequestHealthTipScreen },
   RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen },
   DelegateAccess: { screen: DelegateAccessScreen },

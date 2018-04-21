@@ -1,10 +1,10 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { View, ScrollView, Platform, Dimensions } from 'react-native';
+import { Alert, View, ScrollView, Platform, Dimensions } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
-import { LineChart } from 'react-native-chart-kit';
+import { VictoryLine, VictoryTheme, VictoryChart, VictoryAxis } from "victory-native";
 import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, CoralFooter, colors, RecordDetails, MessageIndicator, logoutAction } from '../ui';
 import { PHOTO_RECORD_TEST, VITAL_SIGNS } from '../utilities/recordTypes';
@@ -15,96 +15,145 @@ import store from '../utilities/store';
 
 const backAction = NavigationActions.back();
 
-export class ViewVitalsScreen extends AsyncRenderComponent {  
+export class ViewVitalsScreen extends AsyncRenderComponent {
   constructor(props) {
     super(props);
-    this.state = { recordInitialized: false, rate: [] };
+    this.dates = this.props.navigation.state.params.dates;
+    this.state = {
+      records: [],
+      recordsFetched: false,
+      processedRecords: 0,
+      filteredRecords: 0,
+      values: { "BreathingRate": [], "Systolic": [], "Diastolic": [] },
+      labels: []
+    };
+    store.getKeyWithName(VITAL_SIGNS).then((records) => {
+      this.state.records = records;
+      this.state.recordsFetched = true
+    });
   }
 
-  generateRate() {
-    var N = 10;
-    this.rate = Array.apply(null, {length: N}).map(Number.call, Number);
+  checkEmptyRecordsFilter() {
+    if ((this.state.processedRecords == Object.keys(this.state.records).length) && (this.state.filteredRecords == 0)) {
+      Alert.alert(
+        "Invalid Dates",
+        "No records were found between the specified dates.", [
+          { text: "OK", onPress: () => this.props.navigation.dispatch(backAction) }
+        ]
+      )
+    }
   }
 
   componentDidMount() {
-    this.generateRate();
+    var processedRecords = 0;
     recordPromise = store.getKeyWithName(VITAL_SIGNS);
-    recordPromise.then(async (records) => {
-      for (var key in records) {
-        let record = records[key];
-        console.log(record);
-        await ipfs.cat(record.hash)
-        .then(async (response) => {
-          const {uri, unauthorized} = response;
-          if (unauthorized) {
-            this.props.navigation.dispatch(await logoutAction(this.props.navigation));
-            return;
+    recordPromise.then(async(records) => {
+      let recordKeys = Object.keys(records);
+      recordKeys.sort(function(a, b) {
+        return a - b;
+      })
+      recordKeys.map((key) => {
+          for (var i = 0; i < recordKeys.length; i++) {
+            let record = records[key];
+            var recordTime = new Date(record.time);
+            if (recordTime < this.dates.datestart || recordTime > this.dates.dateend) {
+              this.state.processedRecords += 1;
+              this.checkEmptyRecordsFilter();
+              continue;
+            }
+            ipfs.cat(record.hash)
+              .then(async(response) => {
+                const { uri, unauthorized } = response;
+                if (unauthorized) {
+                  this.props.navigation.dispatch(await logoutAction(this.props.navigation));
+                  return;
+                }
+                cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv)
+                  .then((decryptionResult) => {
+                    FileSystem.readAsStringAsync(decryptionResult.decryptedUri)
+                      .then((decryptedData) => {
+                        let data = JSON.parse(decryptedData);
+                        var wasLabelSet = false;
+                        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+                        for (var i in data) {
+                          let recordData = data[i]
+                          let dataTime = (new Date(recordData.time));
+                          this.state.values[recordData.key].push({
+                            "x": months[dataTime.getMonth()] +
+                              "-" + dataTime.getDate() +
+                              " " + dataTime.getHours() +
+                              ":" + dataTime.getMinutes(),
+                            "y": parseInt(recordData.value)
+                          })
+                        }
+                        let state = this.state;
+                        state.processedRecords += 1;
+                        state.filteredRecords += 1;
+                        this.setState(state);
+                      })
+                    FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
+                    console.log(this.state);
+                  });
+              })
           }
-
-          cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv)
-            .then((decryptionResult) => {
-              FileSystem.readAsStringAsync(decryptionResult.decryptedUri)
-                .then((decryptedData) => {
-                  console.log(this.state);
-                  let data = JSON.parse(decryptedData);
-                  for (var i in data) {
-                    console.log(data[i]);
-                    if (data[i].key === "BreathingRate") {
-                      console.log("State ");
-                      console.log(this.state);
-                      let state = this.state;
-                      state.rate.push(data[i].value);  
-                      this.setStateAsync(state);
-                      console.log(this.state);
-                    }
-                  }})
-                FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
-                });
-            })
-        .catch((e) => {
-          console.log(e);
-        }); 
-      }
-    console.log(this.state.rate);}).then(console.log(this.state));
-    this.setState(this.state);
-
+        })
+        .then(() => {
+          this.state.loading = false;
+        })
+    });
   }
 
 
+
   render() {
-
-    return (
-      <View style={{ flex: 1, backgroundColor: colors.bg }} ref='main'>
-        <CoralHeader title='View Medical Record' subtitle='Your record has been decrypted below.'/>
-
-        <ScrollView style={{ flex: 1}}>
-          <LineChart
-            data={{
-              labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-              datasets: [{
-                data: [20,45]
-              }]
-            }}
-            width={Dimensions.get('window').width} // from react-native
-            height={450}
-            chartConfig={{
-              backgroundColor: '#e26a00',
-              backgroundGradientFrom: '#fb8c00',
-              backgroundGradientTo: '#ffa726',
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                borderRadius: 16
-              }
-            }}
-            bezier
-            style={{
-              marginVertical: 8,
-              borderRadius: 16
-            }}
-          />
-        </ScrollView>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
-      </View>
-    );
+    if (!this.state.recordsFetched || (this.state.processedRecords != Object.keys(this.state.records).length)) {
+      return ( 
+        <View style = { { flex: 1, backgroundColor: colors.bg } } ref = 'main'>
+          <CoralHeader title = 'Vital Signs Graph' subtitle = 'Generating your vital signs graph.' />
+          <View style = {{ flex: 1, marginBottom: 40, marginTop: 20 }}>
+            <MessageIndicator message = "Constructing graph..." />
+          </View> 
+          <CoralFooter backAction = {
+            () => this.props.navigation.dispatch(backAction)
+          }/> 
+        </View>
+      );
+    } else {
+      return ( 
+        <View style = { { flex: 1, backgroundColor: colors.bg } } ref = 'main'>
+          <CoralHeader title = 'Vital Signs Graph'
+                       subtitle = 'The vital signs graph for the provided time frame.' />
+          <ScrollView horizontal = { true } >
+            <VictoryChart theme = { VictoryTheme.material } width = { Math.max(Dimensions.get('window').width, this.state.processedRecords * 100) }>
+            <VictoryAxis style = { { ticks: { padding: 0 } } } standalone = { false } tickFormat = {
+                                                                                        (x) => {
+                                                                                            return x;
+                                                                                        }}
+            /> 
+            <VictoryAxis dependentAxis orientation = "left" />
+            <VictoryLine  style = {{
+                            data: { stroke: colors.grey }
+                            }}
+                          standalone = { false } data = { this.state.values["BreathingRate"] }
+            /> 
+            <VictoryLine  style = {{
+                            data: { stroke: colors.green }
+                            }}
+                          standalone = { false } data = { this.state.values["Systolic"] }
+            /> 
+            <VictoryLine  style = {{
+                            data: { stroke: colors.red }
+                            }}
+                           standalone = { false } data = { this.state.values["Diastolic"] }
+            /> 
+            </VictoryChart> 
+          </ScrollView> 
+          <CoralFooter backAction = {
+                        () => this.props.navigation.dispatch(backAction)
+                      }
+          /> 
+        </View>
+      );
+    }
   }
 }

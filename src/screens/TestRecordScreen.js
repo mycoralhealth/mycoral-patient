@@ -39,7 +39,8 @@ export class TestRecordScreen extends Component {
   createBasicRecord(hash, encryptionInfo) {
     return {
       encryptionInfo,
-      hash
+      hash,
+      time: new Date()
     }
   }
 
@@ -74,21 +75,14 @@ export class TestRecordScreen extends Component {
     let uploadResponse = await this.encryptAndUploadRecord(data, recordType);
     let encryptedInfo = uploadResponse.encryptedInfo;
     let hash = uploadResponse.hash;
-    console.log("Trying to encrypt");
     let encryptionInfo =  { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv };
     let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, hash, encryptionInfo);
-    console.log("Succeeded.");
     var recordStore = await store.getKeyWithName(recordType)
-
-    console.log("-----------------");
-    console.log(recordStore);
-    console.log("-----------------");
     if (recordStore == null) {
       recordStore = {};
     } 
   
     recordStore[record.id] = this.createBasicRecord(hash, record.encryptionInfo);
-    console.log(recordStore);
     await store.setKeyValue(recordType, recordStore);
     return record;
   }

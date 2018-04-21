@@ -63,6 +63,7 @@ export class AddVitalSignsRecordScreen extends TestRecordScreen {
   onChangeValue(key, value) {
     let state = this.state;
     this.state[key].value = value;
+    this.state[key].error = "";
     this.setState(state);
   }
 
@@ -82,16 +83,6 @@ export class AddVitalSignsRecordScreen extends TestRecordScreen {
     })
     res = mapping.every(val => val === true);
     return res;
-  }
-
-  errorReporting(key, error) {
-    if (error) {
-      return (
-        <Text key={key+'_text'} style={{textAlign: 'center'}}>
-          Error: {error}
-        </Text>
-      )
-    }
   }
 
   async addRecord() {
@@ -135,15 +126,18 @@ export class AddVitalSignsRecordScreen extends TestRecordScreen {
                 <ListItem
                   key={item.key}
                   title={item.title ? item.title : item.key}
+                  titleStyle={{width:300}}
                   hideChevron={true}
                   textInput={true}
+                  subtitle={this.state[item.key].error ? this.state[item.key].error : undefined}
+                  subtitleStyle={{ color: 'red', width:300 }}
                   textInputPlaceholder={item.placeholder}
                   textInputValue={this.state[item.key].value}
                   textInputOnChangeText={(title) => this.onChangeValue(item.key, title)}
                   textInputKeyboardType='numeric'
                   textInputReturnKeyType={'done'}
+                  textInputMaxLength={3}
                 />
-                {this.errorReporting(item.key, this.state[item.key].error)}
               </View>
               ))
             }

@@ -126,6 +126,15 @@ const removeRecord = (r) => {
     try {
       records()
         .then (async (records) => {
+          console.log(r);
+          console.log(r.metadata.testType);
+          let cachedRecords = await getKeyWithName(r.metadata.testType);
+          console.log("Cached records");
+          console.log(cachedRecords);
+          if (cachedRecords != null) {
+            delete cachedRecords[r.id];
+            await setKeyValue(r.metadata.testType, cachedRecords);
+          }
           let newRecords = records.filter((record) => (record.id !== r.id));
           await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${RECORDS}`, JSON.stringify(newRecords));
           resolve(newRecords);
