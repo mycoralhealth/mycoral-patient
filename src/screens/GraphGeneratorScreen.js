@@ -7,7 +7,7 @@ import { AsyncRenderComponent } from './AsyncRenderComponent';
 import RNPickerSelect from 'react-native-picker-select';
 import { CoralHeader, CoralFooter, colors, RecordDetails, MessageIndicator, logoutAction } from '../ui';
 import DatePicker from 'react-native-datepicker'
-import { VITAL_SIGNS } from '../utilities/recordTypes';
+import { VITAL_SIGNS, recordTypes } from '../utilities/recordTypes';
 
 
 const backAction = NavigationActions.back();
@@ -17,11 +17,11 @@ export class GraphGeneratorScreen extends AsyncRenderComponent {
     super(props);
     this.graphList = [
       {
-        label: {VITAL_SIGNS},
-        value: {VITAL_SIGNS},
+        label: VITAL_SIGNS,
+        value: VITAL_SIGNS,
       }
     ]
-    this.state = { graphType: {VITAL_SIGNS}, datestart: "2018-01-01", dateend:"2018-01-01"};
+    this.state = { graphType: VITAL_SIGNS, datestart: "2018-01-01", dateend:"2018-01-01"};
   }
 
   generateGraph(dates) {
@@ -44,10 +44,13 @@ export class GraphGeneratorScreen extends AsyncRenderComponent {
 
     return (
       <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title='View Vitals Graph' subtitle='Select the dates of interest below.'/>
+        <CoralHeader title='View Chart' subtitle='Select the dates of interest below.'/>
          
          <List containerStyle={{marginBottom: 20}}>
-        
+          <ListItem
+            title="Chart Type"
+            rightTitle="Vital Signs"
+            />
           <ListItem
           rightIcon={ 
             <DatePicker
@@ -86,7 +89,7 @@ export class GraphGeneratorScreen extends AsyncRenderComponent {
               disabled={this.state.opInProgress}
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
-              title={this.props.navigation.state.params.buttonText}
+              title='Generate Chart'
               onPress={() => this.generateGraph(this.state)}
             />
           </View>

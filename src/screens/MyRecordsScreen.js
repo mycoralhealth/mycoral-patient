@@ -208,6 +208,22 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
             message={(this.state.addedType === 'contact') ? 'You can verify your contact information in Settings > Contacts.' : 'You can verify the imported record information in Shared Records.'}
             ionIcon='ios-body'
           />
+          <View style={{ flex: 1,marginTop:10, marginBottom: 10}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Add Record' 
+              onPress={() => this.props.navigation.navigate({key:'AddRecordKey', routeName:'AddRecord', params: {onRecordAdded: this.newRecord.bind(this)}})}
+            />
+          </View>
+          <View style={{flex:1,marginBottom:10}}>
+          <Button
+              backgroundColor={colors.red}
+              icon={{name: 'area-graph', type: 'entypo'}}
+              title='View Charts' 
+              onPress={() => this.props.navigation.navigate('GraphGenerator', {})}
+            />
+          </View>
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
 
@@ -221,22 +237,6 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
               ))
             }
           </List>
-          <View style={{ flex: 1, marginBottom: 10}}>
-            <Button
-              backgroundColor={colors.red}
-              icon={{name: 'ios-add-circle', type: 'ionicon'}}
-              title='Add Record' 
-              onPress={() => this.props.navigation.navigate({key:'AddRecordKey', routeName:'AddRecord', params: {onRecordAdded: this.newRecord.bind(this)}})}
-            />
-          </View>
-          <View style={{flex:1,marginBottom:20}}>
-          <Button
-              backgroundColor={colors.red}
-              icon={{name: 'ios-add-circle', type: 'ionicon'}}
-              title='Check Vitals' 
-              onPress={() => this.props.navigation.navigate('GraphGenerator', {})}
-            />
-          </View>
         </ScrollView>
       </View>
     );

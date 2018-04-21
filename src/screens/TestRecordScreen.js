@@ -72,18 +72,13 @@ export class TestRecordScreen extends Component {
   }
 
   async createRecordAndSaveMetadata(data, recordType) {
-    let uploadResponse = await this.encryptAndUploadRecord(data, recordType);
-    let encryptedInfo = uploadResponse.encryptedInfo;
-    let hash = uploadResponse.hash;
-    let encryptionInfo =  { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv };
-    let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, hash, encryptionInfo);
+    let encryptedRecord = this.createRecord(data, recordType);
     var recordStore = await store.getKeyWithName(recordType)
     if (recordStore == null) {
       recordStore = {};
     } 
-  
-    recordStore[record.id] = this.createBasicRecord(hash, record.encryptionInfo);
+    recordStore[record.id] = this.createBasicRecord(encryptedRecord.hash, encryptedRecord.encryptionInfo);
     await store.setKeyValue(recordType, recordStore);
-    return record;
+    return encryptedRecord;
   }
 }
