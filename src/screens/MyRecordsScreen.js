@@ -186,25 +186,6 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
     this.setState({ modalVisible: false });
   }
 
-  generateGraph(dates) {
-  var convertedDates = {datestart: new Date(dates.datestart), dateend: new Date(dates.dateend)}
-    if (convertedDates.datestart >= convertedDates.dateend) {
-      return Alert.alert(
-          "Invalid Dates",
-          "The start date must be before the end date.",
-          [
-            {text: "OK"}
-          ]
-        )
-    }
-    console.log("Before: ") 
-    console.log(convertedDates);
-    convertedDates.dateend.setDate(convertedDates.dateend.getDate() + 1); // shift by one to get to the next day at midnight
-    console.log("After: ") 
-    console.log(convertedDates);
-    this.props.navigation.navigate('ViewVitals', {dates: convertedDates})
-  }
-
 
   render() {
     if (this.state.loading) {
@@ -253,7 +234,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
               backgroundColor={colors.red}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Check Vitals' 
-              onPress={() => this.props.navigation.navigate('DatePicker', {onButtonPress: this.generateGraph.bind(this), buttonText: "Generate Graph"})}
+              onPress={() => this.props.navigation.navigate('GraphGenerator', {})}
             />
           </View>
         </ScrollView>

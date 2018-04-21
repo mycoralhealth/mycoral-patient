@@ -1,13 +1,11 @@
-import moment from 'moment';
 import React, { Component } from 'react';
 import { Alert, View, ScrollView, Platform, Dimensions } from 'react-native';
-import { Button, List, ListItem, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
 import { VictoryLine, VictoryTheme, VictoryChart, VictoryAxis } from "victory-native";
 import { AsyncRenderComponent } from './AsyncRenderComponent';
-import { CoralHeader, CoralFooter, colors, RecordDetails, MessageIndicator, logoutAction } from '../ui';
-import { PHOTO_RECORD_TEST, VITAL_SIGNS } from '../utilities/recordTypes';
+import { CoralHeader, CoralFooter, colors, MessageIndicator, logoutAction } from '../ui';
+import { VITAL_SIGNS } from '../utilities/recordTypes';
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
 import store from '../utilities/store';
@@ -15,21 +13,30 @@ import store from '../utilities/store';
 
 const backAction = NavigationActions.back();
 
-export class ViewVitalsScreen extends AsyncRenderComponent {
+export class ViewGraphScreen extends AsyncRenderComponent {
   constructor(props) {
     super(props);
     this.dates = this.props.navigation.state.params.dates;
+    this.recordType = this.props.navigation.state.params.recordType;
     this.state = {
       records: [],
       recordsFetched: false,
       processedRecords: 0,
       filteredRecords: 0,
-      values: { "BreathingRate": [], "Systolic": [], "Diastolic": [] },
-      labels: []
+      values: {}
     };
-    store.getKeyWithName(VITAL_SIGNS).then((records) => {
-      this.state.records = records;
-      this.state.recordsFetched = true
+    store.getKeyWithName(this.recordType).then((records) => {
+      if (records == null) {
+        Alert.alert(
+          "No records found",
+          "No records of the chosen type were found.", [
+            { text: "OK", onPress: () => this.props.navigation.dispatch(backAction) }
+          ]
+        )
+      } else {
+        this.state.records = records;
+        this.state.recordsFetched = true
+      }
     });
   }
 
@@ -44,10 +51,17 @@ export class ViewVitalsScreen extends AsyncRenderComponent {
     }
   }
 
+  getMonthDayTimeString(date) {
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    return (months[dataTime.getMonth()] +
+            "-" + dataTime.getDate() +
+            " " + dataTime.getHours() +
+            ":" + dataTime.getMinutes())
+  }
+
   componentDidMount() {
     var processedRecords = 0;
-    recordPromise = store.getKeyWithName(VITAL_SIGNS);
-    recordPromise.then(async(records) => {
+    this.state.records.map((records) => {
       let recordKeys = Object.keys(records);
       recordKeys.sort(function(a, b) {
         return a - b;
@@ -74,15 +88,14 @@ export class ViewVitalsScreen extends AsyncRenderComponent {
                       .then((decryptedData) => {
                         let data = JSON.parse(decryptedData);
                         var wasLabelSet = false;
-                        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
                         for (var i in data) {
                           let recordData = data[i]
                           let dataTime = (new Date(recordData.time));
+                          if (this.state.values[recordData.key] == null) {
+                            this.state.values[recordData.key] = [];
+                          }
                           this.state.values[recordData.key].push({
-                            "x": months[dataTime.getMonth()] +
-                              "-" + dataTime.getDate() +
-                              " " + dataTime.getHours() +
-                              ":" + dataTime.getMinutes(),
+                            "x": this.getMonthDayTimeString(dataTime),
                             "y": parseInt(recordData.value)
                           })
                         }
@@ -92,7 +105,6 @@ export class ViewVitalsScreen extends AsyncRenderComponent {
                         this.setState(state);
                       })
                     FileSystem.deleteAsync(decryptionResult.decryptedUri, { idempotent: true });
-                    console.log(this.state);
                   });
               })
           }
@@ -109,7 +121,7 @@ export class ViewVitalsScreen extends AsyncRenderComponent {
     if (!this.state.recordsFetched || (this.state.processedRecords != Object.keys(this.state.records).length)) {
       return ( 
         <View style = { { flex: 1, backgroundColor: colors.bg } } ref = 'main'>
-          <CoralHeader title = 'Vital Signs Graph' subtitle = 'Generating your vital signs graph.' />
+          <CoralHeader title = {this.recordType + ' Graph'} subtitle = 'Generating your vital signs graph.' />
           <View style = {{ flex: 1, marginBottom: 40, marginTop: 20 }}>
             <MessageIndicator message = "Constructing graph..." />
           </View> 

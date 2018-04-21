@@ -91,7 +91,7 @@ export class AddVitalSignsRecordScreen extends TestRecordScreen {
 
     let results = this.key_info.map((item) => {
       return {"key": item.key, 
-              "title": item.key,
+              "title": item.title,
               "value": this.state[item.key].value,
               "type": item.type,
               "time" : new Date(),

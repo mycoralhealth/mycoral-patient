@@ -12,7 +12,7 @@ import { VITAL_SIGNS } from '../utilities/recordTypes';
 
 const backAction = NavigationActions.back();
 
-export class DatePickerScreen extends AsyncRenderComponent {  
+export class GraphGeneratorScreen extends AsyncRenderComponent {  
   constructor(props) {
     super(props);
     this.graphList = [
@@ -23,6 +23,22 @@ export class DatePickerScreen extends AsyncRenderComponent {
     ]
     this.state = { graphType: {VITAL_SIGNS}, datestart: "2018-01-01", dateend:"2018-01-01"};
   }
+
+  generateGraph(dates) {
+  var convertedDates = {datestart: new Date(dates.datestart), dateend: new Date(dates.dateend)}
+    if (convertedDates.datestart >= convertedDates.dateend) {
+      return Alert.alert(
+          "Invalid Dates",
+          "The start date must be before the end date.",
+          [
+            {text: "OK"}
+          ]
+        )
+    }
+    convertedDates.dateend.setDate(convertedDates.dateend.getDate() + 1); // shift by one to get to the next day at midnight
+    this.props.navigation.navigate('ViewGraph', {recordType: this.state.graphType, dates: convertedDates})
+  }
+
 
   render() {
 
@@ -71,7 +87,7 @@ export class DatePickerScreen extends AsyncRenderComponent {
               backgroundColor={colors.green}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title={this.props.navigation.state.params.buttonText}
-              onPress={() => this.props.navigation.state.params.onButtonPress(this.state)}
+              onPress={() => this.generateGraph(this.state)}
             />
           </View>
         <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
