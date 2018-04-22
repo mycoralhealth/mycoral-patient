@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Alert, View, ScrollView, Platform, Dimensions } from 'react-native';
+import { List, ListItem, CheckBox } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import { FileSystem } from 'expo';
-import { VictoryLine, VictoryTheme, VictoryChart, VictoryAxis } from "victory-native";
+import { VictoryLine, VictoryTheme, VictoryChart, VictoryAxis, VictoryLegend } from "victory-native";
 import { AsyncRenderComponent } from './AsyncRenderComponent';
 import { CoralHeader, CoralFooter, colors, MessageIndicator, logoutAction } from '../ui';
 import { recordTypes } from '../utilities/recordTypes';
@@ -46,7 +47,8 @@ export class ViewGraphScreen extends AsyncRenderComponent {
     return (months[date.getMonth()] +
             "-" + date.getDate() +
             " " + date.getHours() +
-            ":" + date.getMinutes())
+            ":" + date.getMinutes() + 
+            ":" + date.getSeconds())
   }
 
   populateDataValues(recordData) {
@@ -56,6 +58,7 @@ export class ViewGraphScreen extends AsyncRenderComponent {
     }
     if (this.state.recordRenderInfo[recordData.key] == null) {
       this.state.recordRenderInfo[recordData.key] = {
+        title: recordData.title,
         color: this.state.availableColors.pop(),
         visible: true,
       }
@@ -68,7 +71,7 @@ export class ViewGraphScreen extends AsyncRenderComponent {
 
   componentDidMount() {
     store.getKeyWithName(this.recordType).then((records) => {
-      if (records == null) {
+      if (records == null || Object.keys(records).length === 0) {
         Alert.alert(
           "No records found",
           "No records of the chosen type were found.", [
@@ -119,6 +122,11 @@ export class ViewGraphScreen extends AsyncRenderComponent {
     });
   }
 
+  onChangeVisibility(key) {
+    let state = this.state;
+    this.state.recordRenderInfo[key].visible = !this.state.recordRenderInfo[key].visible;
+    this.setState(state);
+  }
 
 
   render() {
@@ -138,28 +146,19 @@ export class ViewGraphScreen extends AsyncRenderComponent {
       return ( 
         <View style = { { flex: 1, backgroundColor: colors.bg } } ref = 'main'>
           <CoralHeader title = {recordTypes[this.recordType] + ' Chart'} subtitle = {recordTypes[this.recordType] + ' chart for your selected timeline.'} />
-          <ScrollView horizontal = { true } >
-            <VictoryChart theme = { VictoryTheme.material } width = { Math.max(Dimensions.get('window').width, this.state.processedRecords * 100) }>
+          <ScrollView horizontal = { true } height={500} style={{borderRadius:3, borderBottomColor: colors.black}} >
+            <VictoryChart theme = { VictoryTheme.material } width = { Dimensions.get('window').width }>
             <VictoryAxis  style = { { ticks: { padding: 0 } } } 
                           standalone = { false } tickFormat = {
                                                  (x) => {
-                                                    return x;
+                                                   //  return x;
                                                  }}
             /> 
             <VictoryAxis dependentAxis orientation = "left" />
-            <VictoryLine  style = {{
-                                   data: { stroke: this.state.recordRenderInfo["BreathingRate"].color }
-                                }}
-                                standalone = { false } 
-                                data = { this.state.values["BreathingRate"] }
-                  /> 
             {
               Object.keys(this.state.recordRenderInfo).map((renderInfoKey) => {
                 let renderInfo = this.state.recordRenderInfo[renderInfoKey];
-                console.log(renderInfo);
                 if (renderInfo.visible) {
-                  console.log("rendering...");
-                  console.log(this.state.values[renderInfo.key]);
                   return (
                     <VictoryLine  key = {renderInfoKey}  
                                   style = {{
@@ -171,8 +170,30 @@ export class ViewGraphScreen extends AsyncRenderComponent {
                 }
               })
             }
-            </VictoryChart> 
-          </ScrollView> 
+          </VictoryChart> 
+          </ScrollView>
+          <ScrollView>
+           <List containerStyle={{marginBottom: 20}}>
+          {
+            Object.keys(this.state.recordRenderInfo).map((renderInfoKey) => (
+              <View key={renderInfoKey+ '_view'} style={{flex:1}}>
+              <ListItem
+                key={renderInfoKey}
+                title={
+                  <CheckBox
+                    title={this.state.recordRenderInfo[renderInfoKey].title}
+                    textStyle={{ color: this.state.recordRenderInfo[renderInfoKey].color }}
+                    onPress={() => this.onChangeVisibility(renderInfoKey)}
+                    checked={this.state.recordRenderInfo[renderInfoKey].visible}
+                  />
+                }
+                hideChevron={true}
+              />
+              </View>
+            ))
+          }
+        </List>
+        </ScrollView>
           <CoralFooter backAction = {
                         () => this.props.navigation.dispatch(backAction)
                       }

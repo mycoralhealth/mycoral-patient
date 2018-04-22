@@ -41,13 +41,10 @@ const setKeyValue = async (name, data) => {
 }
 
 const getKeyWithName = async (name) => {
-  console.log("Trying to get key...");
   let info = await AsyncStorage.getItem(`${STORE_KEY}.${name}`); 
-
   if (!info) {
     return null;
   }
-  console.log(info);
   return JSON.parse(info);
 }
 
@@ -126,11 +123,7 @@ const removeRecord = (r) => {
     try {
       records()
         .then (async (records) => {
-          console.log(r);
-          console.log(r.metadata.testType);
           let cachedRecords = await getKeyWithName(r.metadata.testType);
-          console.log("Cached records");
-          console.log(cachedRecords);
           if (cachedRecords != null) {
             delete cachedRecords[r.id];
             await setKeyValue(r.metadata.testType, cachedRecords);

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Coral Health",
     "slug": "mycoral-patient",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "sdkVersion": "23.0.0",
     "privacy": "unlisted",
     "scheme": "coralhealth",
