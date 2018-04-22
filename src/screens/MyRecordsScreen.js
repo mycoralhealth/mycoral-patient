@@ -137,7 +137,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
       cachedRecords = await store.records();
     }
     this.setState({recordsList: cachedRecords, loading: false});
-    this.decryptRecords(cachedRecords);)
+    this.decryptRecords(cachedRecords);
   }
 
   async decryptRecords(recordsList) {
