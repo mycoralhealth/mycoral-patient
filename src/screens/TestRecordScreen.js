@@ -1,10 +1,12 @@
 import moment from 'moment'
 import FlakeIdGen from 'flakeid';
 import React, { Component } from 'react';
-import { FileSystem } from 'expo';
+import { FileSystem, SecureStore } from 'expo';
 
 import { recordTypes } from '../utilities/recordTypes';
 import store from '../utilities/store';
+import { getKeyWithName } from '../utilities/pki';
+
 import cryptoHelpers from '../utilities/crypto_helpers';
 import ipfs from '../utilities/expo-ipfs';
 import { logoutAction } from '../ui';
@@ -34,6 +36,14 @@ export class TestRecordScreen extends Component {
     }
   }
 
+  createBasicRecord(hash, encryptionInfo) {
+    return {
+      encryptionInfo,
+      hash,
+      time: new Date()
+    }
+  }
+
   async encryptAndUploadRecord(data, selectedRecordType) {
     let metadata = await this.createRecordMetadata(selectedRecordType);
 
@@ -57,7 +67,17 @@ export class TestRecordScreen extends Component {
     let hash = uploadResponse.hash;
 
     let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, hash, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
-
     return record;
+  }
+
+  async createRecordAndSaveMetadata(data, recordType) {
+    let encryptedRecord = await this.createRecord(data, recordType);
+    var recordStore = await store.getKeyWithName(recordType)
+    if (recordStore == null) {
+      recordStore = {};
+    } 
+    recordStore[encryptedRecord.id] = this.createBasicRecord(encryptedRecord.hash, encryptedRecord.encryptionInfo);
+    await store.setKeyValue(recordType, recordStore);
+    return encryptedRecord;
   }
 }

@@ -17,6 +17,7 @@ import reducers from './src/reducers';
 import { LoginScreen } from './src/screens/LoginScreen.js';
 import { MyRecordsScreen } from './src/screens/MyRecordsScreen.js';
 import { ViewRecordScreen } from './src/screens/ViewRecordScreen.js';
+import { ViewGraphScreen } from './src/screens/ViewGraphScreen.js';
 import { RequestHealthTipScreen } from './src/screens/RequestHealthTipScreen.js';
 import { RequestHealthTipConfirmScreen } from './src/screens/RequestHealthTipConfirmScreen.js';
 import { AddRecordScreen } from './src/screens/AddRecordScreen.js';
@@ -24,6 +25,7 @@ import { AddRecordManualScreen } from './src/screens/AddRecordManualScreen.js';
 import { QRCodeReaderScreen } from './src/screens/QRCodeReaderScreen.js';
 import { AddBloodTestRecordScreen } from './src/screens/AddBloodTestRecordScreen';
 import { AddGeneticTestRecordScreen } from './src/screens/AddGeneticTestRecordScreen';
+import { AddVitalSignsRecordScreen } from './src/screens/AddVitalSignsRecordScreen';
 import { DelegateAccessScreen } from './src/screens/DelegateAccessScreen';
 import { DelegationContactsScreen } from './src/screens/DelegationContactsScreen';
 import { ViewImageScreen } from './src/screens/ViewImageScreen';
@@ -37,10 +39,13 @@ import { ContactsScreen } from './src/screens/ContactsScreen';
 import { MyContactScreen } from './src/screens/MyContactScreen';
 import { SharedRecordsWithScreen } from './src/screens/SharedRecordsWithScreen';
 import { ViewSharedRecordScreen } from './src/screens/ViewSharedRecordScreen';
+import { GraphGeneratorScreen } from './src/screens/GraphGeneratorScreen';
 
 const MyRecordsNavigator = StackNavigator({
   MyRecords: { screen: MyRecordsScreen },
   ViewRecord: { screen: ViewRecordScreen },
+  ViewGraph: { screen: ViewGraphScreen },
+  GraphGenerator: { screen: GraphGeneratorScreen },
   RequestHealthTip: { screen: RequestHealthTipScreen },
   RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen },
   DelegateAccess: { screen: DelegateAccessScreen },
@@ -49,6 +54,7 @@ const MyRecordsNavigator = StackNavigator({
   AddRecordManual: { screen: AddRecordManualScreen },
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
+  AddVitalSignsRecord: {screen: AddVitalSignsRecordScreen},
   QRCode: { screen: QRCodeScreen },
   ViewImage: {
     screen: ViewImageScreen,

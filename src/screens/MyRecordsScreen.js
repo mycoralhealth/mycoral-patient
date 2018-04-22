@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, { Component } from 'react';
-import { View, ScrollView, ActivityIndicator, Linking } from 'react-native';
+import { Alert, View, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { Button, List, ListItem, Text } from 'react-native-elements';
 import nextFrame from 'next-frame';
 import { connect } from 'react-redux';
@@ -137,7 +137,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
       cachedRecords = await store.records();
     }
     this.setState({recordsList: cachedRecords, loading: false});
-    this.decryptRecords(cachedRecords);
+    this.decryptRecords(cachedRecords);)
   }
 
   async decryptRecords(recordsList) {
@@ -185,6 +185,7 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
     this.setState({ modalVisible: false });
   }
 
+
   render() {
     if (this.state.loading) {
       return(
@@ -206,8 +207,25 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
             message={(this.state.addedType === 'contact') ? 'You can verify your contact information in Settings > Contacts.' : 'You can verify the imported record information in Shared Records.'}
             ionIcon='ios-body'
           />
+          <View style={{ flex: 1,marginTop:10, marginBottom: 10}}>
+            <Button
+              backgroundColor={colors.red}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Add Record' 
+              onPress={() => this.props.navigation.navigate({key:'AddRecordKey', routeName:'AddRecord', params: {onRecordAdded: this.newRecord.bind(this)}})}
+            />
+          </View>
+          <View style={{flex:1,marginBottom:10}}>
+          <Button
+              backgroundColor={colors.red}
+              icon={{name: 'area-graph', type: 'entypo'}}
+              title='View Charts' 
+              onPress={() => this.props.navigation.navigate('GraphGenerator', {})}
+            />
+          </View>
           <List containerStyle={{marginTop: 0, marginBottom: 20, borderTopWidth: 0, borderBottomWidth: 0}}>
             {
+
               this.state.recordsList.map((record) => (
                 <RecordListItem
                   key={record.id}
@@ -218,14 +236,6 @@ class MyRecordsScreenUnwrapped extends AsyncRenderComponent {
               ))
             }
           </List>
-          <View style={{ flex: 1, marginBottom: 20}}>
-            <Button
-              backgroundColor={colors.red}
-              icon={{name: 'ios-add-circle', type: 'ionicon'}}
-              title='Add Record' 
-              onPress={() => this.props.navigation.navigate({key:'AddRecordKey', routeName:'AddRecord', params: {onRecordAdded: this.newRecord.bind(this)}})}
-            />
-          </View>
         </ScrollView>
       </View>
     );

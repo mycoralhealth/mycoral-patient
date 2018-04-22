@@ -24,6 +24,7 @@ export class ViewRecordScreen extends AsyncRenderComponent {
     this.props.navigation.dispatch(backAction);
   }
 
+
   componentDidMount() {
     const record = this.props.navigation.state.params.record;
 
@@ -35,12 +36,10 @@ export class ViewRecordScreen extends AsyncRenderComponent {
       ipfs.cat(record.hash)
         .then(async (response) => {
           const {uri, unauthorized} = response;
-
           if (unauthorized) {
             this.props.navigation.dispatch(await logoutAction(this.props.navigation));
             return;
           }
-
           cryptoHelpers.decryptFile(uri, record.encryptionInfo.key, record.encryptionInfo.iv)
             .then((decryptionResult) => {
               FileSystem.readAsStringAsync(decryptionResult.decryptedUri)

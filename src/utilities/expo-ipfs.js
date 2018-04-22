@@ -1,4 +1,5 @@
 import forge from 'node-forge';
+import FlakeIdGen from 'flakeid';
 import { FileSystem } from 'expo';
 import { getIPFSProvider, getUserInfo } from './store';
 import { CORALD_API } from '../const';
@@ -7,6 +8,8 @@ const CORALD_IPFS_PROXY=CORALD_API+'/ipfs/';
 const ROOT_API_URL='/api/v0/';
 const ADD_API='add';
 const CAT_API='cat';
+
+const IdGenerator = new FlakeIdGen();
 
 const ipfsRootURL = async () => {
   let ipfsConfig = await getIPFSProvider();
@@ -24,7 +27,8 @@ const isURI = (data) => {
 
 const tempRandomName = () => {
   let md = forge.md.sha256.create();
-  md.update(new Date());
+  md.start();
+  md.update(IdGenerator.gen());
 
   return md.digest().toHex();
 }

@@ -5,7 +5,6 @@ import { PHOTO_RECORD_TEST } from './utilities/recordTypes';
 import { NavigationActions, SafeAreaView } from 'react-navigation';
 import { Constants } from 'expo';
 
-
 import store from './utilities/store';
 import { cleanUpRecordsCache } from './screens/MyRecordsScreen';
 
@@ -186,8 +185,8 @@ export const RecordDetails = (props) => {
         {
           props.record.results.map((item) => (
             <ListItem
+              title={item.title ? item.title : item.key} 
               key={item.key}
-              title={item.key}
               hideChevron={true}
               rightTitle={(item.value == '') ? ' ' : item.value}
               rightTitleStyle={{ color: 'black', fontSize: 20, fontFamily: (Platform.OS === 'ios') ? 'Courier' : 'monospace', fontWeight: 'bold'}}
