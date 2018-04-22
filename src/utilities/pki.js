@@ -66,6 +66,19 @@ export const keysExist = () => {
   return p;
 }
 
+export const getKeyWithName = (name) => {
+  let p = new Promise(async function(resolve, reject) {
+    let storeKey = await getPerUserStoreKey();
+
+    SecureStore.getItemAsync(`${storeKey}.${name}`)
+      .then((marker) => {
+        resolve(marker);
+      }).catch((e) => reject(`Error getting marker from store (${e})`));
+  });
+
+  return p;
+}
+
 export const encryptPKI = async (data, optionalPublicKey) => {
   if (optionalPublicKey) {
     return new Promise(function(resolve, reject) {

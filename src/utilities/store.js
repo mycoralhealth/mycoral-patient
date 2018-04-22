@@ -36,6 +36,17 @@ const setUserInfo = async (userInfo) => {
   await AsyncStorage.setItem(`${STORE_KEY}.${USER_INFO}`, JSON.stringify(userInfo)); 
 }
 
+const setKeyValue = async (name, data) => {
+  await AsyncStorage.setItem(`${STORE_KEY}.${name}`, JSON.stringify(data)); 
+}
+
+const getKeyWithName = async (name) => {
+  let info = await AsyncStorage.getItem(`${STORE_KEY}.${name}`); 
+  if (!info) {
+    return null;
+  }
+  return JSON.parse(info);
+}
 
 /**
  * Per user store information. It uses the STORE_KEY + the user auth0 name which should equal the email
@@ -112,6 +123,11 @@ const removeRecord = (r) => {
     try {
       records()
         .then (async (records) => {
+          let cachedRecords = await getKeyWithName(r.metadata.testType);
+          if (cachedRecords != null) {
+            delete cachedRecords[r.id];
+            await setKeyValue(r.metadata.testType, cachedRecords);
+          }
           let newRecords = records.filter((record) => (record.id !== r.id));
           await AsyncStorage.setItem(`${await getPerUserStoreKey()}.${RECORDS}`, JSON.stringify(newRecords));
           resolve(newRecords);
@@ -360,12 +376,14 @@ module.exports = {
   removeRecord,
   getIPFSProvider,
   setIPFSProvider,
+  setKeyValue,
   getEthAddress,
   setEthAddress,
   setUserInfo,
   getUserInfo,
   getEmail,
   getUserName,
+  getKeyWithName,
   getPerUserStoreKey,
   contacts,
   addContact,
