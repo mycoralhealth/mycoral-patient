@@ -13,7 +13,7 @@
     "icon": "./assets/icon.png",
     "ios": {
       "bundleIdentifier": "com.mycoralhealth.PatientApp",
-      "buildNumber": "0.2.2"
+      "buildNumber": "0.2.3"
     },
     "android": {
       "package": "com.mycoralhealth.PatientApp",
