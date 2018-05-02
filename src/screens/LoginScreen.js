@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { AuthSession } from 'expo';
+import { NavigationActions } from 'react-navigation';
 
 import store from '../utilities/store';
 import { colors, MessageIndicator } from '../ui';
@@ -41,8 +42,11 @@ export class LoginScreen extends Component {
 
     if (this.state.loggedIn) {
       // Logged in: navigate to the app
-      this.props.navigation.navigate('MainTabs');
-      return;
+      const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: "MainTabs" })],
+      });
+      return this.props.navigation.dispatch(resetAction);
     }
 
     if (this.state.loading || this.state.error) {
