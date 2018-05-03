@@ -2,7 +2,7 @@
   "expo": {
     "name": "Coral Health",
     "slug": "mycoral-patient",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "sdkVersion": "23.0.0",
     "privacy": "unlisted",
     "scheme": "coralhealth",
@@ -13,7 +13,13 @@
     "icon": "./assets/icon.png",
     "ios": {
       "bundleIdentifier": "com.mycoralhealth.PatientApp",
-      "buildNumber": "0.2.3"
+      "buildNumber": "0.2.4.0",
+      "infoPlist": {
+        "NSCameraUsageDescription":
+          "The app needs permission to your camera in order to scan documents and QR codes",
+        "NSLocationAlwaysUsageDescription":
+          "The app does not use location services"
+      }
     },
     "android": {
       "package": "com.mycoralhealth.PatientApp",
