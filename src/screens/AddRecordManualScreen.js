@@ -148,12 +148,23 @@ export class AddRecordManualScreen extends TestRecordScreen {
               }})}
             />
           </View>
-          <View style={{ flex: 1, marginBottom: 20}}>
+          <View style={{ flex: 1, marginBottom: 10}}>
             <Button
               backgroundColor={colors.gray}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
               title='Add Vital Signs'
               onPress={() => this.props.navigation.navigate({key: 'AddVitalSignsRecordKey', routeName: 'AddVitalSignsRecord', params: {
+                onRecordAdded: this.onRecordAdded.bind(this),
+                onRecordAddFailed: this.onRecordAddFailed.bind(this)
+              }})}
+            />
+          </View>
+					<View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.gray}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Add Hair Test'
+              onPress={() => this.props.navigation.navigate({key: 'AddHairTestRecordKey', routeName: 'AddHairTestRecord', params: {
                 onRecordAdded: this.onRecordAdded.bind(this),
                 onRecordAddFailed: this.onRecordAddFailed.bind(this)
               }})}
