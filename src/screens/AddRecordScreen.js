@@ -4,8 +4,9 @@ import { Button, Text } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 
-import { CoralHeader, CoralFooter, colors, MessageIndicator} from '../ui';
+import { colors, MessageIndicator} from '../ui';
 import store from '../utilities/store';
+import {MyRecordsScaffold} from "./MyRecordsScaffold";
 
 const backAction = NavigationActions.back();
 
@@ -69,8 +70,11 @@ export class AddRecordScreen extends Component {
 
     const state = this.props.navigation.state;
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
+      <MyRecordsScaffold
+        title='Add Medical Record'
+        subtitle='Add your medical record to the blockchain.'
+        backAction={() => this.props.navigation.dispatch(backAction)}
+      >
         <ScrollView>
           <QRCodeView
             ethAddress={this.state.ethAddress}
@@ -88,8 +92,7 @@ export class AddRecordScreen extends Component {
             />
           </View>
         </ScrollView>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
-      </View>
+      </MyRecordsScaffold>
     );
   }
 }

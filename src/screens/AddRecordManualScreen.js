@@ -5,10 +5,11 @@ import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 import { ImagePicker, FileSystem } from 'expo';
 
-import { CoralHeader, CoralFooter, colors, MessageModal, MessageIndicator } from '../ui.js';
+import { colors, MessageModal, MessageIndicator } from '../ui.js';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import { TestRecordScreen } from './TestRecordScreen';
 import cryptoHelpers from '../utilities/crypto_helpers';
+import {MyRecordsScaffold} from "./MyRecordsScaffold";
 
 export class AddRecordManualScreen extends TestRecordScreen {
   constructor(props) {
@@ -92,9 +93,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
     }
 
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
-
+      <MyRecordsScaffold title='Add Medical Record' subtitle='Add your medical record to the blockchain.' backAction={() => this.props.navigation.dispatch(resetAction)}>
         <ScrollView centerContent={true}>
           <MessageModal
             visible={this.state.modalVisible}
@@ -171,8 +170,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
             />
           </View>
         </ScrollView>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(resetAction)} />
-      </View>
+      </MyRecordsScaffold>
     );
   }
 }

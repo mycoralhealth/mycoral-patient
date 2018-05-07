@@ -4,10 +4,11 @@ import { View } from 'react-native';
 import { Button, List, ListItem, Text, CheckBox } from 'react-native-elements'
 import { NavigationActions } from 'react-navigation';
 
-import { CoralHeader, CoralFooter, colors } from '../ui';
+import { colors } from '../ui';
 import { TestRecordScreen } from './TestRecordScreen';
 
 import { GENETIC_TEST, recordTypes } from '../utilities/recordTypes';
+import {MyRecordsScaffold} from "./MyRecordsScaffold";
 
 const backAction = NavigationActions.back();
 
@@ -46,8 +47,11 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: colors.bg  }}>
-        <CoralHeader title={`Add ${recordTypes[GENETIC_TEST]}`} subtitle='Enter your results below.'/>
+      <MyRecordsScaffold
+          title={`Add ${recordTypes[GENETIC_TEST]}`}
+          subtitle='Enter your results below.'
+          backAction={() => this.props.navigation.dispatch(backAction)}
+      >
 
         <Text h3 style={{textAlign: 'center', marginTop: 20}}>
           {recordTypes[GENETIC_TEST]}
@@ -88,8 +92,7 @@ export class AddGeneticTestRecordScreen extends TestRecordScreen {
             />
           </View>
         </View>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
-      </View>
+      </MyRecordsScaffold>
     );
   }
 }
