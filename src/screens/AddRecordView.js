@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { View, Text, Button } from "react-native";
+import { View } from "react-native";
+import { Button, Text } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
 import moment from "moment/moment";
 
@@ -21,7 +22,7 @@ export class AddRecordView extends Component {
         subtitle="Enter your results below."
         backAction={() => this.props.navigation.dispatch(backAction)}
       >
-        <KeyboardAwareScrollView style={{flex: 1}}>
+        <KeyboardAwareScrollView style={{ flex: 1 }}>
           <Text h3 style={{ textAlign: "center", marginTop: 20 }}>
             {this.props.recordType}
           </Text>
