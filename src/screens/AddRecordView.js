@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { View, Text, Button } from "react-native";
 import { NavigationActions } from "react-navigation";
 import moment from "moment/moment";
 
@@ -9,14 +10,18 @@ import { MyRecordsScaffold } from "./MyRecordsScaffold";
 const backAction = NavigationActions.back();
 
 export class AddRecordView extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <MyRecordsScaffold
         title={`Add ${this.props.recordType}`}
-        subtitle={this.props.subtitle}
-        backAction={this.props.navigation.dispatch(backAction)}
+        subtitle="Enter your results below."
+        backAction={() => this.props.navigation.dispatch(backAction)}
       >
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={{flex: 1}}>
           <Text h3 style={{ textAlign: "center", marginTop: 20 }}>
             {this.props.recordType}
           </Text>
@@ -31,7 +36,7 @@ export class AddRecordView extends Component {
                 backgroundColor={colors.green}
                 icon={{ name: "ios-add-circle", type: "ionicon" }}
                 title="Save"
-                onPress={async () => this.props.saveAction()}
+                onPress={this.props.saveAction}
               />
             </View>
           </View>
