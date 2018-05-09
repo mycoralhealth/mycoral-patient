@@ -26,6 +26,7 @@ import { QRCodeReaderScreen } from './src/screens/QRCodeReaderScreen.js';
 import { AddBloodTestRecordScreen } from './src/screens/AddBloodTestRecordScreen';
 import { AddGeneticTestRecordScreen } from './src/screens/AddGeneticTestRecordScreen';
 import { AddVitalSignsRecordScreen } from './src/screens/AddVitalSignsRecordScreen';
+import {AddHairTestRecordScreen} from "./src/screens/AddHairTestRecordScreen";
 import { DelegateAccessScreen } from './src/screens/DelegateAccessScreen';
 import { DelegationContactsScreen } from './src/screens/DelegationContactsScreen';
 import { ViewImageScreen } from './src/screens/ViewImageScreen';
@@ -55,6 +56,7 @@ const MyRecordsNavigator = StackNavigator({
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
   AddVitalSignsRecord: {screen: AddVitalSignsRecordScreen},
+  AddHairTestRecord: {screen: AddHairTestRecordScreen},
   QRCode: { screen: QRCodeScreen },
   ViewImage: {
     screen: ViewImageScreen,

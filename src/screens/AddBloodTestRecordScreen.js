@@ -1,18 +1,11 @@
-import moment from "moment";
 import React from "react";
-import { View } from "react-native";
-import { Button, List, ListItem, Text } from "react-native-elements";
+import { List, ListItem} from "react-native-elements";
 import { NavigationActions } from "react-navigation";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { colors } from "../ui";
 import { TestRecordScreen } from "./TestRecordScreen";
 
 import { BLOOD_TEST, recordTypes } from "../utilities/recordTypes";
-import { MyRecordsScaffold } from "./MyRecordsScaffold";
 import { AddRecordView } from "./AddRecordView";
-
-const backAction = NavigationActions.back();
 
 export class AddBloodTestRecordScreen extends TestRecordScreen {
   constructor(props) {
@@ -55,15 +48,7 @@ export class AddBloodTestRecordScreen extends TestRecordScreen {
         valueType: "magnitude"
       }
     ];
-
-    try {
-      let record = await this.createRecord(JSON.stringify(results), BLOOD_TEST);
-      this.props.navigation.state.params.onRecordAdded(record);
-    } catch (e) {
-      this.props.navigation.state.params.onRecordAddFailed();
-    } finally {
-      this.props.navigation.dispatch(backAction);
-    }
+    this.saveResults(results, BLOOD_TEST);
   }
 
   render() {

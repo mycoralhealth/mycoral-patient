@@ -1,20 +1,20 @@
-import moment from 'moment'
-import FlakeIdGen from 'flakeid';
-import React, { Component } from 'react';
-import { FileSystem, SecureStore } from 'expo';
+import moment from "moment";
+import FlakeIdGen from "flakeid";
+import React, { Component } from "react";
+import { NavigationActions } from "react-navigation";
+import { FileSystem, SecureStore } from "expo";
 
-import { recordTypes } from '../utilities/recordTypes';
-import store from '../utilities/store';
-import { getKeyWithName } from '../utilities/pki';
+import { recordTypes } from "../utilities/recordTypes";
+import store from "../utilities/store";
 
-import cryptoHelpers from '../utilities/crypto_helpers';
-import ipfs from '../utilities/expo-ipfs';
-import { logoutAction } from '../ui';
+import cryptoHelpers from "../utilities/crypto_helpers";
+import ipfs from "../utilities/expo-ipfs";
+import { logoutAction } from "../ui";
 
 const IdGenerator = new FlakeIdGen();
+const backAction = NavigationActions.back();
 
 export class TestRecordScreen extends Component {
-
   async createRecordMetadata(selectedRecordType) {
     return {
       username: await store.getUserName(),
@@ -33,7 +33,7 @@ export class TestRecordScreen extends Component {
       hash,
       encryptionInfo,
       encrypted: true
-    }
+    };
   }
 
   createBasicRecord(hash, encryptionInfo) {
@@ -41,7 +41,7 @@ export class TestRecordScreen extends Component {
       encryptionInfo,
       hash,
       time: new Date()
-    }
+    };
   }
 
   async encryptAndUploadRecord(data, selectedRecordType) {
@@ -61,22 +61,41 @@ export class TestRecordScreen extends Component {
     return { hash: Hash, encryptedInfo };
   }
 
+  async saveResults(results, recordType) {
+    try {
+      let record = await this.createRecord(JSON.stringify(results), recordType);
+      this.props.navigation.state.params.onRecordAdded(record);
+    } catch (e) {
+      console.log({ e });
+      this.props.navigation.state.params.onRecordAddFailed();
+    } finally {
+      this.props.navigation.dispatch(backAction);
+    }
+  }
+
   async createRecord(data, recordType) {
     let uploadResponse = await this.encryptAndUploadRecord(data, recordType);
     let encryptedInfo = uploadResponse.encryptedInfo;
     let hash = uploadResponse.hash;
 
-    let record = this.createEncryptedRecord(encryptedInfo.encryptedMetadata, hash, { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv });
+    let record = this.createEncryptedRecord(
+      encryptedInfo.encryptedMetadata,
+      hash,
+      { key: encryptedInfo.encryptedKey, iv: encryptedInfo.encryptedIv }
+    );
     return record;
   }
 
   async createRecordAndSaveMetadata(data, recordType) {
     let encryptedRecord = await this.createRecord(data, recordType);
-    var recordStore = await store.getKeyWithName(recordType)
+    let recordStore = await store.getKeyWithName(recordType);
     if (recordStore == null) {
       recordStore = {};
-    } 
-    recordStore[encryptedRecord.id] = this.createBasicRecord(encryptedRecord.hash, encryptedRecord.encryptionInfo);
+    }
+    recordStore[encryptedRecord.id] = this.createBasicRecord(
+      encryptedRecord.hash,
+      encryptedRecord.encryptionInfo
+    );
     await store.setKeyValue(recordType, recordStore);
     return encryptedRecord;
   }

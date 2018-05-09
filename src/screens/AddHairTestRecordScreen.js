@@ -1,38 +1,118 @@
-import React, { Component } from "react";
-import { NavigationActions } from "react-navigation";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import React from "react";
+import { List, ListItem, CheckBox } from "react-native-elements";
 
-import { colors } from "../ui.js";
 import { TestRecordScreen } from "./TestRecordScreen";
 
 import { HAIR_TEST, recordTypes } from "../utilities/recordTypes";
-import { MyRecordsScaffold } from "./MyRecordsScaffold";
+import { AddRecordView } from "./AddRecordView";
 
-const backAction = NavigationActions.back();
-const recordType = recordTypes(HAIR_TEST);
+const recordType = recordTypes[HAIR_TEST];
 
 export class AddHairTestRecordScreen extends TestRecordScreen {
   constructor(props) {
     super(props);
 
     this.state = {
-      "Number of painful cysts": 0,
-      "Baldness": false,
-      "Baldness from disease": false
+      numberCysts: "",
+      baldness: false,
+      baldnessFromDisease: false,
+      opInProgress: false
     };
+  }
+
+  onChangeValue(key, value) {
+    let state = this.state;
+    this.state[key] = value;
+    this.setState(state);
+  }
+
+  async addRecord() {
+    this.setState({ opInProgress: true });
+
+    let results = [
+      {
+        key: "Number of painful cysts",
+        value: this.state["numberCysts"],
+        type: "marker",
+        valueType: "magnitude"
+      },
+      {
+        key: "Baldness",
+        value: this.state["baldness"] ? "Yes" : "No",
+        type: "marker",
+        valueType: "boolean"
+      },
+      {
+        key: "Baldness from disease",
+        value: this.state["baldnessFromDisease"] ? "Yes" : "No",
+        type: "marker",
+        valueType: "boolean"
+      }
+    ];
+    this.saveResults(results, HAIR_TEST);
   }
 
   render() {
     return (
-      <MyRecordsScaffold
-        title={`Add ${recordType}`}
-        subtitle="Enter your results below."
-        backAction={()=>this.props.navigation.dispatch(backAction)}
+      <AddRecordView
+        recordType={recordType}
+        navigation={this.props.navigation}
+        opInProgress={this.state.opInProgress}
+        saveAction={async () => this.addRecord()}
       >
-        <KeyboardAwareScrollView>
+        <List containerStyle={{ marginBottom: 20 }}>
+          {[
+            {
+              key: "numberCysts",
+              title: "Number of painful cysts",
+              placeholder: "0"
+            }
+          ].map(item => (
+            <ListItem
+              key={item.key}
+              title={item.title}
+              hideChevron={true}
+              textInput={true}
+              textInputPlaceholder={item.placeholder}
+              textInputValue={this.state[item.key]}
+              textInputOnChangeText={title =>
+                this.onChangeValue(item.key, title)
+              }
+              textInputKeyboardType="numeric"
+              textInputReturnKeyType={"done"}
+            />
+          ))}
+          {[
+            { key: "baldness", title: "Baldness", disabled: false },
+            {
+              key: "baldnessFromDisease",
+              title: "Baldness from disease",
+              disabled: !this.state.baldness
+            }
+          ].map(item => (
+            <ListItem
+              key={item.key}
+              title={this._renderCheckBox(item)}
+              hideChevron={true}
+              disabled={item.disabled}
+            />
+          ))}
+        </List>
+      </AddRecordView>
+    );
+  }
 
-        </KeyboardAwareScrollView>
-      </MyRecordsScaffold>
-    )
+  _renderCheckBox(item) {
+    if (item.disabled) {
+      return <CheckBox title={item.title} onPress={() => {}} checked={false} />;
+    } else {
+      return (
+        <CheckBox
+          title={item.title}
+          onPress={() => this.onChangeValue(item.key, !this.state[item.key])}
+          checked={this.state[item.key]}
+        />
+      );
+    }
   }
 }
