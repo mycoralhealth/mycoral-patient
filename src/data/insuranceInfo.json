@@ -1,0 +1,38 @@
+{
+  "companies": [
+    {
+      "key": "bcbsma",
+      "name": "BCBS Massachusetts"
+    },
+    {
+      "key": "aetna",
+      "name": "AETNA"
+    },
+    {
+      "key": "excellus",
+      "name": "Excellus"
+    }
+  ],
+  "procedures": [
+    {
+      "key": "laserHairRemoval",
+      "name": "Laser Hair Removal"
+    },
+    {
+      "key": "hairTransplant",
+      "name": "Hair Transplant"
+    }
+  ],
+  "approvals": {
+    "laserHairRemoval": {
+      "bcbsma": true,
+      "aetna": false,
+      "excellus": false
+    },
+    "hairTransplant": {
+      "bcbsma": true,
+      "aetna": true,
+      "excellus": false
+    }
+  }
+}

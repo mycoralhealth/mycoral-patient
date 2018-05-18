@@ -20,6 +20,7 @@ import { ViewRecordScreen } from './src/screens/ViewRecordScreen.js';
 import { ViewGraphScreen } from './src/screens/ViewGraphScreen.js';
 import { RequestHealthTipScreen } from './src/screens/RequestHealthTipScreen.js';
 import { RequestHealthTipConfirmScreen } from './src/screens/RequestHealthTipConfirmScreen.js';
+import {CheckInsuranceScreen} from "./src/screens/CheckInsuranceScreen";
 import { AddRecordScreen } from './src/screens/AddRecordScreen.js';
 import { AddRecordManualScreen } from './src/screens/AddRecordManualScreen.js';
 import { QRCodeReaderScreen } from './src/screens/QRCodeReaderScreen.js';
@@ -49,6 +50,7 @@ const MyRecordsNavigator = StackNavigator({
   GraphGenerator: { screen: GraphGeneratorScreen },
   RequestHealthTip: { screen: RequestHealthTipScreen },
   RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen },
+  CheckInsurance: {screen: CheckInsuranceScreen},
   DelegateAccess: { screen: DelegateAccessScreen },
   DelegationContacts: { screen: DelegationContactsScreen },
   AddRecord: { screen: AddRecordScreen },
