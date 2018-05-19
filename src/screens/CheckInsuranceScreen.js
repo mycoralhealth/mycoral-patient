@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, ScrollView, Image } from "react-native";
+import { View, ScrollView, Image, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { NavigationActions } from "react-navigation";
 import { MyRecordsScaffold } from "./MyRecordsScaffold";
@@ -7,13 +7,22 @@ import RNPickerSelect from "react-native-picker-select";
 import { colors } from "../ui";
 
 const backAction = NavigationActions.back();
-
 const screenStages = {
   form: 1,
   results: 2
 };
 
 import insuranceInfo from "../data/insuranceInfo.json";
+const _infoMapper = datas => {
+  tempMap = {};
+  datas.forEach(data => {
+    tempMap[data.key] = data.name;
+  });
+  return tempMap;
+};
+
+const companyMap = _infoMapper(insuranceInfo["companies"]);
+const procedureMap = _infoMapper(insuranceInfo["procedures"]);
 
 export class CheckInsuranceScreen extends Component {
   constructor(props) {
@@ -56,7 +65,7 @@ export class CheckInsuranceScreen extends Component {
   _renderSelectForm() {
     return (
       <View>
-        <Text h4 style={{ textAlign: "center", marginTop: 20 }}>
+        <Text h4 style={styles.centerText}>
           {"Select the procedure for which you want insurance approval"}
         </Text>
         {CheckInsuranceScreen._renderPicker({
@@ -65,7 +74,7 @@ export class CheckInsuranceScreen extends Component {
           choices: insuranceInfo.procedures,
           onChangeValue: value => this.setState({ procedure: value })
         })}
-        <Text h4 style={{ textAlign: "center", marginTop: 20 }}>
+        <Text h4 style={styles.centerText}>
           {"Select insurance company"}
         </Text>
         {CheckInsuranceScreen._renderPicker({
@@ -79,9 +88,7 @@ export class CheckInsuranceScreen extends Component {
             backgroundColor={colors.green}
             icon={{ name: "ios-add-circle", type: "ionicon" }}
             title="Submit"
-            onPress={() =>
-              this._checkApproval(this.record)
-            }
+            onPress={() => this._checkApproval(this.record)}
           />
         </View>
       </View>
@@ -109,20 +116,25 @@ export class CheckInsuranceScreen extends Component {
 
   _renderApprovalDetails() {
     return (
-      <View>
+      <View style={{ flex: 1, alignItems: "center", marginTop: 20 }}>
         {(() => {
           if (this.state.approved) {
             return (
               <Image
+                style={styles.approvalImage}
                 source={require("../../assets/icons8-checkmark-500.png")}
               />
             );
           } else {
             return (
-              <Image source={require("../../assets/icons8-cancel-512.png")} />
+              <Image
+                style={styles.approvalImage}
+                source={require("../../assets/icons8-cancel-512.png")}
+              />
             );
           }
         }).call()}
+        <Text h4 style={styles.centerText}>{this._generateApprovalText()}</Text>
       </View>
     );
   }
@@ -144,4 +156,25 @@ export class CheckInsuranceScreen extends Component {
     }
     this.setState({ approved: approved, stage: screenStages.results });
   }
+
+  _generateApprovalText() {
+    const approved = this.state.approved;
+    var approvalText =
+      "According to " + companyMap[this.state.company] + "’s medical policy, ";
+    approvalText = approvalText + "you" + (!approved ? " do not " : " ");
+    approvalText =
+      approvalText + "qualify for " + procedureMap[this.state.procedure] + ".";
+    return approvalText;
+  }
 }
+
+const styles = StyleSheet.create({
+  approvalImage: {
+    width: 200,
+    height: 200
+  },
+  centerText: {
+    textAlign: "center",
+    marginTop: 20
+  }
+});
