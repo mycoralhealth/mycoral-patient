@@ -20,12 +20,14 @@ import { ViewRecordScreen } from './src/screens/ViewRecordScreen.js';
 import { ViewGraphScreen } from './src/screens/ViewGraphScreen.js';
 import { RequestHealthTipScreen } from './src/screens/RequestHealthTipScreen.js';
 import { RequestHealthTipConfirmScreen } from './src/screens/RequestHealthTipConfirmScreen.js';
+import {CheckInsuranceScreen} from "./src/screens/CheckInsuranceScreen";
 import { AddRecordScreen } from './src/screens/AddRecordScreen.js';
 import { AddRecordManualScreen } from './src/screens/AddRecordManualScreen.js';
 import { QRCodeReaderScreen } from './src/screens/QRCodeReaderScreen.js';
 import { AddBloodTestRecordScreen } from './src/screens/AddBloodTestRecordScreen';
 import { AddGeneticTestRecordScreen } from './src/screens/AddGeneticTestRecordScreen';
 import { AddVitalSignsRecordScreen } from './src/screens/AddVitalSignsRecordScreen';
+import {AddHairTestRecordScreen} from "./src/screens/AddHairTestRecordScreen";
 import { DelegateAccessScreen } from './src/screens/DelegateAccessScreen';
 import { DelegationContactsScreen } from './src/screens/DelegationContactsScreen';
 import { ViewImageScreen } from './src/screens/ViewImageScreen';
@@ -48,6 +50,7 @@ const MyRecordsNavigator = StackNavigator({
   GraphGenerator: { screen: GraphGeneratorScreen },
   RequestHealthTip: { screen: RequestHealthTipScreen },
   RequestHealthTipConfirm: { screen: RequestHealthTipConfirmScreen },
+  CheckInsurance: {screen: CheckInsuranceScreen},
   DelegateAccess: { screen: DelegateAccessScreen },
   DelegationContacts: { screen: DelegationContactsScreen },
   AddRecord: { screen: AddRecordScreen },
@@ -55,6 +58,7 @@ const MyRecordsNavigator = StackNavigator({
   AddBloodTestRecord: {screen: AddBloodTestRecordScreen},
   AddGeneticTestRecord: {screen: AddGeneticTestRecordScreen},
   AddVitalSignsRecord: {screen: AddVitalSignsRecordScreen},
+  AddHairTestRecord: {screen: AddHairTestRecordScreen},
   QRCode: { screen: QRCodeScreen },
   ViewImage: {
     screen: ViewImageScreen,

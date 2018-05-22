@@ -9,6 +9,7 @@ import { CoralHeader, CoralFooter, colors } from '../ui';
 import { TestRecordScreen } from './TestRecordScreen';
 
 import { VITAL_SIGNS, recordTypes } from '../utilities/recordTypes';
+import {MyRecordsScaffold} from "./MyRecordsScaffold";
 
 const backAction = NavigationActions.back();
 
@@ -109,9 +110,11 @@ export class AddVitalSignsRecordScreen extends TestRecordScreen {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title={`Add ${recordTypes[VITAL_SIGNS]}`} subtitle='Enter your results below.'/>
-
+      <MyRecordsScaffold
+        title={`Add ${recordTypes[VITAL_SIGNS]}`}
+        subtitle='Enter your results below.'
+        backAction={()=>this.props.navigation.dispatch(backAction)}
+      >
         <KeyboardAwareScrollView style={{ flex: 1 }}>
           <Text h3 style={{textAlign: 'center', marginTop: 20}}>
             {recordTypes[VITAL_SIGNS]}
@@ -157,8 +160,7 @@ export class AddVitalSignsRecordScreen extends TestRecordScreen {
           <View style={{ height: 200 }}/>
           
         </KeyboardAwareScrollView>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(backAction)}/>
-      </View>
+      </MyRecordsScaffold>
     );
   }
 }

@@ -5,10 +5,11 @@ import { NavigationActions } from 'react-navigation';
 import QRCode from 'react-native-qrcode';
 import { ImagePicker, FileSystem } from 'expo';
 
-import { CoralHeader, CoralFooter, colors, MessageModal, MessageIndicator } from '../ui.js';
+import { colors, MessageModal, MessageIndicator } from '../ui.js';
 import { PHOTO_RECORD_TEST } from '../utilities/recordTypes';
 import { TestRecordScreen } from './TestRecordScreen';
 import cryptoHelpers from '../utilities/crypto_helpers';
+import {MyRecordsScaffold} from "./MyRecordsScaffold";
 
 export class AddRecordManualScreen extends TestRecordScreen {
   constructor(props) {
@@ -92,9 +93,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
     }
 
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bg  }}>
-        <CoralHeader title='Add Medical Record' subtitle='Add your medical record to the blockchain.'/>
-
+      <MyRecordsScaffold title='Add Medical Record' subtitle='Add your medical record to the blockchain.' backAction={() => this.props.navigation.dispatch(resetAction)}>
         <ScrollView centerContent={true}>
           <MessageModal
             visible={this.state.modalVisible}
@@ -148,7 +147,7 @@ export class AddRecordManualScreen extends TestRecordScreen {
               }})}
             />
           </View>
-          <View style={{ flex: 1, marginBottom: 20}}>
+          <View style={{ flex: 1, marginBottom: 10}}>
             <Button
               backgroundColor={colors.gray}
               icon={{name: 'ios-add-circle', type: 'ionicon'}}
@@ -159,9 +158,19 @@ export class AddRecordManualScreen extends TestRecordScreen {
               }})}
             />
           </View>
+					<View style={{ flex: 1, marginBottom: 20}}>
+            <Button
+              backgroundColor={colors.gray}
+              icon={{name: 'ios-add-circle', type: 'ionicon'}}
+              title='Add Hair Test'
+              onPress={() => this.props.navigation.navigate({key: 'AddHairTestRecordKey', routeName: 'AddHairTestRecord', params: {
+                onRecordAdded: this.onRecordAdded.bind(this),
+                onRecordAddFailed: this.onRecordAddFailed.bind(this)
+              }})}
+            />
+          </View>
         </ScrollView>
-        <CoralFooter backAction={() => this.props.navigation.dispatch(resetAction)} />
-      </View>
+      </MyRecordsScaffold>
     );
   }
 }
